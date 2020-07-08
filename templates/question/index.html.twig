@@ -1,0 +1,34 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{% trans %}Podgląd pytania{% endtrans %}{% endblock %}
+
+{% block body %}
+    <div>
+        <h4>{{ question.questionContent }}</h4>
+        <p>
+            {% if question.multiChoice %}
+                {% trans %}Pytanie wielokrotnego wyboru{% endtrans %}
+                {% else %}
+                    {{ question.questionType.name }}
+            {% endif %}
+        </p>
+        <div class="answers mb-3">
+            <ul class="list-group vote-ul">
+            {% for key,answer in question.answers %}
+                <input name="answer{% if question.multiChoice %}[]{% endif %}"
+                       type="{% if question.multiChoice %}checkbox{% else %}radio{% endif %}"
+                       value="{{ answer.id }}" class="d-none" id="answer_{{ key }}">
+                <label class="list-group-item list-group-item-action mb-0" for="answer_{{ key }}">{{ answer.content }}</label>
+            {% endfor %}
+            </ul>
+        </div>
+        <div class="d-flex justify-content-between">
+        {% if question.sort > 1 %}
+        <a href="{{ path('app_question_show',{slug:question.polling.slug,sort:(question.sort-1)}) }}" class="btn btn-secondary btn-sm">{% trans %}Poprzednie pytanie{% endtrans %}</a>
+        {% endif %}
+        {% if question.polling.questions|length>question.sort %}
+        <a href="{{ path('app_question_show',{slug:question.polling.slug,sort:(question.sort+1)}) }}" class="btn btn-secondary btn-sm">{% trans %}Następne pytanie{% endtrans %}</a>
+        {% endif %}
+        </div>
+    </div>
+{% endblock %}

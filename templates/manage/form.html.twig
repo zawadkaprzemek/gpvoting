@@ -1,0 +1,19 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{% trans %}Wprowadź hasło{% endtrans %}{% endblock %}
+
+{% block body %}
+    {{ form_start(form) }}
+    <div class="row form-group">
+        <div class="col-12 col-sm-3 col-form-label">
+            {{form_label(form.password)}}
+        </div>
+        <div class="col-12 col-sm-9">
+            {{ form_widget(form.password) }}
+        </div>
+    </div>
+
+    {{ form_row(form.submit) }}
+    {{ form_end(form) }}
+
+{% endblock %}

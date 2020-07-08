@@ -1,0 +1,59 @@
+<header class="bg-dark">
+    <div class="container">
+        <nav class="navbar navbar-expand-lg navbar-dark">
+            <div class="collapse navbar-collapse flex-grow-1 text-right" id="navbarSupportedContent">
+                <ul class="navbar-nav ml-auto flex-nowrap">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            {% if app.user %}
+                            {% trans %}Zalogowany jako: {% endtrans %}{{ app.user.username }}
+                            {% else %}
+                                {% trans %}Gość{% endtrans %}
+                            {% endif %}
+                        </a>
+                        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                            {% if app.user %}
+                                <a class="dropdown-item" href="#">{% trans %}Ustawienia{% endtrans %}</a>
+                                <a class="dropdown-item" href="{{path('app_logout')}}">{% trans %}Wyloguj{% endtrans %}</a>
+                            {% else %}
+                                <a class="dropdown-item" href="{{ path('app_login')}}">{% trans %}Logowanie{% endtrans %}</a>
+                                <a class="dropdown-item" href="{{path('app_register')}}">{% trans %}Rejestracja{% endtrans %}</a>
+                            {% endif %}
+
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+    </div>
+</header><header class="bg-light">
+    <div class="container">
+        <nav class="navbar navbar-expand-lg navbar-light">
+            <a class="navbar-brand" href="{{path('app_event_list')}}"><img src="{{ asset('assets/images/gpvo-logo.png') }}" alt="GP Voting Online" style="max-width: 220px;" /></a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse flex-grow-1 text-right" id="navbarSupportedContent">
+                <ul class="navbar-nav ml-auto flex-nowrap text-uppercase font-weight-bold">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ path('app_event_list')}}">{% trans %}Podgląd{% endtrans %}<span class="sr-only">(current)</span></a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{path('app_manage')}}">{%trans%}Zarządzanie{% endtrans %}</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{path('app_pollings')}}">{% trans %}Głosowanie{% endtrans %}</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Analiza</a>
+                    </li>
+                </ul>{#
+                <form class="form-inline my-2 my-lg-0">
+                    <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
+                    <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+                </form>#}
+            </div>
+        </nav>
+    </div>
+</header>

@@ -1,0 +1,83 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{% trans %}Zarządzanie kodami{% endtrans %}{% endblock %}
+
+{% block body %}
+
+    <div class="">
+        <h3>{{ event.name }}</h3>
+        <h4>{% trans %}Organizator{% endtrans %}: {{ event.organizer }}</h4>
+        <img src="{{ asset(event.logoPath) }}" class="img-fluid img-logo mb-3" alt="">
+    </div>
+
+    <h3>{% trans %}Zarządzanie kodami{% endtrans %}</h3>
+    <div class="row">
+        <div class="col-6">
+            <p>{% trans %}Przypisane wydarzenia{% endtrans %}</p>
+        </div>
+        <div class="col-6">
+            <p>{% trans %}Przypisane głosowania{% endtrans %}</p>
+        </div>
+
+        {% for code in codes %}
+        <div class="col-12 mb-2 border-bottom">
+            <p class="font-weight-bold mb-2">{{ code.name }} <a href="{{ path('app_manage_code_edit',{id:code.id}) }}" class="btn btn-sm btn-outline-primary">{% trans %}Edytuj kod{% endtrans %}</a> </p>
+            <div class="row">
+                <div class="col-6">
+                    {% for room in code.rooms %}
+                        {{ room.name }}
+                        <div class="btn-group btn-group-sm mb-2">
+                            <a href="{{ path('app_manage_room',{slug_parent:event.slug,slug_child:room.slug}) }}" class="btn btn-primary">{% trans %}Podgląd{% endtrans %}</a>
+                            <a href="{{ path('app_manage_edit_room',{slug_parent:event.slug,slug_child:room.slug}) }}" class="btn btn-secondary">{% trans %}Edycja{% endtrans %}</a>
+                        </div>
+                    {% else %}
+                        <p class="text-warning">{% trans %}Kod nie przypisany do żadnego pokoju{% endtrans %}</p>
+                    {% endfor %}
+                </div>
+                <div class="col-6">
+                    {% for polling in code.pollings %}
+                        {{ polling.name }}
+                        <div class="btn-group btn-group-sm mb-2">
+                            <a href="{{ path('app_manage_polling_show',{slug:polling.slug}) }}" class="btn btn-primary">{% trans %}Podgląd{% endtrans %}</a>
+                            <a href="{{ path('app_polling_edit',{slug:polling.slug}) }}" class="btn btn-secondary">{% trans %}Edycja{% endtrans %}</a>
+                        </div>
+                    {% else %}
+                        <p class="text-warning">{% trans %}Kod nie przypisany do żadnego głosowania{% endtrans %}</p>
+                    {% endfor %}
+                </div>
+            </div>
+            <div class="border-bottom"></div>
+        </div>
+        {% endfor %}
+    </div>
+    <button class="btn btn-sm btn-secondary" data-toggle="modal" data-target="#newCodesModal">{% trans %}Generuj nowe kody{% endtrans %}</button>
+
+    <div class="modal fade" id="newCodesModal" tabindex="-1" role="dialog" aria-labelledby="newCodesLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="newCodesLabel">{% trans %}Generuj nowe kody{% endtrans %}</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                {{ form_start(form) }}
+                <div class="modal-body">
+                    <div class="row form-group">
+                        <div class="col-12 col-sm-3 col-form-label">
+                            {{form_label(form.count)}}
+                        </div>
+                        <div class="col-12 col-sm-9">
+                            {{ form_widget(form.count) }}
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">{% trans %}Anuluj{% endtrans %}</button>
+                    {{ form_row(form.submit) }}
+                </div>
+                {{ form_end(form) }}
+            </div>
+        </div>
+    </div>
+{% endblock %}

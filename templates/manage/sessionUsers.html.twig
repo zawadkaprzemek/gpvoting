@@ -1,0 +1,27 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{% trans %}Lista użytkowników sesji{% endtrans %}{% endblock %}
+
+{% block body %}
+    <h4>{% trans %}Lista użytkowników sesji{% endtrans %}</h4>
+    <div class="table-responsive">
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th>{% trans %}Nazwa{% endtrans %}</th>
+            <th>{% trans %}Ostatnia data aktywności{% endtrans %}</th>
+            <th>{% trans %}Adres IP{% endtrans %}</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for user in users %}
+            <tr>
+                <td>{{ user.name }}</td>
+                <td>{{ user.date|date('d/m/Y H:i') }}</td>
+                <td>{{ user.ip }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    </div>
+{% endblock %}

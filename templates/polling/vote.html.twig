@@ -1,0 +1,33 @@
+{% extends 'base.html.twig' %}
+    {% block metatags %}
+        {% if seconds is defined %}
+        <meta http-equiv="refresh" content="{{ seconds }}" >
+        {% endif %}
+    {% endblock %}
+{% block title %}{% trans %}Głosowanie{% endtrans %}: {{ polling.name }}{% endblock %}
+
+{% block body %}
+
+    {{ form_start(form) }}
+
+    <h3>{{ question.questionContent }}</h3>
+    {% if question.multiChoice %}
+    <p><small>{% trans %}Pytanie wielokrotnego wyboru{% endtrans %}</small></p>
+    {% endif %}
+        <ul class="list-group mb-2 vote-ul">
+            {% for key,answer in question.answers %}
+                <input name="answer{% if question.multiChoice %}[]{% endif %}"
+                       type="{% if question.multiChoice %}checkbox{% else %}radio{% endif %}"
+                       value="{{ answer.id }}" class="d-none" id="answer_{{ key }}">
+                <label class="list-group-item list-group-item-action mb-0" for="answer_{{ key }}">{{ answer.content }}</label>
+            {% endfor %}
+        </ul>
+    {{ form_row(form.startDateString) }}
+    {{ form_row(form.submit) }}
+    {{ form_row(form._token) }}
+    {{ form_end(form,{render_rest:false}) }}
+{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+
+{% endblock %}

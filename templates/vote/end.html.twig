@@ -1,0 +1,13 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{% trans %}Dziękujemy za udział w głosowaniu{% endtrans %}{% endblock %}
+
+{% block body %}
+    <div class="">
+        <div class="alert alert-success">
+            {% trans %}Dziękujemy za głosowanie! {% endtrans %}
+        </div>
+        <p>Tutaj będzie jakieś podsumowanie oddanych głosów</p>
+        <p class="text-info">Twoje głosowanie trwało: {{ diff }}</p>
+    </div>
+{% endblock %}

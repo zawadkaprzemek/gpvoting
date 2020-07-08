@@ -1,0 +1,134 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block body %}
+    {{ form_start(form) }}
+    <div class="row form-group">
+        <div class="col-12 col-sm-3 col-form-label">
+            {{form_label(form.question_content)}}
+        </div>
+        <div class="col-12 col-sm-9">
+            {{ form_widget(form.question_content) }}
+        </div>
+    </div>
+
+    <h5>{% trans %}Odpowiedzi{% endtrans %}:</h5>
+    <div class="answers">
+    {% for key,answer in form.answers %}
+    <div class="row form-group answer">
+        {% for child in answer.children %}
+            <div class="col-12 col-sm-3 col-form-label">
+                {% if child.vars.label=='Odpowiedź' %}
+                    {{ form_label(child) }}
+                {% endif %}
+            </div>
+            <div class="col-12 col-sm-9">
+                {% if child.vars.label=="Poprawna" %}
+                    <div class="custom-control custom-switch">
+                        <input type="checkbox" {% if child.vars.checked %}checked{% endif%} name="{{ child.vars.full_name }}" class="custom-control-input" id="{{ child.vars.id }}" value="{{ child.vars.value }}">
+                        <label class="custom-control-label" for="{{ child.vars.id }}">{{ child.vars.label }}</label>
+                    </div>
+                {% else %}
+                    {{ form_widget(child) }}
+                {% endif %}
+            </div>
+        {% endfor %}
+    </div>
+    {% endfor %}
+    </div>
+
+    {% if form.vars.value.id is null and (((form.vars.value.polling.questions|length)+1)<form.vars.value.polling.questionsCount) %}
+    <div class="row form-group">
+        <div class="col-12 col-sm-3 col-form-label">
+            {{form_label(form.next)}}
+        </div>
+        <div class="col-12 col-sm-9">
+            <div class="custom-control custom-switch">
+                <input type="checkbox" {% if(form.next.vars.attr.checked)%}checked{% endif %} name="{{ form.next.vars.full_name }}" class="custom-control-input" id="{{ form.next.vars.id }}" value="{{ form.next.vars.value }}">
+                <label class="custom-control-label" for="{{ form.next.vars.id }}">{{ form.next.vars.label }}</label>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    {{ form_row(form._token) }}
+    {{ form_row(form.submit) }}
+    {{ form_end(form,{render_rest:false}) }}
+{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        var $collectionHolder;
+        var $addQuestionButton = $('<button type="button" class="add_answer_link btn btn-light">{% trans %}Dodaj odpowiedź{% endtrans %}</button>');
+        var $newLinkLi = $('<div></div>').append($addQuestionButton);
+
+        jQuery(document).ready(function() {
+            // Get the ul that holds the collection of tags
+            $collectionHolder = $('div.answers');
+
+            $collectionHolder.append($newLinkLi);
+
+            $collectionHolder.find('div.answer').each(function() {
+                addQuestionFormDeleteLink($(this));
+            });
+            // count the current form inputs we have (e.g. 2), use that as the new
+            // index when inserting a new item (e.g. 2)
+            $collectionHolder.data('index', $collectionHolder.find('input[type=text]').length);
+
+            $('body').on('click','.add_answer_link', function(e) {
+                addQuestionForm($collectionHolder, $newLinkLi);
+            });
+
+            function addQuestionForm($collectionHolder, $newLinkLi) {
+                // Get the data-prototype explained earlier
+                var prototype = $('.answer:first').clone();
+
+                // get the new index
+                var index = $collectionHolder.data('index');
+
+                $collectionHolder.data('index', index + 1);
+                var newForm=$(prototype).html().replace(/0/g,index);
+                $(newForm).find('input[type=checkbox]').prop('checked',false);
+
+                var $newFormLi = $('<div class="row form-group answer"></div>').append(newForm);
+                $newLinkLi.before($newFormLi);
+                $('.answer:last').find('input[type=text]').val('')
+                $('.answer:last').find('input[type=checkbox]').prop('checked',false)
+                //addQuestionFormDeleteLink($newFormLi);
+                var len=$('.answer').length;
+                if(len===6)
+                {
+                    $addQuestionButton.prop('disabled',true);
+                }
+                $('.removeQuestionButton').prop('disabled',false);
+            }
+
+            function addQuestionFormDeleteLink($tagFormLi) {
+                var $removeFormButton = $('<button class="btn btn-dark removeQuestionButton" type="button" title="{% trans %}Usuń odpowiedź{% endtrans %}">&times;</button>');
+                $tagFormLi.append($removeFormButton);
+
+                $('body').on('click','.removeQuestionButton', function(e) {
+                    $(this).parent().remove();
+                    var len=($('.answer').length);
+                    if(len===2)
+                    {
+                        $('.removeQuestionButton').prop('disabled',true);
+                    }
+                    $addQuestionButton.prop('disabled',false);
+                });
+            }
+        });
+    </script>
+    <style>
+        .answer{
+            position: relative;
+            padding: 10px 10px 10px 0;
+        }
+        .removeQuestionButton{
+            position: absolute;
+            bottom:0;
+            right: 0;
+        }
+    </style>
+{% endblock %}

@@ -1,0 +1,49 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{% trans %}Głosowania{% endtrans %}{% endblock %}
+
+{% block body %}
+    <div>
+        <h3>{% trans %}Głosowania{% endtrans %}</h3>
+        <div class="row">
+            {% for polling in pollings %}
+                <div class="col-12 mb-2">
+                    {{ polling.name }}
+                    {% if manage %}
+                        <span class="mr-2">({{ polling.questions|length }}/{{ polling.questionsCount }})</span>
+                    {% endif %}
+                    <div class="btn-group btn-group-sm">
+                        {% if manage %}
+                            <a href="{{ path('app_manage_polling_show',{slug:polling.slug}) }}" class="btn btn-primary">{% trans %}Podgląd{% endtrans %}</a>
+                            <a href="{{ path('app_polling_edit',{slug:polling.slug}) }}" class="btn btn-secondary">{% trans %}Edycja{% endtrans %}</a>
+
+                            {% if polling.questions|length>0 %}
+                                <a href="{{ path('app_polling_vote_test',{slug:polling.slug}) }}" class="btn btn-success">{% trans %}Testowe głosowanie{% endtrans %}</a>
+                                <a href="{{ path('app_polling_results',{slug:polling.slug}) }}" class="btn btn-info">{% trans %}Wyniki{% endtrans %}</a>
+                            {% endif %}
+                            {% if polling.session %}
+                                {#<a href="" class="btn btn-success">{% trans %}Zarządzanie sesją{% endtrans %}</a>#}
+                                {% if polling.settings is null or polling.settings.status==0 %}
+                                    <a href="{{ path('app_manage_begin_session',{slug:polling.slug}) }}" class="btn btn-success">{% trans %}Rozpocznij sesję{% endtrans %}</a>
+                                {% endif %}
+                                {% if polling.settings is not null and polling.settings.status==1 %}
+                                    {{ include('manage/_end_session.html.twig',{polling:polling}) }}
+                                {% endif %}
+                                <a {% if polling.settings is not null and polling.settings.answerEnd > date()%}href="javascript:void()"{% else %}href="{{ path('app_manage_session_settings',{slug:polling.slug}) }}"{% endif %} class="btn btn-secondary">{% trans %}Ustawienia sesji{% endtrans %}</a>
+                                <a href="{{ path('app_manage_session_users',{slug:polling.slug}) }}" class="btn btn-outline-success">{% trans %}Lista użytkowników{% endtrans %}</a>
+                            {% endif %}
+                            {{ include('polling/_delete_form.html.twig') }}
+                        {% else %}
+                            {% if polling.session %}
+                                <a href="{{ path('app_polling_vote_session',{slug:polling.slug}) }}" class="btn btn-primary">{% trans %}Przystąp do głosowania{% endtrans %}</a>
+                            {% else %}
+                                <a href="{{ path('app_polling_enter',{slug:polling.slug}) }}" class="btn btn-primary">{% trans %}Przystąp do głosowania{% endtrans %}</a>
+                            {% endif %}
+                        {% endif %}
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+
+{% endblock %}

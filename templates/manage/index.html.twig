@@ -1,0 +1,46 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{% trans %}Zarządzaj wydarzeniami{% endtrans %}{% endblock %}
+
+{% block body %}
+    <div class="btn-group btn-group-sm">
+        <a href="{{ path('app_event_create',{_locale:app.request.locale}) }}" class="btn btn-sm btn-primary">{% trans %}Stwórz nowe wydarzenie{% endtrans %}</a>
+    </div>
+    <div class="table-responsive">
+        <table id="eventsTable" class="table table-striped">
+            <thead>
+            <tr>
+                <th>{% trans %}Nazwa{% endtrans %}</th>
+                <th>{% trans %}Organizator{% endtrans %}</th>
+                <th class="d-none d-md-table-cell">{% trans %}Logo{% endtrans %}</th>
+                <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for event in events %}
+                <tr>
+                    <td>{{ event.name }}</td>
+                    <td>{{ event.organizer }}</td>
+                    <td class="d-none d-md-table-cell"><img src="{{ asset(event.logoPath) }}" class="img-fluid img-logo" alt=""></td>
+                    <td>
+                        <div class="btn-group btn-group-sm">
+                            <a href="{{ path('app_manage_event_show',{_locale:app.request.locale,slug:event.slug}) }}" class="btn btn-sm btn-outline-info mb-2">{% trans %}Podgląd{% endtrans %}</a>
+                            <a href="{{ path('app_event_edit',{_locale:app.request.locale,slug:event.slug}) }}" class="btn btn-sm btn-outline-secondary mb-2">{% trans %}Edytuj{% endtrans %}</a>
+                            {% if event.status != 2 %}
+                            {{ include('event/_open_form.html.twig',{event:event}) }}
+                            {{ include('event/_close_form.html.twig',{event:event}) }}
+                                {% else %}
+                                <p class="text-info pl-2">{% trans %}Wydarzenie zakończone{% endtrans %}</p>
+                            {% endif %}
+                            {% if (event.rooms|length)==0 %}
+                                {{include('event/_delete_form.html.twig',{ event:event }) }}
+                            {% endif %}
+                        </div>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+{% endblock %}

@@ -1,0 +1,7 @@
+<form method="post" action="{{ path('app_manage_end_session',{slug:polling.slug}) }}" onsubmit="return confirm('{% trans %}Na pewno chcesz zakończyć sesję?{% endtrans %}');">
+    <input type="hidden" name="_method" value="PATCH">
+    <input type="hidden" name="_token" value="{{ csrf_token('patch' ~ polling.id) }}">
+    <button class="btn btn-sm btn-outline-danger rounded-0" {% if polling.settings.answerEnd > date() %}disabled{% endif %}>
+        {% trans %}Zakończ sesję{% endtrans %}
+    </button>
+</form>

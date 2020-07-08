@@ -1,0 +1,43 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{% trans %}Event{% endtrans %}: {{ event.name }}{% endblock %}
+
+{% block body %}
+
+    <div class="">
+        <h3>{{ event.name }}</h3>
+        <h4>{% trans %}Organizator{% endtrans %}: {{ event.organizer }}</h4>
+        <img src="{{ asset(event.logoPath) }}" class="img-fluid img-logo mb-3" alt="">
+    </div>
+    {% if manage %}
+        <div class="btn-group btn-group-sm">
+            <a class="btn btn-outline-primary" href="{{ path('app_event_edit',{_locale:app.request.locale,slug:event.slug}) }}">{% trans %}Edytuj{% endtrans %}</a>
+            <a class="btn btn-outline-primary" href="{{ path('app_event_codes_menage',{slug:event.slug}) }}">{% trans %}Zarządzaj kodami{% endtrans %}</a>
+        </div>
+    {% endif %}
+    <p class="mt-2">{% trans %}Pokoje{% endtrans %}:</p>
+    {% if manage %}
+        <a href="{{ path('app_manage_add_room',{_locale:app.request.locale,slug:event.slug}) }}" class="btn btn-sm btn-outline-primary">{% trans %}Dodaj pokój{% endtrans %}</a>
+    {% endif %}
+    <div class="row mt-2">
+        {% for room in rooms %}
+            <div class="col-12 mb-2">
+                {{ room.name }} :
+                <div class="btn-group btn-group-sm">
+                    {% if manage %}
+                    <a href="{{ path('app_manage_room',{slug_parent:room.event.slug,slug_child:room.slug}) }}" class="btn btn-primary">{% trans %}Podgląd{% endtrans %}</a>
+                    <a href="{{ path('app_manage_edit_room',{slug_parent:room.event.slug,slug_child:room.slug}) }}" class="btn btn-secondary">{% trans %}Edycja{% endtrans %}</a>
+                    {{include('room/_visible_form.html.twig',{room:room})}}
+                        {% if (room.pollings|length)==0 %}
+                            {{ include('room/_delete_form.html.twig',{room:room}) }}
+                            {% endif %}
+                    {% else %}
+                        <a href="{{ path('app_room_enter',{slug_parent:room.event.slug,slug_child:room.slug}) }}" class="btn btn-primary">{% trans %}Wejdź do pokoju{% endtrans %}</a>
+                    {% endif %}
+                </div>
+            </div>
+        {% else %}
+            <div class="col-12"><p class="text-info">{% trans %}Brak pokoi{% endtrans %}</p></div>
+        {% endfor %}
+    </div>
+{% endblock %}

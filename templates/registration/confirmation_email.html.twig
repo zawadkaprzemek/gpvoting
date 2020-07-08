@@ -1,0 +1,11 @@
+<h1>{% trans %}Witaj! Prosimy o potwierdzenie adresu email{% endtrans %}</h1>
+
+<p>
+    {% trans %}Potwierdź swój adres email klikając poniższy link:{% endtrans%} <br><br>
+    <a href="{{ signedUrl|raw }}">{% trans %}Potwiedź mój adres email{% endtrans %}</a>.
+    {% trans with { '%hours%':expiresAt|date('g')} %}Link wygaśnie w ciągu %hours% godzin.{% endtrans %}
+</p>
+
+<p>
+    {% trans %}Pozdrowienia{% endtrans %}
+</p>

@@ -1,0 +1,18 @@
+.img-logo{
+    max-width: 100px;
+}
+
+.valueSpan{
+    width: 30px;
+    text-align: right;
+}
+
+input:checked+label.list-group-item{
+    background: #0062cc !important;
+    color: #fff;
+}
+
+.rounded-left-0{
+    border-bottom-left-radius: 0;
+    border-top-left-radius: 0;
+}

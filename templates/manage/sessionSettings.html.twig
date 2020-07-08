@@ -1,0 +1,43 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{% trans %}Ustawienia sesji{% endtrans %}{% endblock %}
+
+{% block body %}
+    {{ form_start(form) }}
+    <div class="row form-group">
+        <div class="col-12 col-sm-3 col-form-label">
+            {{form_label(form.active_question)}}
+        </div>
+        <div class="col-12 col-sm-9">
+            {{ form_widget(form.active_question) }}
+        </div>
+    </div>
+
+    <div class="row form-group">
+        <div class="col-12 col-sm-3 col-form-label">
+            {{form_label(form.timeForAnswer)}}
+        </div>
+        <div class="col-12 col-sm-9">
+            {{ form_widget(form.timeForAnswer) }}
+        </div>
+    </div>
+    {%  if form.vars.data.status==0 %}
+        <div class="row form-group">
+            <div class="col-12 col-sm-3 col-form-label">
+                {{form_label(form.begin)}}
+            </div>
+            <div class="col-12 col-sm-9">
+                <div class="custom-control custom-switch">
+                    <input type="checkbox" {% if form.begin.vars.checked %}checked{% endif%} name="{{ form.begin.vars.full_name }}"
+                           class="custom-control-input" id="{{ form.begin.vars.id }}" value="{{ form.begin.vars.value }}">
+                    <label class="custom-control-label" for="{{ form.begin.vars.id }}">{{ form.begin.vars.label }}</label>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+
+    {{ form_row(form.submit) }}
+    {{ form_row(form._token) }}
+    {{ form_end(form,{render_rest:false}) }}
+
+{% endblock %}

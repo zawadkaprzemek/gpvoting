@@ -1,0 +1,119 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block body %}
+
+    {{ form_start(form) }}
+    <div class="row form-group">
+        <div class="col-12 col-sm-3 col-form-label">
+            {{form_label(form.name)}}
+        </div>
+        <div class="col-12 col-sm-9">
+            {{ form_widget(form.name) }}
+        </div>
+    </div>
+    <div class="row form-group">
+        <div class="col-12 col-sm-3 col-form-label">
+            {{form_label(form.questionsCount)}}
+        </div>
+        <div class="col-12 col-sm-9 d-flex">
+            {{ form_widget(form.questionsCount) }}
+            <span id="questionsCountSpan" class="font-weight-bold text-primary ml-2 mt-1 valueSpan">20</span>
+        </div>
+    </div>
+    <div class="row form-group">
+        <div class="col-12 col-sm-3 col-form-label">
+            {{form_label(form.default_answers)}}
+        </div>
+        <div class="col-12 col-sm-9 d-flex">
+            {{ form_widget(form.default_answers) }}
+            <span id="defaultAnswersSpan" class="font-weight-bold text-primary ml-2 mt-1 valueSpan">4</span>
+        </div>
+    </div>
+    <div class="row form-group">
+        <div class="col-12 col-sm-3 col-form-label">
+            {{form_label(form.session)}}
+        </div>
+        <div class="col-12 col-sm-9">
+            <div class="custom-control custom-switch">
+                <input type="checkbox" {% if form.session.vars.checked %}checked{% endif%} name="{{ form.session.vars.full_name }}"
+                       class="custom-control-input" id="{{ form.session.vars.id }}" value="{{ form.session.vars.value }}">
+                <label class="custom-control-label" for="{{ form.session.vars.id }}">{{ form.session.vars.label }}</label>
+            </div>
+        </div>
+    </div>
+
+    <div class="row form-group">
+        <div class="col-12 col-sm-3 col-form-label">
+            {{form_label(form.startDate)}}
+        </div>
+        <div class="col-12 col-sm-9 d-flex">
+            {{ form_widget(form.startDate) }}
+        </div>
+    </div>
+
+    <div class="row form-group not_session">
+        <div class="col-12 col-sm-3 col-form-label">
+            {{form_label(form.endDate)}}
+        </div>
+        <div class="col-12 col-sm-9 d-flex">
+            {{ form_widget(form.endDate) }}
+        </div>
+    </div>
+
+    <div class="row form-group not_session">
+        <div class="col-12 col-sm-3 col-form-label">
+            {{form_label(form.code)}}
+        </div>
+        <div class="col-12 col-sm-9 d-flex">
+            {{ form_widget(form.code) }}
+        </div>
+    </div>
+
+    <div class="row form-group">
+        <div class="col-12 col-sm-3 col-form-label">
+            {{ form_label(form.resultsGraph) }}
+        </div>
+        <div class="col-12 col-sm-9">
+            {{ form_widget(form.resultsGraph) }}
+        </div>
+    </div>
+    {{ form_row(form._token) }}
+    {{ form_row(form.submit) }}
+    {{ form_end(form,{render_rest:false}) }}
+{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        $(document).ready(function () {
+            $('#questionsCountSpan').html($('#polling_questionsCount').val());
+            $('#defaultAnswersSpan').html($('#polling_default_answers').val());
+            sessionToggle($('#polling_session').prop('checked'));
+
+            $('#polling_questionsCount').on('change',function () {
+                $('#questionsCountSpan').html($(this).val());
+            });
+            $('#polling_default_answers').on('change',function () {
+                $('#defaultAnswersSpan').html($(this).val());
+            })
+
+            $('#polling_session').on('change',function () {
+                sessionToggle($(this).prop('checked'));
+            });
+            function sessionToggle(value) {
+                if(value)
+                {
+                    $('.not_session').addClass('d-none');
+                    $('#polling_endDate').prop('required',false);
+                    $('#polling_code').prop('required',false);
+                }else{
+                    $('.not_session').removeClass('d-none');
+
+                    $('#polling_endDate').prop('required',true);
+                    $('#polling_code').prop('required',true);
+                }
+            }
+        })
+    </script>
+{% endblock %}

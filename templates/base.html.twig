@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <title>{% block title %}Welcome!{% endblock %}</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="icon" type="image/png" href="{{ asset('assets/images/logo.png') }}">
+    {% block metatags %}
+    {% endblock %}
+    {% block stylesheets %}
+        <link rel="stylesheet" href="{{ asset('assets/css/bootstrap.min.css') }}">
+        <link rel="stylesheet" href="{{ asset('assets/css/bootstrap-select.min.css') }}">
+        <link rel="stylesheet" href="{{ asset('assets/css/style.css') }}">
+    {% endblock %}
+    {% block js_top %}
+        <script src="{{ asset('assets/js/jquery-3.5.0.min.js') }}"></script>
+        <script src="{{ asset('assets/js/popper.min.js') }}"></script>
+    {% endblock %}
+</head>
+<body>
+{{ include('home/header.html.twig') }}
+<div class="container">
+    <div class="row">
+        <div class="col-12 alert-container">
+            <div class="row">
+                <div class="col-12">
+                    {% for label, messages in app.flashes %}
+                        {% for message in messages %}
+                            <div class="alert alert-{{ label }}">
+                                {{ message|raw }}
+                                <button class="close" type="button" data-dismiss="alert" aria-label="Close">&times;</button>
+                            </div>
+                        {% endfor %}
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row py-5">
+        <div class="col-12">
+            {% block body %}{% endblock %}
+        </div>
+    </div>
+</div>
+{% block javascripts %}
+    <script src="{{ asset('assets/js/bootstrap.bundle.min.js') }}"></script>
+{% endblock %}
+</body>
+</html>

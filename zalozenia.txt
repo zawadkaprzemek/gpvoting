@@ -1,0 +1,39 @@
+Event
+- nazwa organizatora
+- nazwa eventu
+- kody eventu
+- logo eventu/organizatora
+- slug
+
+Ankieta
+- event_id
+- name
+- slug
+- ilosc pytan
+- domyslna ilosc odpowiedzi
+- typ ankiety
+
+Pytanie
+- ankieta_id
+- Treść pytania
+- Multi true/false
+- Typ pytania
+
+Odpowiedź
+- pytanie_id
+- treść
+- valid true/false
+
+Typ pytania
+- nazwa
+- correct_answers ( 0 - sonda, 1 - test, 2 - multi)
+
+Typ ankiety
+- name
+
+Głosowanie:
+- ankieta
+- odpowiedzi
+- adresIP
+- startDate
+- endDate

@@ -1,0 +1,53 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block body %}
+
+    {{ form_start(form) }}
+    <div class="row form-group">
+        <div class="col-12 col-sm-3 col-form-label">
+            {{form_label(form.name)}}
+        </div>
+        <div class="col-12 col-sm-9">
+            {{ form_widget(form.name) }}
+        </div>
+    </div>
+
+    {% if form.vars.value.id is not null %}
+        {{ form_widget(form.changeLogo) }}
+    {% endif %}
+    <div class="row form-group logo-row {% if form.vars.value.id is not null%}d-none{% endif %}">
+        <div class="col-12 col-sm-3 col-form-label">
+            {{form_label(form.logoFile)}}
+        </div>
+        <div class="col-12 col-sm-9">
+            {{ form_widget(form.logoFile) }}
+        </div>
+    </div>
+
+    {{ form_row(form.submit) }}
+    {{ form_end(form) }}
+{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        $(document).ready(function () {
+            if($('#event_changeLogo').prop('checked'))
+            {
+                $('.logo-row').removeClass('d-none');
+                $('#event_logoFile').prop('required',true);
+            }
+            $('#event_changeLogo').on('change',function(){
+                if($(this).prop('checked'))
+                {
+                    $('.logo-row').removeClass('d-none');
+                    $('#event_logoFile').prop('required',true);
+                }else{
+                    $('.logo-row').addClass('d-none');
+                    $('#event_logoFile').prop('required',false);
+                }
+            });
+        })
+    </script>
+{% endblock %}

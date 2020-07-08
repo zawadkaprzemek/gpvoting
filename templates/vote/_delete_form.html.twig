@@ -1,0 +1,6 @@
+<form method="post" action="{{ path('app_vote_delete', {'id': vote.id}) }}"
+      onsubmit="return confirm('{% trans %}Na pewno chcesz usunąć tą odpowiedź?{% endtrans %}');">
+    <input type="hidden" name="_method" value="DELETE">
+    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ vote.id) }}">
+    <button class="btn btn-sm btn-dark">{% trans %}Usuń{% endtrans %}</button>
+</form>

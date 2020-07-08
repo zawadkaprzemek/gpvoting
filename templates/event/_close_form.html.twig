@@ -1,0 +1,9 @@
+<form method="post" action="{{ path('app_manage_close_event', {'slug': event.slug}) }}"
+      onsubmit="return confirm('{% trans %}Na pewno chcesz zamknąć to wydarzenie?{% endtrans %}\r\n {% trans %}Operacja ta jest nieodwracalna{% endtrans %}');"
+>
+    <input type="hidden" name="_method" value="PATCH">
+    <input type="hidden" name="_token" value="{{ csrf_token('patch' ~ event.id) }}">
+    <button class="btn btn-sm btn-outline-danger rounded-0">
+        {% trans %}Zamknij{% endtrans %}
+    </button>
+</form>

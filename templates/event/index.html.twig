@@ -1,0 +1,48 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Lista eventów{% endblock %}
+
+{% block body %}
+
+    <h3>{% trans %}Zbliżające się wydarzenia{% endtrans %}</h3>
+
+    <div class="table-responsive">
+        <table id="eventsTable" class="table table-striped">
+            <thead>
+                <tr>
+                    <th>{% trans %}Nazwa{% endtrans %}</th>
+                    <th>{% trans %}Organizator{% endtrans %}</th>
+                    <th class="d-none d-md-table-cell">{% trans %}Logo{% endtrans %}</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for event in pagination %}
+                    <tr>
+                        <td>{{ event.name }}</td>
+                        <td>{{ event.organizer }}</td>
+                        <td class="d-none d-md-table-cell"><img src="{{ asset(event.logoPath) }}" class="img-fluid img-logo" alt=""></td>
+                        <td>
+                            <div class="btn-group btn-group-sm">
+                                {% if manage %}
+                                <a href="{{ path('app_event_show',{_locale:app.request.locale,slug:event.slug}) }}" class="btn btn-sm btn-outline-info mb-2">{% trans %}Podgląd{% endtrans %}</a>
+                                <a href="{{ path('app_event_edit',{_locale:app.request.locale,slug:event.slug}) }}" class="btn btn-sm btn-outline-secondary mb-2">{% trans %}Edytuj{% endtrans %}</a>
+                                {% else %}
+                                <a href="{{ path('app_event_show',{slug:event.slug}) }}" class="btn btn-primary btn-sm">{% trans %}Wejdź{% endtrans %}</a>
+                                {% endif %}
+                            </div>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="4">{% trans %}Brak nadchodzących eventów{% endtrans %}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div class="navigation">
+        {{ knp_pagination_render(pagination) }}
+    </div>
+{% endblock %}

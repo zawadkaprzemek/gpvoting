@@ -1,0 +1,34 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{% trans %}Uzyskałeś dostęp do pokoi/głosowań{% endtrans %}{% endblock %}
+
+{% block body %}
+
+<div>
+    {% if rooms|length >0 %}
+        <h3>{% trans %}Pokoje{% endtrans %}</h3>
+        <div class="row">
+        {% for room in rooms %}
+            <div class="col-12 mb-2">
+                {{ room.name }}
+                <a href="{{ path('app_room_enter',{'slug_child':room.slug,'slug_parent':room.event.slug}) }}" class="btn btn-sm btn-success">{% trans %}Wejdź do pokoju{% endtrans %}</a>
+            </div>
+        {% endfor %}
+        </div>
+    {% endif %}
+    {% if pollings|length >0 %}
+        <h3>{% trans %}Głosowania{% endtrans %}</h3>
+        <div class="row">
+            {% for polling in pollings %}
+                <div class="col-12 mb-2">
+                    {{ polling.name }}
+                    <a href="{{ path('app_polling_enter',{'slug':polling.slug}) }}" class="btn btn-sm btn-success">{% trans %}Głosuj{% endtrans %}</a>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+{% endblock %}

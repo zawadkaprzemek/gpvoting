@@ -1,0 +1,40 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{% trans %}Głosowanie{% endtrans %}: {{ polling.name }}{% endblock %}
+
+{% block body %}
+    <div class="">
+        <h4>{% trans %}Głosowanie{% endtrans %}: {{ polling.name }}</h4>
+    </div>
+
+    <div class="text-info">
+        {% if polling.session %}
+            <p>{% trans %}Planowana data głosowania{% endtrans %}: {{ polling.startDate|date('d-m-Y H:i') }}</p>
+        {% else %}
+            <p>{% trans %}Głosowanie dostępne od{% endtrans %}: {{ polling.startDate|date('d-m-Y H:i') }} {% trans %}do{% endtrans %} {{ polling.endDate|date('d-m-Y H:i') }}</p>
+            <p>{% trans %}Kod dostępu{% endtrans %}: {{ polling.code.name }}</p>
+        {% endif %}
+        <p></p>
+    </div>
+    <div class="row mt-2">
+        <div class="col-12">
+            <p>{% trans %}Pytania{% endtrans%} ({{ polling.questions|length }}/{{ polling.questionsCount }})</p>
+            {% if (polling.questions|length)<polling.questionsCount %}
+                <a href="{{ path('app_questions_add',{slug:polling.slug}) }}" class="btn btn-sm btn-primary mb-2">{% trans %}Dodaj nowe pytanie{% endtrans %}</a>
+            {% endif %}
+        </div>
+        {% for question in polling.questions %}
+            <div class="col-12 mb-2">
+                <span class="mr-2">{{ question.questionContent }}</span>
+                <div class="btn-group btn-group-sm">
+                    <a href="{{ path('app_question_show',{slug:question.polling.slug,sort:question.sort}) }}" class="btn btn-primary">{% trans %}Podgląd{% endtrans %}</a>
+                    <a href="{{ path('app_question_edit',{slug:question.polling.slug,sort:question.sort}) }}" class="btn btn-secondary">{% trans %}Edycja{% endtrans %}</a>
+                    <a href="{{ path('app_question_results',{sort:question.sort,slug:question.polling.slug}) }}" class="btn btn-info">{% trans %}Wyniki{% endtrans %}</a>
+                    {{include('question/_delete_form.html.twig',{ question:question }) }}
+                </div>
+            </div>
+        {% else %}
+            <div class="col-12"><p class="text-info">{% trans %}Brak pytań{% endtrans %}</p></div>
+        {% endfor %}
+    </div>
+{% endblock %}

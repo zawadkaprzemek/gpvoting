@@ -1,0 +1,118 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{% trans %}Wyniki do pytania{% endtrans %}: {{ question.questionContent}} {% endblock %}
+{% block js_top %}
+    {{ parent() }}
+    <script src="{{ asset('assets/js/Chart.min.js') }}"></script>
+{% endblock %}
+{% block body %}
+    <div>
+        <h4>{{ question.questionContent }}</h4>
+        <h5>{% trans %}Wyniki{% endtrans %}</h5>
+        <div class="chart-container">
+        <canvas id="myChart" width="300" height="150"></canvas>
+        <script>
+            var ctx = document.getElementById('myChart').getContext('2d');
+            var myChart = new Chart(ctx, {
+                type: '{{ (question.polling.resultsGraph==1 ? 'bar' : 'horizontalBar') }}',
+                data: {
+                    labels: ['{% trans %}Procent{% endtrans %}'],
+                    datasets: [
+                        {% for result in results %}
+                        {
+                            label: '{{result.content}}',
+                            data: [{{ result.percent }}],
+                            backgroundColor: [
+                                {% if result.valid %}
+                                'green',
+                                {% else %}
+                                'rgba({{ random(0,255) }},0,{{ random(0,255) }},0.8)',
+                                {% endif %}
+                            ]
+                        },
+                        {% endfor %}
+                    ]
+
+                },
+                options: {
+                    scales: {
+                        yAxes: [{
+                            ticks: {
+                                beginAtZero: true
+                            }
+                        }]
+                    }
+                }
+            });
+        </script>
+        </div>
+        <div class="row">
+            <div class="col-6 text-left">
+                {% if(question.sort>1) %}
+                    <a class="btn btn-secondary btn-sm" href="{{ path('app_question_results',{slug:question.polling.slug,sort:(question.sort-1)}) }}">
+                        {% trans %}Poprzednie pytanie{% endtrans %}
+                    </a>
+                {% endif %}
+            </div>
+            <div class="col-6 text-right">
+                {% if(question.sort<(question.polling.questions|length)) %}
+                    <a class="btn btn-secondary btn-sm" href="{{ path('app_question_results',{slug:question.polling.slug,sort:(question.sort+1)}) }}">
+                        {% trans %}Następne pytanie{% endtrans %}
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="col-12 votes-list table-responsive mt-3">
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>{% trans %}Kto{% endtrans %}</th>
+                        <th>{% trans %}Odpowiedź{% endtrans %}</th>
+                        <th>{% trans %}Czas odpowiedzi{% endtrans %}</th>
+                        <th>{% trans %}Test{% endtrans %}</th>
+                        <th>{% trans %}Akcje{% endtrans %}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for vote in votes %}
+                    <tr>
+                        <td>{{ vote.who }}</td>
+                        <td>{{ vote.answers|join(", ") }}</td>
+                        <td>{{ vote.answerTime|number_format(2,".","") }} {% trans %}sekund{% endtrans %}</td>
+                        <td>{% if vote.test %}
+                                {% trans %}Tak{% endtrans %}
+                            {% else %}
+                                {% trans %}Nie{% endtrans %}
+                            {% endif %}
+                        </td>
+                        <td>{{ include('question/_delete_form.html.twig',{vote:vote})}}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <h4>{% trans %}Ranking najszybciej głosujących{% endtrans %}</h4>
+        <table class="table table-borderless">
+            <thead>
+            <tr>
+                <th>{% trans %}Pozycja{% endtrans %}</th>
+                <th>{% trans %}Kto{% endtrans %}</th>
+                <th>{% trans %}Czas odpowiedzi{% endtrans %}</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% set poz=0 %}
+            {% for result in votes|sort((a,b) => a.answerTime <=> b.answerTime) %}
+                {% set poz=poz+1 %}
+                <tr>
+                    <td>{{ poz }}</td>
+                    <td>{{ result.who }}</td>
+                    <td>{{ result.answerTime|number_format(2,".","") }} {% trans %}sekund{% endtrans %}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}
