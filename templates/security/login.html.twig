@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Log in!{% endblock %}
+{% block title %}{% trans %}Zaloguj się{% endtrans %}!{% endblock %}
 
 {% block body %}
 <form method="post">
@@ -24,16 +24,11 @@
            value="{{ csrf_token('authenticate') }}"
     >
 
-    {#
-        Uncomment this section and add a remember_me option below your firewall to activate remember me functionality.
-        See https://symfony.com/doc/current/security/remember_me.html
-
         <div class="checkbox mb-3">
             <label>
-                <input type="checkbox" name="_remember_me"> Remember me
+                <input type="checkbox" name="_remember_me"> {% trans %}Zapamiętaj mnie{% endtrans %}
             </label>
         </div>
-    #}
     <p>
         <a href="{{ path('app_forgot_password_request') }}">{% trans %}Nie pamiętam hasła{% endtrans %}</a>
     </p>

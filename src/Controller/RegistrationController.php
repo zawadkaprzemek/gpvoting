@@ -25,7 +25,7 @@ class RegistrationController extends AbstractController
      */
     private $translator;
 
-    public function __construct(EmailVerifier $emailVerifier,TranslatorInterface $translator)
+    public function __construct(EmailVerifier $emailVerifier, TranslatorInterface $translator)
     {
         $this->emailVerifier = $emailVerifier;
         $this->translator = $translator;
@@ -53,7 +53,7 @@ class RegistrationController extends AbstractController
                     $form->get('plainPassword')->getData()
                 )
             )
-            ->setRoles(['ROLE_USER','ROLE_ORGANIZATOR']);
+                ->setRoles(['ROLE_USER', 'ROLE_ORGANIZATOR']);
 
             $entityManager = $this->getDoctrine()->getManager();
             $user->setLastIP($request->getClientIp());
@@ -63,7 +63,7 @@ class RegistrationController extends AbstractController
             // generate a signed url and email it to the user
             $this->emailVerifier->sendEmailConfirmation('app_verify_email', $user,
                 (new TemplatedEmail())
-                    ->from(new Address('noreply@gpvoting.pl', 'GpVoting'))
+                    ->from(new Address('kontakt@gpvoting.pl', 'GpVoting'))
                     ->to($user->getEmail())
                     ->subject($this->translator->trans('Potwierdź swój email'))
                     ->htmlTemplate('registration/confirmation_email.html.twig')
@@ -84,7 +84,7 @@ class RegistrationController extends AbstractController
     }
 
     /**
-     * @Route("/verify/email", name="app_verify_email")
+     * @Route("/{_locale}/verify/email", name="app_verify_email")
      * @param Request $request
      * @return Response
      */
@@ -105,5 +105,53 @@ class RegistrationController extends AbstractController
         $this->addFlash('success', $this->translator->trans('Twój adres email został zweryfikowany'));
 
         return $this->redirectToRoute('app_register');
+    }
+
+    /**
+     * @Route("/{_locale}/admin/create_account", name="app_admin_create_account")
+     * @param Request $request
+     * @param UserPasswordEncoderInterface $passwordEncoder
+     * @param GuardAuthenticatorHandler $guardHandler
+     * @param LoginFormAuthenticator $authenticator
+     * @return Response
+     */
+    public function createAccount(Request $request, UserPasswordEncoderInterface $passwordEncoder, GuardAuthenticatorHandler $guardHandler, LoginFormAuthenticator $authenticator): Response
+    {
+        $user = new User();
+        $form = $this->createForm(RegistrationFormType::class, $user);
+        $form->remove('agreeTerms');
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            // encode the plain password
+            $user->setPassword(
+                $passwordEncoder->encodePassword(
+                    $user,
+                    $form->get('plainPassword')->getData()
+                )
+            )
+                ->setRoles(['ROLE_USER', 'ROLE_ORGANIZATOR']);
+
+            $entityManager = $this->getDoctrine()->getManager();
+            $user->setLastIP($request->getClientIp());
+            $entityManager->persist($user);
+            $entityManager->flush();
+
+            // generate a signed url and email it to the user
+            $this->emailVerifier->sendEmailConfirmation('app_verify_email', $user,
+                (new TemplatedEmail())
+                    ->from(new Address('kontakt@gpvoting.pl', 'GpVoting'))
+                    ->to($user->getEmail())
+                    ->subject($this->translator->trans('Zostało założone konto w GPVoting'))
+                    ->htmlTemplate('registration/create_account_email.html.twig')
+                    ->context(['password' => $form->get('plainPassword')->getData()])
+            );
+            // do anything else you need here, like send an email
+            $this->addFlash('sucess',$this->translator->trans("Konto zostało utworzone"));
+            return $this->redirectToRoute('home');
+        }
+        return $this->render('registration/create_account.html.twig', [
+            'form' => $form->createView(),
+        ]);
     }
 }

@@ -1,0 +1,54 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{% trans %}Stwórz konto{% endtrans %}{% endblock %}
+
+{% block body %}
+    {% for flashError in app.flashes('verify_email_error') %}
+        <div class="alert alert-danger" role="alert">{{ flashError }}</div>
+    {% endfor %}
+
+    <h3>{% trans %}Utwórz konto{% endtrans %}</h3>
+
+    {{ form_start(form) }}
+    <div class="form-group row">
+        <div class="col-12 pt-1 col-sm-3 col-form-label">
+            {{ form_label(form.username) }}
+        </div>
+        <div class="col-12 col-sm-9">
+            {{ form_widget(form.username) }}
+        </div>
+    </div>
+    <div class="form-group row">
+        <div class="col-12 pt-1 col-sm-3 col-form-label">
+            {{ form_label(form.plainPassword) }}
+        </div>
+        <div class="col-12 col-sm-9">
+            {{ form_widget(form.plainPassword) }}
+        </div>
+    </div>
+    <div class="form-group row">
+        <div class="col-12 pt-1 col-sm-3 col-form-label">
+            {{ form_label(form.email) }}
+        </div>
+        <div class="col-12 col-sm-9">
+            {{ form_widget(form.email) }}
+        </div>
+    </div>
+    <div class="form-group row">
+        <div class="col-12 pt-1 col-sm-3 col-form-label">
+            {{ form_label(form.name) }}
+        </div>
+        <div class="col-12 col-sm-9">
+            {{ form_widget(form.name) }}
+        </div>
+    </div>
+    <div class="form-group row">
+        <div class="col-12 pt-1 col-sm-3 col-form-label">
+            {{ form_label(form.surname) }}
+        </div>
+        <div class="col-12 col-sm-9">
+            {{ form_widget(form.surname) }}
+        </div>
+    </div>
+    {{ form_end(form) }}
+{% endblock %}

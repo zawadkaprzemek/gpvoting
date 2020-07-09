@@ -6,13 +6,16 @@
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             {% if app.user %}
-                            {% trans %}Zalogowany jako: {% endtrans %}{{ app.user.username }}
+                            {% trans %}Zalogowany jako{% endtrans %}: {{ app.user.username }}
                             {% else %}
                                 {% trans %}Gość{% endtrans %}
                             {% endif %}
                         </a>
                         <div class="dropdown-menu" aria-labelledby="navbarDropdown">
                             {% if app.user %}
+                                {% if is_granted("ROLE_ADMIN") %}
+                                    <a class="dropdown-item" href="{{ path('app_admin_create_account') }}">{% trans %}Stwórz konto użytkownika{% endtrans %}</a>
+                                {% endif %}
                                 <a class="dropdown-item" href="#">{% trans %}Ustawienia{% endtrans %}</a>
                                 <a class="dropdown-item" href="{{path('app_logout')}}">{% trans %}Wyloguj{% endtrans %}</a>
                             {% else %}
