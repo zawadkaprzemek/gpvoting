@@ -16,6 +16,9 @@
                                 {% if is_granted("ROLE_ADMIN") %}
                                     <a class="dropdown-item" href="{{ path('app_admin_create_account') }}">{% trans %}Stwórz konto użytkownika{% endtrans %}</a>
                                 {% endif %}
+                                <a class="dropdown-item" href="{{ path('app_profile')}}">{% trans %}Mój profil{% endtrans %}</a>
+                                <a class="dropdown-item" href="{{ path('app_profile_edit')}}">{% trans %}Edytuj profil{% endtrans %}</a>
+                                <a class="dropdown-item" href="{{ path('app_profile_change_password')}}">{% trans %}Zmień hasło{% endtrans %}</a>
                                 <a class="dropdown-item" href="#">{% trans %}Ustawienia{% endtrans %}</a>
                                 <a class="dropdown-item" href="{{path('app_logout')}}">{% trans %}Wyloguj{% endtrans %}</a>
                             {% else %}

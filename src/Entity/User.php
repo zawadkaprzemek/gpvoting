@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Repository\UserRepository;
+use DateTimeInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -89,6 +90,8 @@ class User implements UserInterface
      * @ORM\OneToMany(targetEntity=Event::class, mappedBy="user")
      */
     private $events;
+
+    private $oldPassword;
 
     public function __construct()
     {
@@ -205,12 +208,12 @@ class User implements UserInterface
         return $this;
     }
 
-    public function getLastVisit(): ?\DateTimeInterface
+    public function getLastVisit(): ?DateTimeInterface
     {
         return $this->last_visit;
     }
 
-    public function setLastVisit(\DateTimeInterface $last_visit): self
+    public function setLastVisit(DateTimeInterface $last_visit): self
     {
         $this->last_visit = $last_visit;
 
@@ -313,5 +316,29 @@ class User implements UserInterface
         }
 
         return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function __toString()
+    {
+        return $this->username;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getOldPassword()
+    {
+        return $this->oldPassword;
+    }
+
+    /**
+     * @param mixed $oldPassword
+     */
+    public function setOldPassword($oldPassword): void
+    {
+        $this->oldPassword = $oldPassword;
     }
 }

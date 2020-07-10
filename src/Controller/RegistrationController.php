@@ -41,6 +41,10 @@ class RegistrationController extends AbstractController
      */
     public function register(Request $request, UserPasswordEncoderInterface $passwordEncoder, GuardAuthenticatorHandler $guardHandler, LoginFormAuthenticator $authenticator): Response
     {
+        if($this->isGranted("ROLE_USER"))
+        {
+            return $this->redirectToRoute('home');
+        }
         $user = new User();
         $form = $this->createForm(RegistrationFormType::class, $user);
         $form->handleRequest($request);
@@ -115,8 +119,9 @@ class RegistrationController extends AbstractController
      * @param LoginFormAuthenticator $authenticator
      * @return Response
      */
-    public function createAccount(Request $request, UserPasswordEncoderInterface $passwordEncoder, GuardAuthenticatorHandler $guardHandler, LoginFormAuthenticator $authenticator): Response
+    public function createAccount(Request $request, UserPasswordEncoderInterface $passwordEncoder): Response
     {
+        $this->denyAccessUnlessGranted("ROLE_ADMIN");
         $user = new User();
         $form = $this->createForm(RegistrationFormType::class, $user);
         $form->remove('agreeTerms');
@@ -147,7 +152,7 @@ class RegistrationController extends AbstractController
                     ->context(['password' => $form->get('plainPassword')->getData()])
             );
             // do anything else you need here, like send an email
-            $this->addFlash('sucess',$this->translator->trans("Konto zostało utworzone"));
+            $this->addFlash('success',$this->translator->trans("Konto zostało utworzone"));
             return $this->redirectToRoute('home');
         }
         return $this->render('registration/create_account.html.twig', [

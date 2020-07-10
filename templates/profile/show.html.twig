@@ -1,0 +1,16 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{% trans %}Mój profil{% endtrans %}{% endblock %}
+
+{% block body %}
+
+<div>
+    <h3>{% trans %}Witaj{% endtrans %} {{ app.user.username }}!</h3>
+    <h5>{% trans %}Twoje dane{% endtrans %}</h5>
+    <p>{% trans %}Email{% endtrans %}: {{ app.user.email }}</p>
+    <p>{% trans %}Imię{% endtrans %}: {{ app.user.name }}</p>
+    <p>{% trans %}Nazwisko{% endtrans %}: {{ app.user.surname }}</p>
+    <p>{% trans %}Data rejestacji{% endtrans %}: {{ app.user.createdAt|date('Y-m-d H:i') }}</p>
+    <a href="{{ path('app_profile_edit') }}" class="btn btn-sm btn-primary">{% trans %}Edytuj moje dane{% endtrans %}</a>
+</div>
+{% endblock %}
