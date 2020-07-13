@@ -12,5 +12,21 @@
     <p>{% trans %}Nazwisko{% endtrans %}: {{ app.user.surname }}</p>
     <p>{% trans %}Data rejestacji{% endtrans %}: {{ app.user.createdAt|date('Y-m-d H:i') }}</p>
     <a href="{{ path('app_profile_edit') }}" class="btn btn-sm btn-primary">{% trans %}Edytuj moje dane{% endtrans %}</a>
+
+    {% if is_granted("ROLE_ORGANIZATOR") %}
+        <div class="mt-2">
+        <h5 class="my-3">{% trans %}Podkonta:{% endtrans %}</h5>
+            <a href="{{ path('app_profile_create_subacccount') }}" class="btn btn-sm btn-secondary">{% trans %}Stwórz podkonto{% endtrans %}</a>
+            <div class="my-2">
+                <ul class="list-group">
+        {% for subaccount in app.user.subaccounts %}
+            <li class="list-group-item">{{ subaccount.username }}</li>
+            {% else %}
+            <p class="alert alert-info">{% trans %}Nie posiadasz jeszcze żadnych podkont{% endtrans %}</p>
+        {% endfor %}
+                </ul>
+            </div>
+        </div>
+    {% endif %}
 </div>
 {% endblock %}

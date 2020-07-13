@@ -115,8 +115,6 @@ class RegistrationController extends AbstractController
      * @Route("/{_locale}/admin/create_account", name="app_admin_create_account")
      * @param Request $request
      * @param UserPasswordEncoderInterface $passwordEncoder
-     * @param GuardAuthenticatorHandler $guardHandler
-     * @param LoginFormAuthenticator $authenticator
      * @return Response
      */
     public function createAccount(Request $request, UserPasswordEncoderInterface $passwordEncoder): Response
@@ -157,6 +155,8 @@ class RegistrationController extends AbstractController
         }
         return $this->render('registration/create_account.html.twig', [
             'form' => $form->createView(),
+            'button_text'=>$this->translator->trans('Stwórz konto'),
+            'title'=>$this->translator->trans('Utwórz konto')
         ]);
     }
 }

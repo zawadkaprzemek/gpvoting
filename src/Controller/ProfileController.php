@@ -2,7 +2,9 @@
 
 namespace App\Controller;
 
+use App\Entity\User;
 use App\Form\PasswordChangeType;
+use App\Form\RegistrationFormType;
 use App\Form\UserEditType;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -12,6 +14,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * @IsGranted("ROLE_USER")
@@ -21,6 +24,13 @@ use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
  */
 class ProfileController extends AbstractController
 {
+    private $translator;
+
+    public function __construct(TranslatorInterface $translator)
+    {
+        $this->translator = $translator;
+    }
+
     /**
      * @Route("/", name="app_profile")
      */
@@ -86,6 +96,46 @@ class ProfileController extends AbstractController
 
         return $this->render('profile/change_password.html.twig',[
            'form'=>$form->createView()
+        ]);
+    }
+
+    /**
+     * @Route("/create_subaccount", name="app_profile_create_subacccount")
+     * @param Request $request
+     * @param UserPasswordEncoderInterface $passwordEncoder
+     * @return Response
+     */
+    public function createSubAccount(Request $request, UserPasswordEncoderInterface $passwordEncoder): Response
+    {
+        $this->denyAccessUnlessGranted("ROLE_ORGANIZATOR");
+        $user = new User();
+        $form = $this->createForm(RegistrationFormType::class, $user);
+        $form->remove('agreeTerms');
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            // encode the plain password
+            $user->setPassword(
+                $passwordEncoder->encodePassword(
+                    $user,
+                    $form->get('plainPassword')->getData()
+                )
+            )
+                ->setRoles(['ROLE_USER', 'ROLE_SUBACCOUNT']);
+            $user->setParent($this->getUser());
+            $user->setIsVerified(true);
+            $entityManager = $this->getDoctrine()->getManager();
+            $user->setLastIP($request->getClientIp());
+            $entityManager->persist($user);
+            $entityManager->flush();
+
+            $this->addFlash('success',$this->translator->trans("Konto zostało utworzone"));
+            return $this->redirectToRoute('app_profile');
+        }
+        return $this->render('registration/create_account.html.twig', [
+            'form' => $form->createView(),
+            'button_text'=>$this->translator->trans('Stwórz podkonto'),
+            'title'=>$this->translator->trans('Utwórz podkonto')
         ]);
     }
 }

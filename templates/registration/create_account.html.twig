@@ -1,13 +1,13 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}{% trans %}Stwórz konto{% endtrans %}{% endblock %}
+{% block title %}{{title}}{% endblock %}
 
 {% block body %}
     {% for flashError in app.flashes('verify_email_error') %}
         <div class="alert alert-danger" role="alert">{{ flashError }}</div>
     {% endfor %}
 
-    <h3>{% trans %}Utwórz konto{% endtrans %}</h3>
+    <h3>{{ title }}</h3>
 
     {{ form_start(form) }}
     <div class="form-group row">
@@ -50,5 +50,6 @@
             {{ form_widget(form.surname) }}
         </div>
     </div>
+    {{ form_row(form.submit,{'label':button_text}) }}
     {{ form_end(form) }}
 {% endblock %}
