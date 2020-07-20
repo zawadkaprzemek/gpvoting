@@ -52,9 +52,15 @@ class Room
      */
     private $pollings;
 
+    /**
+     * @ORM\OneToMany(targetEntity=GeneralMeeting::class, mappedBy="room")
+     */
+    private $generalMeetings;
+
     public function __construct()
     {
         $this->pollings = new ArrayCollection();
+        $this->generalMeetings = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -147,6 +153,37 @@ class Room
             // set the owning side to null (unless already changed)
             if ($polling->getRoom() === $this) {
                 $polling->setRoom(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|GeneralMeeting[]
+     */
+    public function getGeneralMeetings(): Collection
+    {
+        return $this->generalMeetings;
+    }
+
+    public function addGeneralMeeting(GeneralMeeting $generalMeeting): self
+    {
+        if (!$this->generalMeetings->contains($generalMeeting)) {
+            $this->generalMeetings[] = $generalMeeting;
+            $generalMeeting->setRoom($this);
+        }
+
+        return $this;
+    }
+
+    public function removeGeneralMeeting(GeneralMeeting $generalMeeting): self
+    {
+        if ($this->generalMeetings->contains($generalMeeting)) {
+            $this->generalMeetings->removeElement($generalMeeting);
+            // set the owning side to null (unless already changed)
+            if ($generalMeeting->getRoom() === $this) {
+                $generalMeeting->setRoom(null);
             }
         }
 

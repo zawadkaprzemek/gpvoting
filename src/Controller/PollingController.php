@@ -4,9 +4,11 @@ namespace App\Controller;
 
 use App\Entity\Answer;
 use App\Entity\Event;
+use App\Entity\GeneralMeeting;
 use App\Entity\Polling;
 use App\Entity\Question;
 use App\Entity\Room;
+use App\Form\GeneralMeetingType;
 use App\Form\PollingEnterType;
 use App\Form\PollingType;
 use App\Form\QuestionType;
@@ -303,6 +305,50 @@ class PollingController extends AbstractController
         return $this->render('polling/enter.html.twig', [
             'form'=>$form->createView(),
             'polling'=>$polling
+        ]);
+    }
+
+    /**
+     * @Route("/{_locale}/manage/{slug_parent}/{slug_child}/create_general_meeting", name="app_manage_create_general_meeting")
+     * @ParamConverter("event", options={"mapping": {"slug_parent": "slug"}})
+     * @ParamConverter("room", options={"mapping": {"slug_child": "slug"}})
+     * @param Event $event
+     * @param Room $room
+     * @param Request $request
+     * @return Response
+     */
+    public function createGeneralMeeting(Event $event,Room $room,Request $request)
+    {
+        $meeting=new GeneralMeeting();
+        $meeting->setRoom($room);
+        $form=$this->createForm(GeneralMeetingType::class,$meeting);
+        $form->handleRequest($request);
+        if($form->isSubmitted()&&$form->isValid())
+        {
+            $em=$this->getDoctrine()->getManager();
+            if($meeting->getVariant()===1)
+            {
+                $meeting->setCount($form->get('countResolution')->getData());
+            }elseif ($meeting->getVariant()===2)
+            {
+                $meeting->setCount($form->get('countPersonal')->getData());
+            }
+
+            $em->persist($meeting);
+            $em->flush();
+            $this->addFlash('succes',$this->translator->trans('Dodano nowe Walne zgromadzenie'));
+            if($meeting->getVariant()===1)
+            {
+                //redirect na dodawanie uchwał
+            }elseif($meeting->getVariant()===2)
+            {
+                //redirect na dodawanie kandydatów
+            }
+        }
+
+        return $this->render('polling/general_meeting_form.html.twig',[
+            'title'=>$this->translator->trans('Utwórz walne zgromadzenie'),
+            'form'=>$form->createView()
         ]);
     }
 

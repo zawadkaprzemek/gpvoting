@@ -11,8 +11,9 @@
         {% endif %}
         <p>{% trans %}Głosowania{% endtrans %}</p>
         {% if manage %}
-        <div>
-            <a class="btn btn-primary btn-sm" href="{{ path('app_manage_create_polling',{slug_parent:room.event.slug,slug_child:room.slug}) }}">{% trans %}Dodaj głosowanie{% endtrans %}</a>
+        <div class="btn-group btn-group-sm">
+            <a class="btn btn-primary" href="{{ path('app_manage_create_polling',{slug_parent:room.event.slug,slug_child:room.slug}) }}">{% trans %}Dodaj głosowanie{% endtrans %}</a>
+            <a class="btn btn-primary" href="{{ path('app_manage_create_general_meeting',{slug_parent:room.event.slug,slug_child:room.slug}) }}">{% trans %}Dodaj Walne zgromadzenie{% endtrans %}</a>
         </div>
         {% endif %}
         <div class="row">
