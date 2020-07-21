@@ -3,7 +3,10 @@
 namespace App\Entity;
 
 use App\Repository\GeneralMeetingRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Gedmo\Mapping\Annotation as Gedmo;
 
 /**
  * @ORM\Entity(repositoryClass=GeneralMeetingRepository::class)
@@ -79,6 +82,28 @@ class GeneralMeeting
      * @ORM\JoinColumn(nullable=false)
      */
     private $room;
+
+    /**
+     * @ORM\OneToMany(targetEntity=Candidate::class, mappedBy="general_meeting")
+     */
+    private $candidates;
+
+    /**
+     * @ORM\OneToMany(targetEntity=Resolution::class, mappedBy="general_meeting",cascade={"persist"})
+     */
+    private $resolutions;
+
+    /**
+     * @Gedmo\Slug(fields={"name"})
+     * @ORM\Column(type="string", length=255, unique=true)
+     */
+    private $slug;
+
+    public function __construct()
+    {
+        $this->candidates = new ArrayCollection();
+        $this->resolutions = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -201,6 +226,80 @@ class GeneralMeeting
     public function setRoom(?Room $room): self
     {
         $this->room = $room;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Candidate[]
+     */
+    public function getCandidates(): Collection
+    {
+        return $this->candidates;
+    }
+
+    public function addCandidate(Candidate $candidate): self
+    {
+        if (!$this->candidates->contains($candidate)) {
+            $this->candidates[] = $candidate;
+            $candidate->setGeneralMeeting($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCandidate(Candidate $candidate): self
+    {
+        if ($this->candidates->contains($candidate)) {
+            $this->candidates->removeElement($candidate);
+            // set the owning side to null (unless already changed)
+            if ($candidate->getGeneralMeeting() === $this) {
+                $candidate->setGeneralMeeting(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Resolution[]
+     */
+    public function getResolutions(): Collection
+    {
+        return $this->resolutions;
+    }
+
+    public function addResolution(Resolution $resolution): self
+    {
+        if (!$this->resolutions->contains($resolution)) {
+            $this->resolutions[] = $resolution;
+            $resolution->setGeneralMeeting($this);
+        }
+
+        return $this;
+    }
+
+    public function removeResolution(Resolution $resolution): self
+    {
+        if ($this->resolutions->contains($resolution)) {
+            $this->resolutions->removeElement($resolution);
+            // set the owning side to null (unless already changed)
+            if ($resolution->getGeneralMeeting() === $this) {
+                $resolution->setGeneralMeeting(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getSlug(): ?string
+    {
+        return $this->slug;
+    }
+
+    public function setSlug(string $slug): self
+    {
+        $this->slug = $slug;
 
         return $this;
     }

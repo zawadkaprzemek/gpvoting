@@ -7,7 +7,9 @@ use App\Entity\Event;
 use App\Entity\GeneralMeeting;
 use App\Entity\Polling;
 use App\Entity\Question;
+use App\Entity\Resolution;
 use App\Entity\Room;
+use App\Form\GeneralMeetingResolutionsType;
 use App\Form\GeneralMeetingType;
 use App\Form\PollingEnterType;
 use App\Form\PollingType;
@@ -339,7 +341,7 @@ class PollingController extends AbstractController
             $this->addFlash('succes',$this->translator->trans('Dodano nowe Walne zgromadzenie'));
             if($meeting->getVariant()===1)
             {
-                //redirect na dodawanie uchwał
+                return $this->redirectToRoute('app_manage_general_meeting_add_resolutins',['slug'=>$meeting->getSlug()]);
             }elseif($meeting->getVariant()===2)
             {
                 //redirect na dodawanie kandydatów
@@ -350,6 +352,49 @@ class PollingController extends AbstractController
             'title'=>$this->translator->trans('Utwórz walne zgromadzenie'),
             'form'=>$form->createView()
         ]);
+    }
+
+    /**
+     * @Route("/{_locale}/manage/general_meeting/{slug}/addResolutions",name="app_manage_general_meeting_add_resolutins")
+     * @param GeneralMeeting $meeting
+     * @param Request $request
+     * @return RedirectResponse|Response
+     */
+    public function addResolutions(GeneralMeeting $meeting,Request $request)
+    {
+        if($meeting->getRoom()->getEvent()->getUser()!==$this->getUser())
+        {
+            return $this->redirectToRoute('app_manage');
+        }
+        for($i=0;$i<$meeting->getCount();$i++)
+        {
+            $meeting->addResolution(new Resolution());
+        }
+
+        $form=$this->createForm(GeneralMeetingResolutionsType::class,$meeting);
+        $form->handleRequest($request);
+        if($form->isSubmitted()&&$form->isValid())
+        {
+            $em=$this->getDoctrine()->getManager();
+            $em->persist($meeting);
+            $em->flush();
+            $this->addFlash('success',$this->translator->trans('Dodano uchwały!'));
+            return $this->redirectToRoute('app_manage_general_meeting_show',['slug'=>$meeting->getSlug()]);
+        }
+
+        return $this->render('polling/resolutions_form.html.twig',[
+           'form'=>$form->createView(),
+           'meeting'=>$meeting
+        ]);
+    }
+
+    /**
+     * @Route("/{_locale}/manage/general_meeting/{slug}", name="app_manage_general_meeting_show")
+     * @param GeneralMeeting $meeting
+     */
+    public function showGeneralMeeting(GeneralMeeting $meeting)
+    {
+        dd($meeting);
     }
 
 

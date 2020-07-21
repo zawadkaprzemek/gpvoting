@@ -52,8 +52,8 @@ class GeneralMeetingType extends AbstractType
             ->add('countPersonal',RangeType::class,
                 array('label'=>'Ilość kandydatów',
                     'attr' => [
-                        'min' => 1,
-                        'max' => 99,
+                        'min' => 2,
+                        'max' => 50,
                         'step'=>1,
                         'class'=>'custom-range'
                     ],
