@@ -53,6 +53,11 @@ class Participant
      */
     private $list;
 
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $plainPass;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -138,6 +143,18 @@ class Participant
     public function setList(?ParticipantList $list): self
     {
         $this->list = $list;
+
+        return $this;
+    }
+
+    public function getPlainPass(): ?string
+    {
+        return $this->plainPass;
+    }
+
+    public function setPlainPass(string $plainPass): self
+    {
+        $this->plainPass = $plainPass;
 
         return $this;
     }

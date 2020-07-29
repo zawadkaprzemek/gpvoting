@@ -24,11 +24,10 @@ class ImportParticipantsType extends AbstractType
                                 'application/xhtml+xml',
                                 'application/vnd.ms-excel',
                                 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-                                'text/csv',
                             ],
                             'mimeTypesMessage' => 'Proszę wgrać odpowiedni plik',
                         ])
-                    ],
+                    ]
                     )
             )
             ->add('submit',SubmitType::class,array('label'=>'Importuj'))

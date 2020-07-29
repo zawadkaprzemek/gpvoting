@@ -168,6 +168,9 @@
             "config/packages/sensio_framework_extra.yaml"
         ]
     },
+    "shuchkin/simplexlsx": {
+        "version": "0.8.18"
+    },
     "stof/doctrine-extensions-bundle": {
         "version": "1.2",
         "recipe": {

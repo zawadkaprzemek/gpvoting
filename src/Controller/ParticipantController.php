@@ -2,11 +2,14 @@
 
 namespace App\Controller;
 
+use App\Entity\Participant;
 use App\Entity\ParticipantList;
 use App\Entity\User;
 use App\Form\ImportParticipantsType;
 use App\Form\ParticipantListType;
+use App\Form\ParticipantType;
 use App\Repository\ParticipantListRepository;
+use SimpleXLSX;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -137,12 +140,41 @@ class ParticipantController extends AbstractController
         $form->handleRequest($request);
         if($form->isSubmitted()&&$form->isValid())
         {
-            dd($form->getData());
+            $file=$form->getData()['file'];
+            $xlsx=SimpleXLSX::parse($file);
+            foreach ($xlsx->rows() as $row)
+            {
+                dump($row);
+            }
+            die;
         }
 
         return $this->render('participant/import.html.twig',[
             'form'=>$form->createView(),
             'list'=>$list
+        ]);
+    }
+
+    /**
+     * @Route("/{_locale}/assign_to_list/{hashId}/", name="app_participant_list_assign")
+     * @param ParticipantList $list
+     * @param Request $request
+     * @return Response
+     */
+    public function signToList(ParticipantList $list,Request $request)
+    {
+        $participant=new Participant();
+        $participant->setList($list);
+        $form=$this->createForm(ParticipantType::class,$participant);
+        $form->handleRequest($request);
+        if($form->isSubmitted()&&$form->isValid())
+        {
+            $em=$this->getDoctrine()->getManager();
+        }
+
+        return $this->render('participant/assign_form.html.twig',[
+           'form'=>$form->createView(),
+           'list'=>$list
         ]);
     }
 }

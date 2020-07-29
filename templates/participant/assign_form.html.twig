@@ -1,0 +1,47 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{% trans %}Zapisz się do listy uczestników{% endtrans %}{% endblock %}
+
+{% block body %}
+<div>
+    <h3>{% trans %}Zapisz się do listy uczestników{% endtrans %}</h3>
+    <p>{% trans %}Wprowadź swoje dane aby się zapisać{% endtrans %}</p>
+    {{ form_start(form) }}
+        <div class="form-group row">
+            <div class="col-12 col-sm-3 col-form-label">
+                {{form_label(form.name)}}
+            </div>
+            <div class="col-12 col-sm-9">
+                {{ form_widget(form.name) }}
+            </div>
+        </div>
+        <div class="form-group row">
+            <div class="col-12 col-sm-3 col-form-label">
+                {{form_label(form.surname)}}
+            </div>
+            <div class="col-12 col-sm-9">
+                {{ form_widget(form.surname) }}
+            </div>
+        </div>
+        <div class="form-group row">
+            <div class="col-12 col-sm-3 col-form-label">
+                {{form_label(form.password)}}
+            </div>
+            <div class="col-12 col-sm-9">
+                {{ form_widget(form.password) }}
+            </div>
+        </div>
+        <div class="form-group row">
+            <div class="col-12 col-sm-3 col-form-label">
+                {{form_label(form.phone)}}
+            </div>
+            <div class="col-12 col-sm-9">
+                {{ form_widget(form.phone) }}
+            </div>
+        </div>
+
+
+    {{ form_widget(form.submit) }}
+    {{ form_end(form) }}
+</div>
+{% endblock %}

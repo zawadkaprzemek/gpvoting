@@ -7,6 +7,7 @@
         "ext-iconv": "*",
         "knplabs/knp-paginator-bundle": "^5.1",
         "sensio/framework-extra-bundle": "^5.1",
+        "shuchkin/simplexlsx": "^0.8.18",
         "stof/doctrine-extensions-bundle": "^1.4",
         "symfony/asset": "5.0.*",
         "symfony/console": "5.0.*",
