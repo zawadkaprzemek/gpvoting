@@ -20,7 +20,8 @@ class GeneralMeetingType extends AbstractType
     {
         $startDate= new DateTime("+ 1 hour");
         $startDate->setTime($startDate->format('H'),0, 0,0);
-
+        /** @var GeneralMeeting $meeting */
+        $meeting=$options['data'];
         $builder
             ->add('name',TextType::class,array('label'=>'Nazwa'))
             ->add('startDate',DateTimeType::class,array(
@@ -32,6 +33,7 @@ class GeneralMeetingType extends AbstractType
             ))
             ->add('variant',ChoiceType::class,array(
                     'label'=>'Wariant zgromadzenia',
+                    'disabled'=>sizeof($meeting->getCandidates())>0||sizeof($meeting->getResolutions())>0,
                     'choices'=>array(
                         'Głosowanie nad uchwałą'=>1,
                         'Głosowanie personalne'=>2
@@ -41,22 +43,24 @@ class GeneralMeetingType extends AbstractType
             ->add('countResolution',RangeType::class,
                 array('label'=>'Ilość uchwał',
                     'attr' => [
-                        'min' => 1,
+                        'min' => (sizeof($meeting->getResolutions())>0 ? sizeof($meeting->getResolutions()): 1),
                         'max' => 99,
                         'step'=>1,
                         'class'=>'custom-range'
                     ],
+                    'data'=>(sizeof($meeting->getResolutions())>0 ? sizeof($meeting->getResolutions()): $meeting->getCount()),
                     'mapped'=>false,
                     'required'=>false
                     ))
             ->add('countPersonal',RangeType::class,
                 array('label'=>'Ilość kandydatów',
                     'attr' => [
-                        'min' => 2,
+                        'min' => (sizeof($meeting->getCandidates())>0 ? sizeof($meeting->getCandidates()): 2),
                         'max' => 50,
                         'step'=>1,
                         'class'=>'custom-range'
                     ],
+                    'data'=>(sizeof($meeting->getCandidates())>0 ? sizeof($meeting->getCandidates()): $meeting->getCount()),
                     'mapped'=>false,
                     'required'=>false
                     ))

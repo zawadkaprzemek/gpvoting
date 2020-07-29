@@ -1,0 +1,20 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{% trans %}Importuj listę uczestników{% endtrans %}{% endblock %}
+
+{% block body %}
+<div>
+    <h3>{% trans %}Importuj listę uczestników{% endtrans %}</h3>
+    {{ form_start(form) }}
+        <div class="form-group row">
+            <div class="col-12 col-sm-3 col-form-label">
+                {{form_label(form.file)}}
+            </div>
+            <div class="col-12 col-sm-9">
+                {{ form_widget(form.file) }}
+            </div>
+        </div>
+    {{ form_widget(form.submit) }}
+    {{ form_end(form) }}
+</div>
+{% endblock %}

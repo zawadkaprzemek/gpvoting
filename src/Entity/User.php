@@ -93,10 +93,16 @@ class User implements UserInterface
 
     private $oldPassword;
 
+    /**
+     * @ORM\OneToMany(targetEntity=ParticipantList::class, mappedBy="user")
+     */
+    private $participantLists;
+
     public function __construct()
     {
         $this->subaccounts = new ArrayCollection();
         $this->events = new ArrayCollection();
+        $this->participantLists = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -340,5 +346,36 @@ class User implements UserInterface
     public function setOldPassword($oldPassword): void
     {
         $this->oldPassword = $oldPassword;
+    }
+
+    /**
+     * @return Collection|ParticipantList[]
+     */
+    public function getParticipantLists(): Collection
+    {
+        return $this->participantLists;
+    }
+
+    public function addParticipantList(ParticipantList $participantList): self
+    {
+        if (!$this->participantLists->contains($participantList)) {
+            $this->participantLists[] = $participantList;
+            $participantList->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeParticipantList(ParticipantList $participantList): self
+    {
+        if ($this->participantLists->contains($participantList)) {
+            $this->participantLists->removeElement($participantList);
+            // set the owning side to null (unless already changed)
+            if ($participantList->getUser() === $this) {
+                $participantList->setUser(null);
+            }
+        }
+
+        return $this;
     }
 }

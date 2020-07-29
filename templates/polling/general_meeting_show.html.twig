@@ -1,0 +1,54 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{% trans %}Walne zgromadzenie{% endtrans %}:{{ meeting.name }}{% endblock %}
+
+{% block body %}
+
+    <div>
+        <h3>{{ meeting.name }}</h3>
+        <p>
+            {% if meeting.variant==1 %}
+                {% trans %}Głosowanie nad uchwałą{% endtrans %}
+            {% else %}
+                {% trans %}Głosowanie personalne{% endtrans %}
+            {% endif %}
+        </p>
+        <p>
+            {% if meeting.variant==1 %}
+                {% trans %}Ilość uchwał{% endtrans %}: {{ meeting.count }}
+            {% else %}
+                {% trans %}Ilość kandydatów{% endtrans %}: {{ meeting.count }}
+            {% endif %}
+        </p>
+        <p>
+            {% if meeting.weight==1 %}
+                {% trans %}Waga głosów{% endtrans %}
+            {% else %}
+                {% trans %}Waga akcji{% endtrans %}
+            {% endif %}
+        </p>
+        {% if meeting.secret %}
+            <p>{% trans %}Głosowanie tajne{% endtrans %}</p>
+        {% endif %}
+        {% if meeting.variant==2 %}
+        <p>
+            <strong>{% trans %}Błędne głosy:{% endtrans %}</strong>
+            {% if meeting.badVoteSettings==1 %}
+            {% trans %}Pozwól, nie ostrzegaj{% endtrans %}
+            {% elseif meeting.badVoteSettings==2 %}
+            {% trans %}Nie pozwól, blokuj{% endtrans %}
+            {% elseif meeting.badVoteSettings==3 %}
+            {% trans %}Ostrzegaj ale pozwól{% endtrans %}
+            {% endif %}
+        </p>
+        {% endif %}
+        <p>
+        {% if meeting.variant==1 %}
+            <a href="{{ path('app_manage_general_meeting_resolutions_list',{slug:meeting.slug}) }}" class="btn btn-sm btn-secondary">{% trans %}Lista uchwał{% endtrans %}</a>
+        {% else %}
+            <a href="{{ path('app_manage_general_meeting_candidates_list',{slug:meeting.slug}) }}" class="btn btn-sm btn-secondary">{% trans %}Lista kandydatów{% endtrans %}</a>
+        {% endif %}
+        </p>
+    </div>
+
+{% endblock %}

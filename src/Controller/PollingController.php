@@ -3,12 +3,14 @@
 namespace App\Controller;
 
 use App\Entity\Answer;
+use App\Entity\Candidate;
 use App\Entity\Event;
 use App\Entity\GeneralMeeting;
 use App\Entity\Polling;
 use App\Entity\Question;
 use App\Entity\Resolution;
 use App\Entity\Room;
+use App\Form\GeneralMeetingCandidatesType;
 use App\Form\GeneralMeetingResolutionsType;
 use App\Form\GeneralMeetingType;
 use App\Form\PollingEnterType;
@@ -16,6 +18,7 @@ use App\Form\PollingType;
 use App\Form\QuestionType;
 use App\Repository\QuestionRepository;
 use App\Repository\QuestionTypeRepository;
+use DateTime;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormError;
@@ -69,7 +72,7 @@ class PollingController extends AbstractController
         $form = $this->createForm(PollingType::class, $polling);
         $form->handleRequest($request);
         if ($form->isSubmitted()){
-            if($polling->getStartDate()< new \DateTime())
+            if($polling->getStartDate()< new DateTime())
             {
                 $form->get('startDate')->addError(new FormError('Głosowanie nie może zaczynać się w przeszłości'));
             }
@@ -344,7 +347,7 @@ class PollingController extends AbstractController
                 return $this->redirectToRoute('app_manage_general_meeting_add_resolutins',['slug'=>$meeting->getSlug()]);
             }elseif($meeting->getVariant()===2)
             {
-                //redirect na dodawanie kandydatów
+                return $this->redirectToRoute('app_manage_general_meeting_add_candidates',['slug'=>$meeting->getSlug()]);
             }
         }
 
@@ -389,12 +392,225 @@ class PollingController extends AbstractController
     }
 
     /**
+     * @Route("/{_locale}/manage/general_meeting/{slug}/addCandidates",name="app_manage_general_meeting_add_candidates")
+     * @param GeneralMeeting $meeting
+     * @param Request $request
+     * @return RedirectResponse|Response
+     */
+    public function addCandidates(GeneralMeeting $meeting,Request $request)
+    {
+        if($meeting->getRoom()->getEvent()->getUser()!==$this->getUser())
+        {
+            return $this->redirectToRoute('app_manage');
+        }
+        for($i=0;$i<$meeting->getCount();$i++)
+        {
+            $meeting->addCandidate(new Candidate());
+        }
+        $form=$this->createForm(GeneralMeetingCandidatesType::class,$meeting);
+        $form->handleRequest($request);
+        if($form->isSubmitted()&&$form->isValid())
+        {
+            $em=$this->getDoctrine()->getManager();
+            $em->persist($meeting);
+            $em->flush();
+            $this->addFlash('success',$this->translator->trans('Dodano kandydatów'));
+            return $this->redirectToRoute('app_manage_general_meeting_show',[
+                'slug'=>$meeting->getSlug()
+            ]);
+        }
+
+        return $this->render('polling/candidates_form.html.twig',[
+           'form'=>$form->createView(),
+           'meeting'=>$meeting
+        ]);
+    }
+
+    /**
      * @Route("/{_locale}/manage/general_meeting/{slug}", name="app_manage_general_meeting_show")
      * @param GeneralMeeting $meeting
+     * @return RedirectResponse|Response
      */
     public function showGeneralMeeting(GeneralMeeting $meeting)
     {
-        dd($meeting);
+        if($meeting->getRoom()->getEvent()->getUser()!==$this->getUser())
+        {
+            return $this->redirectToRoute('app_manage');
+        }
+
+        return $this->render('polling/general_meeting_show.html.twig',[
+           'meeting'=>$meeting,
+           'manage'=>true
+        ]);
+    }
+
+    /**
+     * @Route("/{_locale}/manage/general_meeting/{slug}/resolutions", name="app_manage_general_meeting_resolutions_list")
+     * @param GeneralMeeting $meeting
+     * @return RedirectResponse|Response
+     */
+    public function resolutionsList(GeneralMeeting $meeting)
+    {
+        if($meeting->getRoom()->getEvent()->getUser()!==$this->getUser())
+        {
+            return $this->redirectToRoute('app_manage');
+        }
+        if($meeting->getVariant()==2)
+        {
+            return $this->redirectToRoute('app_manage_general_meeting_candidates_list',['slug'=>$meeting->getSlug()]);
+        }
+
+        $resolutions=$meeting->getResolutions();
+        return $this->render('polling/resolutions_list.html.twig',[
+            'resolutions'=>$resolutions,
+            'meeting'=>$meeting
+        ]);
+
+    }
+
+    /**
+     * @Route("/{_locale}/manage/general_meeting/{slug}/candidates", name="app_manage_general_meeting_candidates_list")
+     * @param GeneralMeeting $meeting
+     * @return Response
+     */
+    public function candidatesList(GeneralMeeting $meeting)
+    {
+        if($meeting->getRoom()->getEvent()->getUser()!==$this->getUser())
+        {
+            return $this->redirectToRoute('app_manage');
+        }
+        if($meeting->getVariant()==1)
+        {
+            return $this->redirectToRoute('app_manage_general_meeting_resolutions_list',['slug'=>$meeting->getSlug()]);
+        }
+
+        $candidates=$meeting->getCandidates();
+        return $this->render('polling/candidates_list.html.twig',[
+            'candidates'=>$candidates,
+            'meeting'=>$meeting
+        ]);
+    }
+
+    /**
+     * @Route("/{_locale}/manage/general_meeting/{slug}/edit_candidates", name="app_manage_general_meeting_edit_candidates")
+     * @param GeneralMeeting $meeting
+     * @param Request $request
+     * @return Response
+     */
+    public function editCandidates(GeneralMeeting $meeting,Request $request)
+    {
+        if($meeting->getCount()!==sizeof($meeting->getCandidates()))
+        {
+            $diff=$meeting->getCount()-sizeof($meeting->getCandidates());
+            for($i=0;$i<$diff;$i++)
+            {
+                $meeting->addCandidate(new Candidate());
+            }
+        }
+        $form=$this->createForm(GeneralMeetingCandidatesType::class,$meeting);
+        $form->handleRequest($request);
+        if($form->isSubmitted()&&$form->isValid())
+        {
+            $em=$this->getDoctrine()->getManager();
+            $em->persist($meeting);
+            $em->flush();
+            $this->addFlash('success',$this->translator->trans('Edycja listy kandydatów zakończona sukcesem'));
+            return $this->redirectToRoute('app_manage_general_meeting_candidates_list',['slug'=>$meeting->getSlug()]);
+        }
+
+        return $this->render('polling/candidates_form.html.twig',[
+            'form'=>$form->createView(),
+            'meeting'=>$meeting
+        ]);
+    }
+
+    /**
+     * @Route("/{_locale}/manage/general_meeting/{slug}/edit_resolutions", name="app_manage_general_meeting_edit_resolutions")
+     * @param GeneralMeeting $meeting
+     * @param Request $request
+     * @return Response
+     */
+    public function editResolutions(GeneralMeeting $meeting,Request $request)
+    {
+        if($meeting->getCount()!==sizeof($meeting->getResolutions()))
+        {
+            $diff=$meeting->getCount()-sizeof($meeting->getResolutions());
+            for($i=0;$i<$diff;$i++)
+            {
+                $meeting->addResolution(new Resolution());
+            }
+        }
+        $form=$this->createForm(GeneralMeetingResolutionsType::class,$meeting);
+        $form->handleRequest($request);
+        if($form->isSubmitted()&&$form->isValid())
+        {
+            $em=$this->getDoctrine()->getManager();
+            $em->persist($meeting);
+            $em->flush();
+            $this->addFlash('success',$this->translator->trans('Edycja listy uchwał zakończona sukcesem'));
+            return $this->redirectToRoute('app_manage_general_meeting_resolutions_list',['slug'=>$meeting->getSlug()]);
+        }
+
+        return $this->render('polling/resolutions_form.html.twig',[
+            'form'=>$form->createView(),
+            'meeting'=>$meeting
+        ]);
+    }
+
+    /**
+     * @Route("/{_locale}/manage/general_meeting/{slug}/edit", name="app_manage_general_meeting_edit")
+     * @param GeneralMeeting $meeting
+     * @param Request $request
+     * @return RedirectResponse|Response
+     */
+    public function editGeneralMeeting(GeneralMeeting $meeting,Request $request)
+    {
+        if($meeting->getRoom()->getEvent()->getUser()!==$this->getUser())
+        {
+            return $this->redirectToRoute('app_manage');
+        }
+
+        $oldCount=$meeting->getCount();
+        $form=$this->createForm(GeneralMeetingType::class,$meeting);
+        $form->handleRequest($request);
+        if($form->isSubmitted()&&$form->isValid())
+        {
+            $em=$this->getDoctrine()->getManager();
+            if($meeting->getVariant()===1)
+            {
+                $meeting->setCount($form->get('countResolution')->getData());
+            }elseif ($meeting->getVariant()===2)
+            {
+                $meeting->setCount($form->get('countPersonal')->getData());
+            }
+
+            $em->persist($meeting);
+            $em->flush();
+            $this->addFlash('succes',$this->translator->trans('Edycja Walnego zgromadzenia zakończona powodzeniem'));
+            if($meeting->getVariant()===1)
+            {
+                if($meeting->getCount()!=$oldCount)
+                {
+                    return $this->redirectToRoute('app_manage_general_meeting_edit_resolutions',['slug'=>$meeting->getSlug()]);
+                }else{
+                    return  $this->redirectToRoute('app_manage_general_meeting_show',['slug'=>$meeting->getSlug()]);
+                }
+            }elseif($meeting->getVariant()===2)
+            {
+                if($meeting->getCount()!=$oldCount)
+                {
+                    return $this->redirectToRoute('app_manage_general_meeting_edit_candidates',['slug'=>$meeting->getSlug()]);
+                }else{
+                    return  $this->redirectToRoute('app_manage_general_meeting_show',['slug'=>$meeting->getSlug()]);
+                }
+            }
+        }
+
+        return $this->render('polling/general_meeting_form.html.twig',[
+            'form'=>$form->createView(),
+            'title'=>$this->translator->trans('Edytuj Walne zgromadzenie'),
+            'meeting'=>$meeting
+        ]);
     }
 
 

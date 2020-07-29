@@ -1,0 +1,21 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{% trans %}Walne zgromadzenie{% endtrans %}:{{ meeting.name }}{% endblock %}
+
+{% block body %}
+
+    <div>
+        <h3>{{ meeting.name }}</h3>
+        <p>
+            {% trans %}Lista kandydatów{% endtrans %}
+        </p>
+        <p><a href="{{ path('app_manage_general_meeting_edit_candidates',{slug:meeting.slug}) }}" class="btn btn-sm btn-secondary">{% trans %}Edytuj listę{% endtrans %}</a></p>
+        <div>
+
+        {% for key,candidate in candidates %}
+            <p>{% trans %}Kandydat{% endtrans %} {{ key+1 }}: {{ candidate.name }}</p>
+        {% endfor %}
+        </div>
+    </div>
+
+{% endblock %}

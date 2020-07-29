@@ -1,0 +1,19 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{% trans %}Lista uczestników{% endtrans %}: {{ list.name }}{% endblock %}
+
+{% block body %}
+<div>
+    <h3>{{ list.name }}</h3>
+    <p>
+        {% if list.open %}
+            {% trans %}Lista otwarta{% endtrans %}
+        {% else %}
+            {% trans %}Lista zamknięta{% endtrans %}
+        {% endif %}
+    </p>
+    <p>{% trans %}Ilość uczestników{% endtrans%}: {{ list.participants|length }}</p>
+    <p><a href="{{ path('app_manage_participant_list_import',{id:list.id}) }}" class="btn btn-sm btn-outline-primary">{% trans %}Importuj listę uczestników{% endtrans %}</a></p>
+    <p><a href="" class="btn btn-sm btn-outline-primary">{% trans %}Pokaż link do zapisów{% endtrans %}</a></p>
+</div>
+{% endblock %}

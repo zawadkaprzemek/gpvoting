@@ -18,7 +18,7 @@ class Candidate
     private $id;
 
     /**
-     * @ORM\ManyToOne(targetEntity=GeneralMeeting::class, inversedBy="candidates")
+     * @ORM\ManyToOne(targetEntity=GeneralMeeting::class, inversedBy="candidates",cascade={"persist"})
      * @ORM\JoinColumn(nullable=false)
      */
     private $general_meeting;

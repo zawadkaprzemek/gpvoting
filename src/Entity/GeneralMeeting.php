@@ -84,7 +84,7 @@ class GeneralMeeting
     private $room;
 
     /**
-     * @ORM\OneToMany(targetEntity=Candidate::class, mappedBy="general_meeting")
+     * @ORM\OneToMany(targetEntity=Candidate::class, mappedBy="general_meeting",cascade={"persist"})
      */
     private $candidates;
 
@@ -98,6 +98,11 @@ class GeneralMeeting
      * @ORM\Column(type="string", length=255, unique=true)
      */
     private $slug;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=ParticipantList::class, inversedBy="meeting")
+     */
+    private $participantList;
 
     public function __construct()
     {
@@ -300,6 +305,23 @@ class GeneralMeeting
     public function setSlug(string $slug): self
     {
         $this->slug = $slug;
+
+        return $this;
+    }
+
+    public function __toString():string
+    {
+        return $this->name;
+    }
+
+    public function getParticipantList(): ?ParticipantList
+    {
+        return $this->participantList;
+    }
+
+    public function setParticipantList(?ParticipantList $participantList): self
+    {
+        $this->participantList = $participantList;
 
         return $this;
     }

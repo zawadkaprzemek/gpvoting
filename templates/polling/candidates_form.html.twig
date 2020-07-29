@@ -1,0 +1,45 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{% trans %}Dodaj uchwały{% endtrans %}{% endblock %}
+
+{% block body %}
+
+    {{ form_start(form) }}
+    <div class="form-group row">
+        <div class="col-12 col-sm-3 col-form-label">
+            {{ form_label(form.toChoose) }}
+        </div>
+        <div class="col-12 col-sm-9 d-flex">
+            {{ form_widget(form.toChoose) }}
+            <span id="toChooseSpan" class="font-weight-bold text-primary ml-2 mt-1 valueSpan">20</span>
+        </div>
+    </div>
+    <div class="resolutions">
+        {% for key,candidate in form.candidates %}
+            <div class="row form-group answer">
+                {% for child in candidate.children %}
+                    <div class="col-12 col-sm-3 col-form-label">
+                        {{ form_label(child,child.vars.label~" "~(key+1)) }}
+                    </div>
+                    <div class="col-12 col-sm-9">
+                        {{ form_widget(child) }}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endfor %}
+    </div>
+    {{ form_row(form._token) }}
+    {{ form_row(form.submit) }}
+    {{ form_end(form) }}
+{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        $(document).ready(function () {
+            $('#toChooseSpan').html($('#general_meeting_candidates_toChoose').val());
+            $('#general_meeting_candidates_toChoose').on('change',function () {
+                $('#toChooseSpan').html($(this).val());
+            });
+        });
+    </script>
+{% endblock %}

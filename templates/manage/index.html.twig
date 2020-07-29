@@ -5,6 +5,7 @@
 {% block body %}
     <div class="btn-group btn-group-sm">
         <a href="{{ path('app_event_create',{_locale:app.request.locale}) }}" class="btn btn-sm btn-primary">{% trans %}Stwórz nowe wydarzenie{% endtrans %}</a>
+        <a href="{{ path('app_manage_participants_lists') }}" class="btn btn-secondary">{% trans %}Moje listy uczestników{% endtrans %}</a>
     </div>
     <div class="table-responsive">
         <table id="eventsTable" class="table table-striped">
