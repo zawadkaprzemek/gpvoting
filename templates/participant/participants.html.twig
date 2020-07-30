@@ -1,0 +1,37 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{% trans %}Lista uczestników{% endtrans %}{% endblock %}
+
+{% block body %}
+<div>
+    <h3>{% trans %}Moje listy uczestników{% endtrans %}</h3>
+    <div class="table-responsive">
+        <table class="table">
+            <thead>
+            <tr>
+                <th>{% trans %}Imię{% endtrans %}</th>
+                <th>{% trans %}Nazwisko{% endtrans %}</th>
+                <th>{% trans %}Telefon{% endtrans %}</th>
+                <th>{% trans %}Głosy{% endtrans %}</th>
+                <th>{% trans %}Akcje{% endtrans %}</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for participant in participants %}
+                <tr>
+                    <td>{{ participant.name }}</td>
+                    <td>{{ participant.surname }}</td>
+                    <td>{{ participant.phone }}</td>
+                    <td>{{ participant.votes }}</td>
+                    <td>{{ participant.actions }}</td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="5">{% trans %}Lista jest pusta{% endtrans %}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

@@ -9,6 +9,7 @@ use App\Form\ImportParticipantsType;
 use App\Form\ParticipantListType;
 use App\Form\ParticipantType;
 use App\Repository\ParticipantListRepository;
+use App\Repository\ParticipantRepository;
 use SimpleXLSX;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -122,6 +123,27 @@ class ParticipantController extends AbstractController
         ]);
     }
 
+    /**
+     * @Route("/{_locale}/manage/participants_lists/{id}/participants", name="app_manage_participant_list_show_participants")
+     * @param ParticipantList $list
+     * @param ParticipantRepository $repository
+     * @return RedirectResponse|Response
+     */
+    public function showParticipants(ParticipantList $list,ParticipantRepository $repository)
+    {
+        if($list->getUser()!==$this->getUser())
+        {
+            return $this->redirectToRoute('app_manage');
+        }
+
+        $participants=$repository->getParticipantsFromList($list);
+
+        return $this->render('participant/participants.html.twig',[
+            'participants'=>$participants,
+            'list'=>$list
+        ]);
+    }
+
 
     /**
      * @Route("/{_locale}/manage/participants_lists/{id}/import", name="app_manage_participant_list_import")
@@ -142,11 +164,25 @@ class ParticipantController extends AbstractController
         {
             $file=$form->getData()['file'];
             $xlsx=SimpleXLSX::parse($file);
+            $em=$this->getDoctrine()->getManager();
             foreach ($xlsx->rows() as $row)
             {
-                dump($row);
+                $participant=new Participant();
+                $participant
+                    ->setName($row[0])
+                    ->setSurname($row[1])
+                    ->setPlainPass($row[2])
+                    ->setPassword(md5($row[2]))
+                    ->setPhone($row[3])
+                    ->setVotes($row[4])
+                    ->setActions($row[5])
+                    ->setList($list)
+                ;
+                $em->persist($participant);
             }
-            die;
+            $em->flush();
+            $this->addFlash('success',$this->translator->trans('Import uczestników zakończony sukcesem'));
+            return $this->redirectToRoute('app_manage_participant_list_show',['id'=>$list->getId()]);
         }
 
         return $this->render('participant/import.html.twig',[

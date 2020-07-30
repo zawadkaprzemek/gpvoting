@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Participant;
+use App\Entity\ParticipantList;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -47,4 +48,14 @@ class ParticipantRepository extends ServiceEntityRepository
         ;
     }
     */
+
+    public function getParticipantsFromList(ParticipantList $list)
+    {
+        return $this->createQueryBuilder('p')
+            ->andWhere('p.list = :list')
+            ->setParameter('list',$list)
+            ->getQuery()
+            ->getResult()
+            ;
+    }
 }
