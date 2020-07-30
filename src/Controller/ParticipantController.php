@@ -12,6 +12,7 @@ use App\Repository\ParticipantListRepository;
 use App\Repository\ParticipantRepository;
 use SimpleXLSX;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -212,5 +213,24 @@ class ParticipantController extends AbstractController
            'form'=>$form->createView(),
            'list'=>$list
         ]);
+    }
+
+    /**
+     * @Route("/{_locale}/ajax/participant_list/{id}/open", name="app_participant_list_open", methods={"POST"})
+     * @param ParticipantList $list
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function openClose(ParticipantList $list,Request $request)
+    {
+        if($list->getUser()!==$this->getUser())
+        {
+            return new JsonResponse(['status'=>'fail']);
+        }
+        $list->setOpen(!$list->getOpen());
+        $em=$this->getDoctrine()->getManager();
+        $em->persist($list);
+        $em->flush();
+        return new JsonResponse(['status'=>'success']);
     }
 }
