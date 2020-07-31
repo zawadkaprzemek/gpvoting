@@ -12,7 +12,6 @@ use App\Repository\ParticipantListRepository;
 use App\Repository\ParticipantRepository;
 use SimpleXLSX;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -207,6 +206,11 @@ class ParticipantController extends AbstractController
         if($form->isSubmitted()&&$form->isValid())
         {
             $em=$this->getDoctrine()->getManager();
+            $participant->setPlainPass($participant->getPassword())
+                ->setPassword(md5($participant->getPlainPass()));
+            $em->persist($participant);
+            $em->flush();
+            return $this->redirectToRoute('app_participant_list_assign_complete',['hashId'=>$list->getHashId()]);
         }
 
         return $this->render('participant/assign_form.html.twig',[
@@ -216,21 +220,38 @@ class ParticipantController extends AbstractController
     }
 
     /**
-     * @Route("/{_locale}/ajax/participant_list/{id}/open", name="app_participant_list_open", methods={"POST"})
+     * @Route("/{_locale}/assign_to_list/{hashId}/complete", name="app_participant_list_assign_complete")
      * @param ParticipantList $list
-     * @param Request $request
-     * @return JsonResponse
+     * @return Response
      */
-    public function openClose(ParticipantList $list,Request $request)
+    public function assignComplete(ParticipantList $list)
+    {
+        return $this->render('participant/assign_complete.html.twig',[
+            'list'=>$list
+        ]);
+    }
+
+    /**
+     * @Route("/{_locale}/ajax/participant_list/{id}/open", name="app_participant_list_open")
+     * @param ParticipantList $list
+     * @return RedirectResponse
+     */
+    public function openClose(ParticipantList $list)
     {
         if($list->getUser()!==$this->getUser())
         {
-            return new JsonResponse(['status'=>'fail']);
+            return $this->redirectToRoute('app_manage');
         }
         $list->setOpen(!$list->getOpen());
         $em=$this->getDoctrine()->getManager();
         $em->persist($list);
         $em->flush();
-        return new JsonResponse(['status'=>'success']);
+        if($list->getOpen())
+        {
+            $this->addFlash('success',$this->translator->trans('Otwarto listę'));
+        }else{
+            $this->addFlash('success',$this->translator->trans('Zamknięto listę'));
+        }
+        return $this->redirectToRoute('app_manage_participant_list_show',['id'=>$list->getId()]);
     }
 }

@@ -58,4 +58,13 @@ class ParticipantListRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult();
     }
+
+    public function getUsersListsQuery(User $user)
+    {
+        return $this->createQueryBuilder('pl')
+            ->andWhere('pl.user = :user')
+            ->setParameter('user',$user)
+            ->addOrderBy('pl.createdAt','desc')
+            ;
+    }
 }

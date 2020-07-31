@@ -4,9 +4,15 @@ namespace App\Entity;
 
 use App\Repository\ParticipantRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 /**
  * @ORM\Entity(repositoryClass=ParticipantRepository::class)
+ * @UniqueEntity(
+ *     fields={"name", "surname","list"},
+ *     errorPath="name",
+ *     message="Jesteś już zapisany do tej listy"
+ * )
  */
 class Participant
 {

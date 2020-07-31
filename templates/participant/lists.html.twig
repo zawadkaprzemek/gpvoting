@@ -14,7 +14,7 @@
                 {{ list.name }} <div class="ml-3 btn-group btn-group-sm">
                     <a href="{{ path('app_manage_participant_list_show',{id:list.id}) }}" class="btn btn-primary">{% trans %}Podgląd{% endtrans %}</a>
                     <a href="{{ path('app_manage_participant_list_edit',{id:list.id}) }}" class="btn btn-primary">{% trans %}Edycja{% endtrans %}</a>
-                    <a href="" class="btn btn-primary">{% trans %}Otwórz/Zamknij{% endtrans %}</a>
+                {{include('participant/_open_form.html.twig',{list:list})}}
                 </div>
             </li>
         {% else %}

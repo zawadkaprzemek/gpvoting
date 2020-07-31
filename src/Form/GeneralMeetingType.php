@@ -3,7 +3,10 @@
 namespace App\Form;
 
 use App\Entity\GeneralMeeting;
+use App\Entity\ParticipantList;
+use App\Repository\ParticipantListRepository;
 use DateTime;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
@@ -22,6 +25,7 @@ class GeneralMeetingType extends AbstractType
         $startDate->setTime($startDate->format('H'),0, 0,0);
         /** @var GeneralMeeting $meeting */
         $meeting=$options['data'];
+        $user=$meeting->getRoom()->getEvent()->getUser();
         $builder
             ->add('name',TextType::class,array('label'=>'Nazwa'))
             ->add('startDate',DateTimeType::class,array(
@@ -89,6 +93,15 @@ class GeneralMeetingType extends AbstractType
                 ),
                 'placeholder'=>'Wybierz'
             ))
+            ->add('participantList',EntityType::class,array(
+                'label'=>'Lista uczestników',
+                'required'=>false,
+                'class'=>ParticipantList::class,
+                'placeholder'=>'Wybierz listę uczestników',
+                'query_builder'=>function (ParticipantListRepository $pl) use ($user) {
+                    return $pl->getUsersListsQuery($user);
+                },
+                'choice_label' => 'name'))
             ->add('submit',SubmitType::class,array('label'=>'Zapisz'))
         ;
     }
