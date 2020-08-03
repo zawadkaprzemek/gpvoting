@@ -24,6 +24,7 @@
                 {{ form_widget(form.surname) }}
             </div>
         </div>
+        {% if not edit %}
         <div class="form-group row">
             <div class="col-12 col-sm-3 col-form-label">
                 {{form_label(form.password)}}
@@ -32,6 +33,7 @@
                 {{ form_widget(form.password) }}
             </div>
         </div>
+            {% endif %}
         <div class="form-group row">
             <div class="col-12 col-sm-3 col-form-label">
                 {{form_label(form.phone)}}

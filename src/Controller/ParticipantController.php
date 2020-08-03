@@ -149,9 +149,10 @@ class ParticipantController extends AbstractController
      * @Route("/{_locale}/manage/participants_lists/{id}/import", name="app_manage_participant_list_import")
      * @param ParticipantList $list
      * @param Request $request
+     * @param ParticipantRepository $repository
      * @return RedirectResponse|Response
      */
-    public function importParticipants(ParticipantList $list,Request $request)
+    public function importParticipants(ParticipantList $list,Request $request,ParticipantRepository $repository)
     {
         if($list->getUser()!==$this->getUser())
         {
@@ -162,6 +163,7 @@ class ParticipantController extends AbstractController
         $form->handleRequest($request);
         if($form->isSubmitted()&&$form->isValid())
         {
+            $number=count($repository->getParticipantsFromList($list));
             $file=$form->getData()['file'];
             $xlsx=SimpleXLSX::parse($file);
             $em=$this->getDoctrine()->getManager();
@@ -177,6 +179,7 @@ class ParticipantController extends AbstractController
                     ->setVotes($row[4])
                     ->setActions($row[5])
                     ->setList($list)
+                    ->setAid("A".++$number)
                 ;
                 $em->persist($participant);
             }
@@ -195,9 +198,10 @@ class ParticipantController extends AbstractController
      * @Route("/{_locale}/assign_to_list/{hashId}/", name="app_participant_list_assign")
      * @param ParticipantList $list
      * @param Request $request
+     * @param ParticipantRepository $repository
      * @return Response
      */
-    public function signToList(ParticipantList $list,Request $request)
+    public function signToList(ParticipantList $list,Request $request,ParticipantRepository $repository)
     {
         $participant=new Participant();
         $participant->setList($list);
@@ -205,9 +209,12 @@ class ParticipantController extends AbstractController
         $form->handleRequest($request);
         if($form->isSubmitted()&&$form->isValid())
         {
+            $number=count($repository->getParticipantsFromList($list));
             $em=$this->getDoctrine()->getManager();
             $participant->setPlainPass($participant->getPassword())
-                ->setPassword(md5($participant->getPlainPass()));
+                ->setPassword(md5($participant->getPlainPass()))
+                ->setAid("A".++$number);
+            ;
             $em->persist($participant);
             $em->flush();
             return $this->redirectToRoute('app_participant_list_assign_complete',['hashId'=>$list->getHashId()]);
@@ -215,7 +222,8 @@ class ParticipantController extends AbstractController
 
         return $this->render('participant/assign_form.html.twig',[
            'form'=>$form->createView(),
-           'list'=>$list
+           'list'=>$list,
+            'edit'=>false
         ]);
     }
 
@@ -228,6 +236,38 @@ class ParticipantController extends AbstractController
     {
         return $this->render('participant/assign_complete.html.twig',[
             'list'=>$list
+        ]);
+    }
+
+    /**
+     * @Route("/{_locale}/manage/participant/{id}/edit", name="app_manage_participant_edit")
+     * @param Participant $participant
+     * @param Request $request
+     * @return RedirectResponse|Response
+     */
+    public function editParticipant(Participant $participant,Request $request)
+    {
+        if($participant->getList()->getUser()!==$this->getUser())
+        {
+            return $this->redirectToRoute('app_manage');
+        }
+
+        $form=$this->createForm(ParticipantType::class,$participant);
+        $form->remove('password');
+        $form->handleRequest($request);
+        if($form->isSubmitted()&&$form->isValid())
+        {
+            $em=$this->getDoctrine()->getManager();
+            $em->persist($participant);
+            $em->flush();
+            $this->addFlash('success',$this->translator->trans('Edycja uczestnika zakończona sukcesem'));
+            return $this->redirectToRoute('app_manage_participant_list_show_participants',['id'=>$participant->getList()->getId()]);
+        }
+
+        return $this->render('participant/assign_form.html.twig',[
+           'form'=>$form->createView(),
+            'list'=>$participant->getList(),
+            'edit'=>true
         ]);
     }
 

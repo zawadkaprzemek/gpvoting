@@ -64,6 +64,11 @@ class Participant
      */
     private $plainPass;
 
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $Aid;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -161,6 +166,18 @@ class Participant
     public function setPlainPass(string $plainPass): self
     {
         $this->plainPass = $plainPass;
+
+        return $this;
+    }
+
+    public function getAid(): ?string
+    {
+        return $this->Aid;
+    }
+
+    public function setAid(string $Aid): self
+    {
+        $this->Aid = $Aid;
 
         return $this;
     }

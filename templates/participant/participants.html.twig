@@ -9,21 +9,25 @@
         <table class="table">
             <thead>
             <tr>
+                <th>{% trans %}ID{% endtrans %}</th>
                 <th>{% trans %}Imię{% endtrans %}</th>
                 <th>{% trans %}Nazwisko{% endtrans %}</th>
                 <th>{% trans %}Telefon{% endtrans %}</th>
                 <th>{% trans %}Głosy{% endtrans %}</th>
                 <th>{% trans %}Akcje{% endtrans %}</th>
+                <th></th>
             </tr>
             </thead>
             <tbody>
             {% for participant in participants %}
                 <tr>
+                    <td>{{ participant.aid }}</td>
                     <td>{{ participant.name }}</td>
                     <td>{{ participant.surname }}</td>
                     <td>{{ participant.phone }}</td>
                     <td>{{ participant.votes }}</td>
                     <td>{{ participant.actions }}</td>
+                    <td><a href="{{ path('app_manage_participant_edit',{id:participant.id}) }}" class="btn btn-sm btn-outline-primary">{% trans %}Edytuj{% endtrans %}</a></td>
                 </tr>
                 {% else %}
                 <tr>
