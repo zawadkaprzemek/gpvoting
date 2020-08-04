@@ -104,6 +104,15 @@ class GeneralMeeting
      */
     private $participantList;
 
+    /**
+     * @ORM\Column(type="integer")
+     * Status głosowania
+     * 0 - oczekuje na rozpoczęcie
+     * 1 - rozpoczęte
+     * 2 - zakończone
+     */
+    private $status=0;
+
     public function __construct()
     {
         $this->candidates = new ArrayCollection();
@@ -322,6 +331,18 @@ class GeneralMeeting
     public function setParticipantList(?ParticipantList $participantList): self
     {
         $this->participantList = $participantList;
+
+        return $this;
+    }
+
+    public function getStatus(): ?int
+    {
+        return $this->status;
+    }
+
+    public function setStatus(int $status): self
+    {
+        $this->status = $status;
 
         return $this;
     }

@@ -20,13 +20,19 @@
             {% for meeting in room.generalMeetings %}
             <div class="col-12 mb-2">
                 {{ meeting.name }}
+                <span class="border-info border p-1 d-inline-block">{% trans %}Data rozpoczęcia{% endtrans %}: {{ meeting.startDate|date('d/m/Y H:i') }}</span>
                 <div class="btn-group-sm btn-group">
-                    <a href="{{ path('app_manage_general_meeting_show',{slug:meeting.slug}) }}" class="btn btn-primary">{% trans %}Podgląd{% endtrans %}</a>
-                    <a href="{{ path('app_manage_general_meeting_edit',{slug:meeting.slug}) }}" class="btn btn-secondary">{% trans %}Edycja{% endtrans %}</a>
-                    {% if meeting.variant==1 %}
-                        <a href="{{ path('app_manage_general_meeting_resolutions_list',{slug:meeting.slug}) }}" class="btn btn-info">{% trans %}Lista uchwał{% endtrans %}</a>
-                    {% else %}
-                        <a href="{{ path('app_manage_general_meeting_candidates_list',{slug:meeting.slug}) }}" class="btn btn-info">{% trans %}Lista kandydatów{% endtrans %}</a>
+                    {% if manage %}
+                        <a href="{{ path('app_manage_general_meeting_show',{slug:meeting.slug}) }}" class="btn btn-primary">{% trans %}Podgląd{% endtrans %}</a>
+                        <a href="{{ path('app_manage_general_meeting_edit',{slug:meeting.slug}) }}" class="btn btn-secondary">{% trans %}Edycja{% endtrans %}</a>
+                        {% if meeting.variant==1 %}
+                            <a href="{{ path('app_manage_general_meeting_resolutions_list',{slug:meeting.slug}) }}" class="btn btn-info">{% trans %}Lista uchwał{% endtrans %}</a>
+                        {% else %}
+                            <a href="{{ path('app_manage_general_meeting_candidates_list',{slug:meeting.slug}) }}" class="btn btn-info">{% trans %}Lista kandydatów{% endtrans %}</a>
+                        {% endif %}
+                        {{ include('polling/general_meeting_status.html.twig',{meeting:meeting}) }}
+                        {% else %}
+                        <a href="" class="btn btn-primary">{% trans %}Przystąp do głosowania{% endtrans %}</a>
                     {% endif %}
                 </div>
             </div>

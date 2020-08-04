@@ -1,0 +1,14 @@
+<form method="post" action="{#{{ path('app_polling_delete', {'id':meeting.id}) }}#}"
+      onsubmit="return confirm('{% trans %}Na pewno chcesz rozpocząć to zgromadzenie?{% endtrans %}');">
+    <input type="hidden" name="_method" value="PATCH">
+    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ meeting.id) }}">
+    <button class="btn btn-sm btn-dark rounded-left-0">{% trans %}Rozpocznij{% endtrans %}</button>
+</form>
+
+{% if meeting.status==0 %}
+Rozpocznij
+{% elseif meeting.status==1 %}
+Zakończ
+{% else %}
+    {% trans %}Zgromadzenie zakończone{% endtrans %}
+{% endif %}

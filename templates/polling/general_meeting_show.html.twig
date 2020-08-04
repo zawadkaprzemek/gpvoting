@@ -6,6 +6,7 @@
 
     <div>
         <h3>{{ meeting.name }}</h3>
+        <p>{% trans %}Planowana data zgromadzenia{% endtrans %}: {{ meeting.startDate|date('d/m/Y H:i') }}</p>
         <p>
             {% if meeting.variant==1 %}
                 {% trans %}Głosowanie nad uchwałą{% endtrans %}
