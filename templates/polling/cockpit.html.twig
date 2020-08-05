@@ -1,0 +1,48 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{% trans %}Walne zgromadzenie{% endtrans %}:{{ meeting.name }}{% endblock %}
+
+{% block body %}
+
+    <div>
+        <h3>{{ meeting.name }}</h3>
+        <div class="btn-group btn-group-sm">
+        {% if meeting.status==0 %}
+            <a href="{{ path('app_manage_general_meeting_edit',{slug:meeting.slug}) }}" class="btn btn-secondary">{% trans %}Edytuj{% endtrans %}</a>
+        {% endif %}
+            {{ include('polling/general_meeting_status.html.twig',{meeting:meeting}) }}
+        </div>
+        <p>
+            {% if meeting.variant==1 %}
+                {% trans %}Głosowanie nad uchwałą{% endtrans %}
+            {% else %}
+                {% trans %}Głosowanie personalne{% endtrans %}
+            {% endif %}
+        </p>
+        <p>
+            {% if meeting.variant==1 %}
+                {% trans %}Ilość uchwał{% endtrans %}: {{ meeting.count }}
+            {% else %}
+                {% trans %}Ilość kandydatów{% endtrans %}: {{ meeting.count }}
+            {% endif %}
+        </p>
+        <p>
+            {% if meeting.weight==1 %}
+                {% trans %}Waga głosów{% endtrans %}
+            {% else %}
+                {% trans %}Waga akcji{% endtrans %}
+            {% endif %}
+        </p>
+        {% if meeting.secret %}
+            <p>{% trans %}Głosowanie tajne{% endtrans %}</p>
+        {% endif %}
+        <p>
+        {% if meeting.variant==1 %}
+            <a href="{{ path('app_manage_general_meeting_resolutions_list',{slug:meeting.slug}) }}" class="btn btn-sm btn-secondary">{% trans %}Lista uchwał{% endtrans %}</a>
+        {% else %}
+            <a href="{{ path('app_manage_general_meeting_candidates_list',{slug:meeting.slug}) }}" class="btn btn-sm btn-secondary">{% trans %}Lista kandydatów{% endtrans %}</a>
+        {% endif %}
+        </p>
+    </div>
+
+{% endblock %}

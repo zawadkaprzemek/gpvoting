@@ -30,6 +30,7 @@
                         {% else %}
                             <a href="{{ path('app_manage_general_meeting_candidates_list',{slug:meeting.slug}) }}" class="btn btn-info">{% trans %}Lista kandydatów{% endtrans %}</a>
                         {% endif %}
+                        <a href="{{ path('app_manage_general_meeting_cockpit',{slug:meeting.slug}) }}" class="btn btn-outline-info">{% trans %}Przejdź do zarządzania{% endtrans %}</a>
                         {{ include('polling/general_meeting_status.html.twig',{meeting:meeting}) }}
                         {% else %}
                         <a href="" class="btn btn-primary">{% trans %}Przystąp do głosowania{% endtrans %}</a>
@@ -59,7 +60,7 @@
                         {% if polling.settings is not null and polling.settings.status==1 %}
                             {{ include('manage/_end_session.html.twig',{polling:polling}) }}
                         {% endif %}
-                        <a {% if polling.settings is not null and polling.settings.answerEnd > date()%}href="javascript:void()" {% else %}href="{{ path('app_manage_session_settings',{slug:polling.slug}) }}"{% endif %} class="btn btn-secondary">{% trans %}Ustawienia sesji{% endtrans %}</a>
+                        <a {% if polling.settings is not null and polling.settings.answerEnd > date()%}href="javascript:void(0)" {% else %}href="{{ path('app_manage_session_settings',{slug:polling.slug}) }}"{% endif %} class="btn btn-secondary">{% trans %}Ustawienia sesji{% endtrans %}</a>
                         <a href="{{ path('app_manage_session_users',{slug:polling.slug}) }}" class="btn btn-outline-success">{% trans %}Lista użytkowników{% endtrans %}</a>
                     {% endif %}
                     {{ include('polling/_delete_form.html.twig') }}

@@ -613,5 +613,77 @@ class PollingController extends AbstractController
         ]);
     }
 
+    /**
+     * @Route("/{_locale}/manage/general_meeting/{id}/begin", name="app_manage_general_meeting_begin")
+     * @param GeneralMeeting $meeting
+     * @param Request $request
+     * @return RedirectResponse
+     */
+    public function openGeneralMeeting(GeneralMeeting $meeting,Request $request)
+    {
+        if($meeting->getRoom()->getEvent()->getUser()!==$this->getUser())
+        {
+            return $this->redirectToRoute('app_manage');
+        }
+        if($meeting->getStatus()!==0)
+        {
+            $this->addFlash('danger',$this->translator->trans("Nie można ponownie rozpocząć tego zgromadzenia"));
+            return $this->redirect($request->server->all()['HTTP_REFERER']);
+        }
+
+        $meeting->setStatus(1);
+        $em=$this->getDoctrine()->getManager();
+        $em->persist($meeting);
+        $em->flush();
+        $this->addFlash('success',$this->translator->trans('Walne zgromadzenie zostało rozpoczęte'));
+        return $this->redirectToRoute('app_manage_general_meeting_cockpit',['slug'=>$meeting->getSlug()]);
+
+    }
+
+    /**
+     * @Route("/{_locale}/manage/general_meeting/{id}/end", name="app_manage_general_meeting_end")
+     * @param GeneralMeeting $meeting
+     * @param Request $request
+     * @return RedirectResponse
+     */
+    public function endGeneralMeeting(GeneralMeeting $meeting,Request $request)
+    {
+        if($meeting->getRoom()->getEvent()->getUser()!==$this->getUser())
+        {
+            return $this->redirectToRoute('app_manage');
+        }
+        if($meeting->getStatus()!==1)
+        {
+            $this->addFlash('danger',$this->translator->trans("Nie można zakończyć tego zgromadzenia"));
+            return $this->redirect($request->server->all()['HTTP_REFERER']);
+        }
+
+        $meeting->setStatus(2);
+        $em=$this->getDoctrine()->getManager();
+        $em->persist($meeting);
+        $em->flush();
+        $this->addFlash('success',$this->translator->trans('Walne zgromadzenie zostało zakońćzone'));
+        return $this->redirectToRoute('app_manage_general_meeting_cockpit',['slug'=>$meeting->getSlug()]);
+
+    }
+
+
+    /**
+     * @Route("/{_locale}/manage/general_meeting/{slug}/cockpit", name="app_manage_general_meeting_cockpit")
+     * @param GeneralMeeting $meeting
+     * @return RedirectResponse|Response
+     */
+    public function generalMeetingCockpit(GeneralMeeting $meeting)
+    {
+        if($meeting->getRoom()->getEvent()->getUser()!==$this->getUser())
+        {
+            return $this->redirectToRoute('app_manage');
+        }
+
+        return $this->render('polling/cockpit.html.twig',[
+           'meeting'=>$meeting
+        ]);
+    }
+
 
 }
