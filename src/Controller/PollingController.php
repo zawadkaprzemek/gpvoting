@@ -686,4 +686,31 @@ class PollingController extends AbstractController
     }
 
 
+    /**
+     * @Route(/{_locale}/general_meeting/{slug}/join", name="app_general_meeting_join")
+     * @param GeneralMeeting $meeting
+     * @param Request $request
+     */
+    public function generalMeetingJoin(GeneralMeeting $meeting,Request $request)
+    {
+        $session=$request->getSession();
+        if($meeting->getStatus()!==1)
+        {
+            $this->addFlash('warning',$this->translator->trans("Nie można przystąpić do tego zgromadzenia"));
+            return $this->redirectToRoute('home');
+        }
+
+        $uData=$session->get("user_gm_".$meeting->getSlug());
+        if(!is_null($uData))
+        {
+            // TO DO: Przekierowanie do głosowania
+        }
+
+        // TO DO: Formularz logowania do zgromadzenia
+
+        return $this->render('polling/general_meeting_login.html.twig',[
+           //'form'=>
+        ]);
+    }
+
 }

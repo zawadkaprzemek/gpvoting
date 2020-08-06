@@ -217,6 +217,8 @@ class ParticipantController extends AbstractController
             ;
             $em->persist($participant);
             $em->flush();
+            $session=$request->getSession();
+            $session->set("assign_".$list->getHashId(),$participant->getAid());
             return $this->redirectToRoute('app_participant_list_assign_complete',['hashId'=>$list->getHashId()]);
         }
 
@@ -230,12 +232,20 @@ class ParticipantController extends AbstractController
     /**
      * @Route("/{_locale}/assign_to_list/{hashId}/complete", name="app_participant_list_assign_complete")
      * @param ParticipantList $list
+     * @param Request $request
      * @return Response
      */
-    public function assignComplete(ParticipantList $list)
+    public function assignComplete(ParticipantList $list,Request $request)
     {
+        $session=$request->getSession();
+        $aid=$session->get("assign_".$list->getHashId());
+        if(is_null($aid))
+        {
+            return $this->redirectToRoute('app_participant_list_assign',['hashId'=>$list->getHashId()]);
+        }
         return $this->render('participant/assign_complete.html.twig',[
-            'list'=>$list
+            'list'=>$list,
+            'aid'=>$aid
         ]);
     }
 

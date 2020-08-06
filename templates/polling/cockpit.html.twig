@@ -6,12 +6,7 @@
 
     <div>
         <h3>{{ meeting.name }}</h3>
-        <div class="btn-group btn-group-sm">
-        {% if meeting.status==0 %}
-            <a href="{{ path('app_manage_general_meeting_edit',{slug:meeting.slug}) }}" class="btn btn-secondary">{% trans %}Edytuj{% endtrans %}</a>
-        {% endif %}
-            {{ include('polling/general_meeting_status.html.twig',{meeting:meeting}) }}
-        </div>
+
         <p>
             {% if meeting.variant==1 %}
                 {% trans %}Głosowanie nad uchwałą{% endtrans %}
@@ -36,13 +31,23 @@
         {% if meeting.secret %}
             <p>{% trans %}Głosowanie tajne{% endtrans %}</p>
         {% endif %}
-        <p>
-        {% if meeting.variant==1 %}
-            <a href="{{ path('app_manage_general_meeting_resolutions_list',{slug:meeting.slug}) }}" class="btn btn-sm btn-secondary">{% trans %}Lista uchwał{% endtrans %}</a>
-        {% else %}
-            <a href="{{ path('app_manage_general_meeting_candidates_list',{slug:meeting.slug}) }}" class="btn btn-sm btn-secondary">{% trans %}Lista kandydatów{% endtrans %}</a>
+        {% if meeting.participantList is null %}
+            <p class="text-danger">{% trans %}Nie wybrałeś jeszcze listy uczestników!!!{% endtrans %}</p>
         {% endif %}
-        </p>
+        <div class="btn-group btn-group-sm">
+        {% if meeting.status==0 %}
+            <a href="{{ path('app_manage_general_meeting_edit',{slug:meeting.slug}) }}" class="btn btn-secondary">{% trans %}Edytuj{% endtrans %}</a>
+        {% endif %}
+            {% if meeting.variant==1 %}
+                <a href="{{ path('app_manage_general_meeting_resolutions_list',{slug:meeting.slug}) }}" class="btn btn-sm btn-secondary">{% trans %}Lista uchwał{% endtrans %}</a>
+            {% else %}
+                <a href="{{ path('app_manage_general_meeting_candidates_list',{slug:meeting.slug}) }}" class="btn btn-sm btn-secondary">{% trans %}Lista kandydatów{% endtrans %}</a>
+            {% endif %}
+            {% if meeting.participantList is not null %}
+            <a href="{{ path('app_manage_participant_list_show_participants',{id:meeting.participantList.id}) }}" class="btn btn-sm btn-primary">{% trans %}Lista uczestników{% endtrans %} ({{ meeting.participantList.participants|length }})</a>
+            {% endif %}
+            {{ include('polling/general_meeting_status.html.twig',{meeting:meeting}) }}
+        </div>
     </div>
 
 {% endblock %}
