@@ -687,9 +687,10 @@ class PollingController extends AbstractController
 
 
     /**
-     * @Route(/{_locale}/general_meeting/{slug}/join", name="app_general_meeting_join")
+     * @Route("/{_locale}/general_meeting/{slug}/join", name="app_general_meeting_join")
      * @param GeneralMeeting $meeting
      * @param Request $request
+     * @return RedirectResponse|Response
      */
     public function generalMeetingJoin(GeneralMeeting $meeting,Request $request)
     {
