@@ -58,4 +58,19 @@ class ParticipantRepository extends ServiceEntityRepository
             ->getResult()
             ;
     }
+
+    public function checkCredentials(ParticipantList $list,array $data)
+    {
+        return $this->createQueryBuilder('p')
+            ->andWhere('p.list = :list')
+            ->andWhere('p.Aid = :aid')
+            ->andWhere('p.password = :pass')
+            ->setParameter('list',$list)
+            ->setParameter('aid',$data['aid'])
+            ->setParameter('pass',md5($data['password']))
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getOneOrNullResult()
+            ;
+    }
 }

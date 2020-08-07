@@ -11,11 +11,13 @@ use App\Entity\Question;
 use App\Entity\Resolution;
 use App\Entity\Room;
 use App\Form\GeneralMeetingCandidatesType;
+use App\Form\GeneralMeetingJoinType;
 use App\Form\GeneralMeetingResolutionsType;
 use App\Form\GeneralMeetingType;
 use App\Form\PollingEnterType;
 use App\Form\PollingType;
 use App\Form\QuestionType;
+use App\Repository\ParticipantRepository;
 use App\Repository\QuestionRepository;
 use App\Repository\QuestionTypeRepository;
 use DateTime;
@@ -690,9 +692,10 @@ class PollingController extends AbstractController
      * @Route("/{_locale}/general_meeting/{slug}/join", name="app_general_meeting_join")
      * @param GeneralMeeting $meeting
      * @param Request $request
+     * @param ParticipantRepository $repository
      * @return RedirectResponse|Response
      */
-    public function generalMeetingJoin(GeneralMeeting $meeting,Request $request)
+    public function generalMeetingJoin(GeneralMeeting $meeting,Request $request,ParticipantRepository $repository)
     {
         $session=$request->getSession();
         if($meeting->getStatus()!==1)
@@ -704,13 +707,58 @@ class PollingController extends AbstractController
         $uData=$session->get("user_gm_".$meeting->getSlug());
         if(!is_null($uData))
         {
-            // TO DO: Przekierowanie do głosowania
+            return $this->redirectToRoute('app_general_meeting_vote',['slug'=>$meeting->getSlug()]);
         }
 
-        // TO DO: Formularz logowania do zgromadzenia
+        $form=$this->createForm(GeneralMeetingJoinType::class);
+        $form->handleRequest($request);
+        if($form->isSubmitted()){
+            $data=$form->getData();
+            $participant=$repository->checkCredentials($meeting->getParticipantList(),$data);
+            if(is_null($participant))
+            {
+                $form->get('password')->addError(new FormError($this->translator->trans("Wprowadzono nie aprawidłowe dane dostępowe")));
+            }
+            if($form->isValid())
+            {
+                $session->set("user_gm_".$meeting->getSlug(), array(
+                        'name' => $participant->getName(),
+                        'surname' => $participant->getSurname(),
+                        'votes' => $participant->getVotes(),
+                        'actions' => $participant->getActions(),
+                        'aid' => $participant->getAid()
+                    )
+                );
+                return $this->redirectToRoute('app_general_meeting_vote',['slug'=>$meeting->getSlug()]);
+            }
+        }
 
         return $this->render('polling/general_meeting_login.html.twig',[
-           //'form'=>
+           'form'=>$form->createView(),
+            'meeting'=>$meeting
+        ]);
+    }
+
+
+    /**
+     * @Route("/{_locale}/general_meeting/{slug}/vote", name="app_general_meeting_vote")
+     * @param GeneralMeeting $meeting
+     * @param Request $request
+     * @return RedirectResponse|Response
+     */
+    public function generalMeetingVote(GeneralMeeting $meeting,Request $request)
+    {
+        $session=$request->getSession();
+        $participant=$session->get("user_gm_".$meeting->getSlug());
+        if(is_null($participant))
+        {
+            return $this->redirectToRoute('app_general_meeting_join',['slug'=>$meeting->getSlug()]);
+        }
+        dd($meeting,$participant);
+
+
+        return $this->render('polling/general_meeting_vote.html.twig',[
+           'meeting'=>$meeting
         ]);
     }
 
