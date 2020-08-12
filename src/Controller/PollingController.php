@@ -572,6 +572,12 @@ class PollingController extends AbstractController
             return $this->redirectToRoute('app_manage');
         }
 
+        if($meeting->getStatus()!=0)
+        {
+            $this->addFlash('warning',$this->translator->trans("Nie można edytować rozpoczętego zgromadzenia!"));
+            return $this->redirect($request->server->get('HTTP_REFERER'));
+        }
+
         $oldCount=$meeting->getCount();
         $form=$this->createForm(GeneralMeetingType::class,$meeting);
         $form->handleRequest($request);
@@ -639,6 +645,28 @@ class PollingController extends AbstractController
         $em->flush();
         $this->addFlash('success',$this->translator->trans('Walne zgromadzenie zostało rozpoczęte'));
         return $this->redirectToRoute('app_manage_general_meeting_cockpit',['slug'=>$meeting->getSlug()]);
+
+    }
+
+    /**
+     * @Route("/{_locale}/manage/general_meeting/{slug}/startTestVote", name="app_manage_general_meeting_test_vote_start", methods={"PATCH"})
+     * @param GeneralMeeting $meeting
+     * @param Request $request
+     * @return RedirectResponse
+     */
+    public function generalMeetingTestVotingStart(GeneralMeeting $meeting,Request $request)
+    {
+        if($meeting->getRoom()->getEvent()->getUser()!==$this->getUser())
+        {
+            return $this->redirectToRoute('app_manage');
+        }
+
+        $meeting->setActiveStatus(array('testVote'=>true,'testHash'=>uniqid()));
+        $em=$this->getDoctrine()->getManager();
+        $em->persist($meeting);
+        $em->flush();
+        $this->addFlash('info',$this->translator->trans("Rozpoczęto testowe głosowanie"));
+        return $this->redirectToRoute("app_manage_general_meeting_cockpit",['slug'=>$meeting->getSlug()]);
 
     }
 
@@ -754,7 +782,7 @@ class PollingController extends AbstractController
         {
             return $this->redirectToRoute('app_general_meeting_join',['slug'=>$meeting->getSlug()]);
         }
-        dd($meeting,$participant);
+
 
 
         return $this->render('polling/general_meeting_vote.html.twig',[

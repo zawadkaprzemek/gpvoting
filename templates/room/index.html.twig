@@ -24,7 +24,9 @@
                 <div class="btn-group-sm btn-group">
                     {% if manage %}
                         <a href="{{ path('app_manage_general_meeting_show',{slug:meeting.slug}) }}" class="btn btn-primary">{% trans %}Podgląd{% endtrans %}</a>
-                        <a href="{{ path('app_manage_general_meeting_edit',{slug:meeting.slug}) }}" class="btn btn-secondary">{% trans %}Edycja{% endtrans %}</a>
+                        {% if meeting.status==0 %}
+                            <a href="{{ path('app_manage_general_meeting_edit',{slug:meeting.slug}) }}" class="btn btn-secondary">{% trans %}Edycja{% endtrans %}</a>
+                        {% endif %}
                         {% if meeting.variant==1 %}
                             <a href="{{ path('app_manage_general_meeting_resolutions_list',{slug:meeting.slug}) }}" class="btn btn-info">{% trans %}Lista uchwał{% endtrans %}</a>
                         {% else %}

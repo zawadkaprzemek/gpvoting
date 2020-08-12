@@ -113,6 +113,13 @@ class GeneralMeeting
      */
     private $status=0;
 
+    /**
+     * @ORM\Column(type="array",nullable=true)
+     * tablica ze statusem co jest aktywne,
+     * np która uchwała albo które głosowanie odnośnie kandydatów
+     */
+    private $activeStatus = [];
+
     public function __construct()
     {
         $this->candidates = new ArrayCollection();
@@ -343,6 +350,18 @@ class GeneralMeeting
     public function setStatus(int $status): self
     {
         $this->status = $status;
+
+        return $this;
+    }
+
+    public function getActiveStatus(): ?array
+    {
+        return $this->activeStatus;
+    }
+
+    public function setActiveStatus(array $activeStatus): self
+    {
+        $this->activeStatus = $activeStatus;
 
         return $this;
     }
