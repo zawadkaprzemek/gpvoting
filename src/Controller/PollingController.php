@@ -24,6 +24,7 @@ use DateTime;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormError;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -340,10 +341,10 @@ class PollingController extends AbstractController
             {
                 $meeting->setCount($form->get('countPersonal')->getData());
             }
-
+            $meeting->setHashId(uniqid());
             $em->persist($meeting);
             $em->flush();
-            $this->addFlash('succes',$this->translator->trans('Dodano nowe Walne zgromadzenie'));
+            $this->addFlash('success',$this->translator->trans('Dodano nowe Walne zgromadzenie'));
             if($meeting->getVariant()===1)
             {
                 return $this->redirectToRoute('app_manage_general_meeting_add_resolutins',['slug'=>$meeting->getSlug()]);
@@ -622,10 +623,10 @@ class PollingController extends AbstractController
     }
 
     /**
-     * @Route("/{_locale}/manage/general_meeting/{id}/begin", name="app_manage_general_meeting_begin")
+     * @Route("/{_locale}/manage/general_meeting/{id}/begin", name="app_manage_general_meeting_begin", methods={"PATCH"})
      * @param GeneralMeeting $meeting
      * @param Request $request
-     * @return RedirectResponse
+     * @return JsonResponse|RedirectResponse
      */
     public function openGeneralMeeting(GeneralMeeting $meeting,Request $request)
     {
@@ -635,16 +636,16 @@ class PollingController extends AbstractController
         }
         if($meeting->getStatus()!==0)
         {
-            $this->addFlash('danger',$this->translator->trans("Nie można ponownie rozpocząć tego zgromadzenia"));
-            return $this->redirect($request->server->all()['HTTP_REFERER']);
+            return new JsonResponse(array('status'=>'error'));
         }
 
         $meeting->setStatus(1);
+        $active=array('active'=>null,'votes'=>array());
+        $meeting->setActiveStatus($active);
         $em=$this->getDoctrine()->getManager();
         $em->persist($meeting);
         $em->flush();
-        $this->addFlash('success',$this->translator->trans('Walne zgromadzenie zostało rozpoczęte'));
-        return $this->redirectToRoute('app_manage_general_meeting_cockpit',['slug'=>$meeting->getSlug()]);
+        return new JsonResponse(array('status'=>'success'));
 
     }
 
@@ -652,22 +653,60 @@ class PollingController extends AbstractController
      * @Route("/{_locale}/manage/general_meeting/{slug}/startTestVote", name="app_manage_general_meeting_test_vote_start", methods={"PATCH"})
      * @param GeneralMeeting $meeting
      * @param Request $request
-     * @return RedirectResponse
+     * @return JsonResponse
      */
-    public function generalMeetingTestVotingStart(GeneralMeeting $meeting,Request $request)
+    public function generalMeetingTestVotingStart(GeneralMeeting $meeting,Request $request): JsonResponse
     {
         if($meeting->getRoom()->getEvent()->getUser()!==$this->getUser())
         {
-            return $this->redirectToRoute('app_manage');
+            return new JsonResponse(array('status'=>'error'));
         }
-
-        $meeting->setActiveStatus(array('testVote'=>true,'testHash'=>uniqid()));
+        $active=$meeting->getActiveStatus();
+        $active['active']=0;
+        $active["votes"][0]=array();
+        $meeting->setActiveStatus($active);
         $em=$this->getDoctrine()->getManager();
         $em->persist($meeting);
         $em->flush();
-        $this->addFlash('info',$this->translator->trans("Rozpoczęto testowe głosowanie"));
-        return $this->redirectToRoute("app_manage_general_meeting_cockpit",['slug'=>$meeting->getSlug()]);
+        return new JsonResponse(array('status'=>'success'));
+    }
 
+    /**
+     * @Route("/{_locale}/general_meeting/{slug}/vote_save", name="app_ajax_general_meeting_save",methods={"PATCH"})
+     * @param GeneralMeeting $meeting
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function generalMeetingVoteSave(GeneralMeeting $meeting,Request $request)
+    {
+        $data=json_decode($request->getContent());
+        $active=$meeting->getActiveStatus();
+        $active['votes'][$active['active']][$data->user]=$data->vote;
+        $meeting->setActiveStatus($active);
+        $em=$this->getDoctrine()->getManager();
+        $em->persist($meeting);
+        $em->flush();
+        return new JsonResponse(array('status'=>'success'));
+    }
+
+    /**
+     * @Route("/{_locale}/general_meeting/{slug}/end_vote", name="app_ajax_general_meeting_end_vote", methods={"PATCH"})
+     * @param GeneralMeeting $meeting
+     * @return JsonResponse
+     */
+    public function generalMeetingEndVote(GeneralMeeting $meeting)
+    {
+        if($meeting->getRoom()->getEvent()->getUser()!==$this->getUser())
+        {
+            return new JsonResponse(array('status'=>'error'));
+        }
+        $active=$meeting->getActiveStatus();
+        $active['active']=null;
+        $meeting->setActiveStatus($active);
+        $em=$this->getDoctrine()->getManager();
+        $em->persist($meeting);
+        $em->flush();
+        return new JsonResponse(array('status'=>'success'));
     }
 
     /**
@@ -709,9 +748,22 @@ class PollingController extends AbstractController
         {
             return $this->redirectToRoute('app_manage');
         }
+        $aStatus=$meeting->getActiveStatus();
+        $participants=$meeting->getParticipantList()->getParticipants();
+        $actions=0; $votes=0;
+        foreach ($participants as $participant)
+        {
+            $actions=$actions+$participant->getActions();
+            $votes=$votes+$participant->getVotes();
+        }
+
 
         return $this->render('polling/cockpit.html.twig',[
-           'meeting'=>$meeting
+           'meeting'=>$meeting,
+            'active'=>$aStatus,
+            'hash'=>$meeting->getHashId(),
+            'actions'=>$actions,
+            'votes'=>$votes
         ]);
     }
 
@@ -726,10 +778,10 @@ class PollingController extends AbstractController
     public function generalMeetingJoin(GeneralMeeting $meeting,Request $request,ParticipantRepository $repository)
     {
         $session=$request->getSession();
-        if($meeting->getStatus()!==1)
+        if($meeting->getStatus()>1)
         {
             $this->addFlash('warning',$this->translator->trans("Nie można przystąpić do tego zgromadzenia"));
-            return $this->redirectToRoute('home');
+            return $this->redirect($request->server->all()['HTTP_REFERER']);
         }
 
         $uData=$session->get("user_gm_".$meeting->getSlug());
@@ -782,12 +834,41 @@ class PollingController extends AbstractController
         {
             return $this->redirectToRoute('app_general_meeting_join',['slug'=>$meeting->getSlug()]);
         }
-
-
+        $aStatus=$meeting->getActiveStatus();
+        $list=$meeting->getParticipantList()->getParticipants();
 
         return $this->render('polling/general_meeting_vote.html.twig',[
-           'meeting'=>$meeting
+           'meeting'=>$meeting,
+            'hash'=>$meeting->getHashId(),
+            'active'=>$aStatus,
+            'participant'=>$participant,
+            'list'=>$list
         ]);
+    }
+
+    /**
+     * @Route("/{_locale}/general_meeting/{slug}/activate_vote/{number}", name="app_general_meeting_activate_vote", methods={"PATCH"})
+     * @param GeneralMeeting $meeting
+     * @param int $number
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function activateVote(GeneralMeeting $meeting,int $number,Request $request)
+    {
+        if($meeting->getRoom()->getEvent()->getUser()!==$this->getUser())
+        {
+            return new JsonResponse(array('status'=>'error'));
+        }
+
+        $active=$meeting->getActiveStatus();
+        $active['active']=$number;
+        $active['votes'][$number]=array();
+        $meeting->setActiveStatus($active);
+        $em=$this->getDoctrine()->getManager();
+        $em->persist($meeting);
+        $em->flush();
+        return new JsonResponse(array('status'=>'success'));
+
     }
 
 }

@@ -16,3 +16,20 @@ input:checked+label.list-group-item{
     border-bottom-left-radius: 0;
     border-top-left-radius: 0;
 }
+
+.vote-box{
+    border:1px solid black;
+    width: 30px;
+    padding: 5px;
+    height: 30px;
+    font-size:14px;
+    text-align: center;
+    background: #eee;
+    align-content: center;
+    vertical-align: center;
+}
+.vote-row{
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+}

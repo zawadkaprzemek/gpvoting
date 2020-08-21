@@ -120,6 +120,11 @@ class GeneralMeeting
      */
     private $activeStatus = [];
 
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $hashId;
+
     public function __construct()
     {
         $this->candidates = new ArrayCollection();
@@ -362,6 +367,18 @@ class GeneralMeeting
     public function setActiveStatus(array $activeStatus): self
     {
         $this->activeStatus = $activeStatus;
+
+        return $this;
+    }
+
+    public function getHashId(): ?string
+    {
+        return $this->hashId;
+    }
+
+    public function setHashId(string $hashId): self
+    {
+        $this->hashId = $hashId;
 
         return $this;
     }

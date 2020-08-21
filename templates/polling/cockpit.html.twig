@@ -38,17 +38,114 @@
         {% if meeting.status==0 %}
             <a href="{{ path('app_manage_general_meeting_edit',{slug:meeting.slug}) }}" class="btn btn-secondary">{% trans %}Edytuj{% endtrans %}</a>
         {% endif %}
-            {% if meeting.variant==1 %}
-                <a href="{{ path('app_manage_general_meeting_resolutions_list',{slug:meeting.slug}) }}" class="btn btn-sm btn-secondary">{% trans %}Lista uchwał{% endtrans %}</a>
-            {% else %}
-                <a href="{{ path('app_manage_general_meeting_candidates_list',{slug:meeting.slug}) }}" class="btn btn-sm btn-secondary">{% trans %}Lista kandydatów{% endtrans %}</a>
-            {% endif %}
             {% if meeting.participantList is not null %}
             <a href="{{ path('app_manage_participant_list_show_participants',{id:meeting.participantList.id}) }}" class="btn btn-sm btn-primary">{% trans %}Lista uczestników{% endtrans %} ({{ meeting.participantList.participants|length }})</a>
             {% endif %}
             {{ include('polling/general_meeting_status.html.twig',{meeting:meeting}) }}
+            {% if meeting.status==1 %}
+                {% if active.active is not defined %}
             {{ include('polling/general_meeting_start_test_vote_form.html.twig',{meeting:meeting}) }}
+                {% endif %}
+            {% endif %}
+            {% if active.active is defined and active.active is not null %}
+                <button class="btn btn-outline-primary" data-href="{{ path('app_ajax_general_meeting_end_vote',{slug:meeting.slug}) }}" id="gm-end-vote" {% if active.votes[active.active]|length != meeting.participantList.participants|length %}disabled{% endif %}>{% trans %}Zakończ obecne głosowanie{% endtrans %}</button>
+            {% endif %}
         </div>
+
+        {% if meeting.status!=0 %}
+        <div class="table-responsive">
+            <table class="table table-striped">
+            {% if meeting.variant==1 %}
+                <thead>
+                <tr>
+                    <th>{% trans %}Treść uchwały{% endtrans %}</th>
+                    <th>{% trans %}Status{% endtrans %}</th>
+                    <th>{% trans %}Głosy za{% endtrans %}</th>
+                    <th>{% trans %}Głosy przeciw{% endtrans %}</th>
+                    {% if meeting.holdBack %}
+                    <th>{% trans %}Głosy wstrzymane{% endtrans %}</th>
+                    {% endif %}
+                    <th></th>
+                </tr>
+                </thead>
+                <tbody>
+            {% for key,resolution in meeting.resolutions %}
+                <tr>
+                    <td>{{ resolution.content }}</td>
+                    <td>{{ resolution.accepted }}</td>
+                    <td>{{ resolution.votesOnCount }}</td>
+                    <td>{{ resolution.votesAgainstCount }}</td>
+                    {% if meeting.holdBack %}
+                    <td>{{ resolution.votesAgainstCount }}</td>
+                    {% endif %}
+                    <td>
+                        {% if active.active is defined and active.active is null %}
+                        {% if resolution.accepted is null %}
+                        <button class="btn btn-primary btn-sm btn-gm-activate-vote" data-href="{{ path('app_general_meeting_activate_vote',{slug:meeting.slug,number:(key+1)}) }}">{% trans %}Aktywuj{% endtrans %}</button>
+                        {% endif %}
+                        {% endif %}
+                    </td>
+                </tr>
+            {% endfor %}
+                </tbody>
+            {% else %}
+                <a href="{{ path('app_manage_general_meeting_candidates_list',{slug:meeting.slug}) }}" class="btn btn-sm btn-secondary">{% trans %}Lista kandydatów{% endtrans %}</a>
+            {% endif %}
+            </table>
+        </div>
+            <div class="row">
+                <div class="col-12 col-lg-6">
+                    {% if active.active is defined and active.active is not null %}
+                        <p>{% trans %}Aktualne głosowanie:{% endtrans %}</p>
+                        <h4>{{ meeting.resolutions[active.active-1].content }}</h4>
+                    {% endif %}
+                </div>
+                <div class="col-12 col-lg-6">
+                    <div class="votes my-3">
+                        <div class="vote-row">
+                            <div class="vote-box"></div>
+                            {% for item in meeting.participantList.participants %}
+                                <div class="vote-box">
+                                    {{ item.aid }}
+                                </div>
+                            {% endfor %}
+                        </div>
+                        {% for i in 0..meeting.count %}
+                            <div class="vote-row" id="vote_{{ i }}">
+                                <div class="vote-box">{% if i==0 %}T{% else %}{{ i }}{% endif %}</div>
+                                {% for item in meeting.participantList.participants %}
+                                    <div class="vote-box {%if active.votes[i][item.aid] is defined %}{{active.votes[i][item.aid]|gm_vote_color}}{% endif %}" id="vote_{{ item.aid }}_{{ i }}">
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        {% endfor %}
+                    </div>
+                    <div class="presence">
+                        {% if active.votes[active.active] is defined%}
+                            <p>{% trans %}Zagłosowało{% endtrans %}: <span class="counter">{{ active.votes[active.active]|length }}</span>/<span class="sum">{{ (meeting.participantList.participants|length) }}</span></p>
+                        {% endif %}
+                        {#<p>{% trans %}Na sali znajduje się{% endtrans %}:</p>
+                        <p>
+                            {% set act=0 %}
+                            {% set vot=0 %}
+                            {% for participant in meeting.participantList.participants %}
+                                {% set act=act+participant.actions %}
+                                {% set vot=vot+participant.votes %}
+                            {% endfor %}
+                        {% if meeting.weight==1 %}
+                           {{ act }} - {% trans %}co stanowi{% endtrans %}
+                        {% else %}
+                            {% trans %}{% endtrans %}
+                        {% endif %}
+                        </p>#}
+                    </div>
+                </div>
+            </div>
+        {% endif %}
     </div>
 
+{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+    {{ include('polling/vote_scripts.html.twig',{meeting:meeting}) }}
 {% endblock %}

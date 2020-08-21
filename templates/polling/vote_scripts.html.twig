@@ -1,0 +1,184 @@
+<script type="text/javascript">
+    const socket = new WebSocket("ws://localhost:3001/meeting_{{ meeting.hashId }}");
+
+    socket.addEventListener("open", function() {
+        console.log("CONNECTED");
+    });
+
+    function addMessage(name, message,type,votes,actions) {
+        if(type==="vote")
+        {
+            var res = name.split("_");
+            $('#vote_'+name).addClass(getVoteColor(message));
+            console.log(votes,actions);
+            if(res[(res.length-1)]==="0")
+            {
+                let a=parseInt($('.presence span.counter').text());
+                let sum=parseInt($('.presence span.sum').text());
+                a++;
+                $('.presence span.counter').text(a);
+                if (a==sum)
+                {
+                    $('#gm-end-vote').prop('disabled',false);
+                }
+            }
+        }else if(type==="gm_management"){
+            location.reload();
+        }
+    }
+
+    function getVoteColor(vote){
+        let _class="bg-";
+        switch (vote) {
+            case 1:
+                _class+="success";
+                break;
+            case 0:
+                _class+="danger";
+                break;
+            case 2:
+                _class+="warning";
+                break;
+            default:
+                _class+="lignt";
+                break;
+        }
+        return _class;
+    }
+
+    socket.addEventListener("message", function(e) {
+        try
+        {
+            const message = JSON.parse(e.data);
+            addMessage(message.name, message.message,message.type,message.votes,message.actions);
+        }
+        catch(e)
+        {
+            // Catch any errors
+        }
+    });
+
+
+    $('.btn-test-vote-start').on("click touch",function () {
+        let url=$(this).data('href');
+        if(confirm('{% trans %}Na pewno chcesz rozpocząć testowe głosowanie?{% endtrans %}'))
+        {
+            $.ajax({
+                type: 'PATCH',
+                url: url,
+                processData: false,
+                contentType: 'application/merge-patch+json',
+            }).done(function (result) {
+                if(result.status==="success")
+                {
+                    const message = {
+                        name:"organizator",
+                        message: "meeting_start_test",
+                        type: 'gm_management'
+                    }
+                    socket.send(JSON.stringify(message));
+                    location.reload();
+                }
+            });
+        }
+    })
+
+    $('#gm-end-vote').on('click',function () {
+        let url=$(this).data('href');
+        if(confirm('{% trans %}Na pewno chcesz zakończyć obecne głosowanie?{% endtrans %}'))
+        {
+            $.ajax({
+                type: 'PATCH',
+                url: url,
+                processData: true,
+                contentType: 'application/merge-patch+json',
+            }).done(function (result) {
+                if(result.status==="success")
+                {
+                    const message = {
+                        name:"organizator",
+                        message: "vote_current_end",
+                        type: 'gm_management'
+                    }
+                    socket.send(JSON.stringify(message));
+                    addMessage(message.name, message.message,message.type);
+
+                }
+            });
+        }
+    })
+    $(".btn-vote").on("click", function() {
+        let url='{{ path('app_ajax_general_meeting_save',{slug:meeting.slug}) }}';
+        let vote=$(this).data('vote');
+        let aid='{% if participant is defined %}{{ participant.aid }}{% else %}A0{% endif %}'
+        const message = {
+            name: aid+'_{{ (active.active is defined ? active.active : '') }}',
+            message: vote,
+            type:'vote',
+            votes: '{% if participant is defined %}{{ participant.votes }}{% else %}0{% endif %}',
+            actions: '{% if participant is defined %}{{ participant.actions }}{% else %}0{% endif %}'
+        };
+        $.ajax({
+            type: 'PATCH',
+            url: url,
+            data: JSON.stringify({user:aid,vote:vote}),
+            processData: true,
+            contentType: 'application/merge-patch+json',
+        }).done(function (result) {
+            if(result.status==="success")
+            {
+                socket.send(JSON.stringify(message));
+                addMessage(message.name, message.message,message.type,message.votes,message.actions);
+                $('.btn-vote').prop('disabled',true);
+            }
+        });
+    });
+
+    $('#btn-gm-begin').on('click touch',function () {
+        let url=$(this).data('href');
+        if(confirm('{% trans %}Na pewno chcesz rozpocząć to zgromadzenie?{% endtrans %}'))
+        {
+            $.ajax({
+                type: 'PATCH',
+                url: url,
+                processData: false,
+                contentType: 'application/merge-patch+json',
+            }).done(function (result) {
+                if(result.status==="success")
+                {
+                    const message = {
+                        name:"organizator",
+                        message: "meeting_start",
+                        type: 'gm_management'
+                    }
+                    socket.send(JSON.stringify(message));
+                    location.reload();
+                }
+            });
+        }
+    })
+
+    $('.btn-gm-activate-vote').on('click',function(){
+       let url=$(this).data('href');
+       if(confirm('{% trans %}Na pewno chcesza aktywować głosowanie nad tą uchwałą?{% endtrans %}'))
+       {
+           $.ajax({
+               type: 'PATCH',
+               url: url,
+               processData: false,
+               contentType: 'application/merge-patch+json',
+           }).done(function (result) {
+               if(result.status==="success")
+               {
+                   const message = {
+                       name:"organizator",
+                       message: "activate_vote",
+                       type: 'gm_management'
+                   }
+                   socket.send(JSON.stringify(message));
+                   location.reload();
+               }
+           });
+       }
+    });
+</script>

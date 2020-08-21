@@ -1,6 +1,1 @@
-<form method="post" action="{{ path('app_manage_general_meeting_test_vote_start', {'slug':meeting.slug}) }}"
-      onsubmit="return confirm('{% trans %}Na pewno chcesz rozpocząć testowe głosowanie?{% endtrans %}');">
-    <input type="hidden" name="_method" value="PATCH">
-    <input type="hidden" name="_token" value="{{ csrf_token('patch' ~ meeting.id) }}">
-    <button class="btn btn-sm btn-dark rounded-left-0">{% trans %}Rozpocznij testowe głosowanie{% endtrans %}</button>
-</form>
+<button class="btn btn-sm btn-dark btn-test-vote-start" data-href="{{ path('app_manage_general_meeting_test_vote_start', {'slug':meeting.slug}) }}">{% trans %}Rozpocznij testowe głosowanie{% endtrans %}</button>

@@ -3,96 +3,59 @@
 {% block title %}{% trans %}Walne zgromadzenie{% endtrans %}: {{ meeting.name }}{% endblock %}
 
 {% block body %}
-    <style>
-        body {
-            font-family: arial;
-        }
-
-        .form-group {
-            margin-bottom: 10px;
-        }
-
-        input {
-            border: solid lightgrey 1px;
-            padding: 8px;
-        }
-
-        label {
-            display: inline-block;
-            min-width: 150px;
-        }
-
-        #chat {
-            height: 400px;
-            width: 600px;
-            border: solid lightgrey 1px;
-            overflow: auto;
-            margin-bottom: 20px;
-        }
-
-        button {
-            padding: 6px 12px;
-        }
-
-        .message {
-            padding: 10px 5px;
-            margin-bottom: 10px;
-            border-bottom: solid lightgrey 1px;
-        }
-    </style>
 
     <div>
-        <div id="chat">
-
-        </div>
-        <div>
-            <div class="form-group">
-                <label for="name">Name:</label> <input type="text" id="name">
-            </div>
-            <div class="form-group">
-                <label for="message">Message:</label> <input type="text" id="message">
-            </div>
-            <button type="button" id="sendBtn">Send</button>
-        </div>
+        {% if meeting.status==0 %}
+            <h3 class="text-center">{% trans %}Oczekiwanie na rozpoczęcie Walnego zgromadzenia{% endtrans %}</h3>
+            {% elseif meeting.status==1 %}
+                <div class="row">
+                {% if active.active is not defined or active.active is null %}
+                    <div class="col-12">
+                        <h3 class="text-center">{% trans %}Oczekiwanie na aktywowanie pytania przez organizatora{% endtrans %}</h3>
+                    </div>
+                {% else %}
+                    <div class="col-12 col-lg-6">
+                        {% if active.active==0 %}
+                        <h2>{% trans %}Sprawdzanie obecności{% endtrans %}</h2>
+                    <p>{% trans %}Aby potwierdzić swoją obecność kliknij dowolny przycisk{% endtrans %}</p>
+                            {% else %}
+                                <h2>{{ meeting.resolutions[(active.active-1)].content }}</h2>
+                        {% endif %}
+                    <div class="btn-group btn-group-lg">
+                        <button class="btn btn-success btn-vote" {% if active.votes[active.active][participant.aid] is defined%}disabled{% endif%} data-vote="1">{% trans %}Za{% endtrans %}</button>
+                        <button class="btn btn-danger btn-vote" {% if active.votes[active.active][participant.aid] is defined%}disabled{% endif%} data-vote="0">{% trans %}Przeciw{% endtrans %}</button>
+                        {% if meeting.holdBack %}
+                            <button class="btn btn-warning btn-vote" {% if active.votes[active.active][participant.aid] is defined%}disabled{% endif%} data-vote="2">{% trans %}Wstrzymuje się{% endtrans %}</button>
+                        {% endif %}
+                    </div>
+                    </div>
+                {% endif %}
+                <div class="col-12 col-lg-6">
+                <div class="votes mt-3">
+                    <div class="vote-row">
+                        <div class="vote-box"></div>
+                        {% for item in list %}
+                            <div class="vote-box">
+                                {{ item.aid }}
+                            </div>
+                        {% endfor %}
+                    </div>
+                    {% for i in 0..meeting.count %}
+                        <div class="vote-row" id="vote_{{ i }}">
+                            <div class="vote-box">{% if i==0 %}T{% else %}{{ i }}{% endif %}</div>
+                            {% for item in list %}
+                                <div class="vote-box {%if active.votes[i][item.aid] is defined %}{{active.votes[i][item.aid]|gm_vote_color}}{% endif %}" id="vote_{{ item.aid }}_{{ i }}"></div>
+                            {% endfor %}
+                        </div>
+                    {% endfor %}
+                </div>
+                </div>
+                </div>
+        {% endif %}
     </div>
 {% endblock %}
 {% block javascripts %}
     {{ parent() }}
-    <script type="text/javascript">
-        const socket = new WebSocket("ws://localhost:3001");
-
-        socket.addEventListener("open", function() {
-            console.log("CONNECTED");
-        });
-
-        function addMessage(name, message) {
-            const messageHTML = "<div class='message'><strong>" + name + ":</strong> " + message + "</div>";
-            document.getElementById("chat").innerHTML += messageHTML
-        }
-
-        socket.addEventListener("message", function(e) {
-            console.log(e.data);
-            try
-            {
-                const message = JSON.parse(e.data);
-                addMessage(message.name, message.message);
-            }
-            catch(e)
-            {
-                // Catch any errors
-            }
-        });
-
-
-        document.getElementById("sendBtn").addEventListener("click", function() {
-
-            const message = {
-                name: document.getElementById("name").value,
-                message: document.getElementById("message").value
-            };
-            socket.send(JSON.stringify(message));
-            addMessage(message.name, message.message);
-        });
-    </script>
+{{ include('polling/vote_scripts.html.twig',{participant:participant,hash:hash,}) }}
 
 {% endblock %}
