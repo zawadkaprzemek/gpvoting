@@ -12,6 +12,10 @@
                 {% if active.active is not defined or active.active is null %}
                     <div class="col-12">
                         <h3 class="text-center">{% trans %}Oczekiwanie na aktywowanie pytania przez organizatora{% endtrans %}</h3>
+                        {% if active.last >0 and active.last is not null %}
+                            <p>{% trans %}Poprzednie głosowanie{% endtrans %}</p>
+                            <h4>{{ meeting.resolutions[active.last-1].content }}</h4>
+                        {% endif %}
                     </div>
                 {% else %}
                     <div class="col-12 col-lg-6">

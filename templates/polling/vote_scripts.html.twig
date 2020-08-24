@@ -8,20 +8,18 @@
     function addMessage(name, message,type,votes,actions) {
         if(type==="vote")
         {
-            var res = name.split("_");
-            $('#vote_'+name).addClass(getVoteColor(message));
-            console.log(votes,actions);
-            if(res[(res.length-1)]==="0")
+        var res = name.split("_");
+        $('#vote_'+name).addClass(getVoteColor(message));
+
+            let a=parseInt($('.presence span.counter').text());
+            let sum=parseInt($('.presence span.sum').text());
+            a++;
+            $('.presence span.counter').text(a);
+            if (a==sum)
             {
-                let a=parseInt($('.presence span.counter').text());
-                let sum=parseInt($('.presence span.sum').text());
-                a++;
-                $('.presence span.counter').text(a);
-                if (a==sum)
-                {
-                    $('#gm-end-vote').prop('disabled',false);
-                }
+                $('#gm-end-vote').prop('disabled',false);
             }
+
         }else if(type==="gm_management"){
             location.reload();
         }

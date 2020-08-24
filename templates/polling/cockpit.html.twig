@@ -43,7 +43,7 @@
             {% endif %}
             {{ include('polling/general_meeting_status.html.twig',{meeting:meeting}) }}
             {% if meeting.status==1 %}
-                {% if active.active is not defined %}
+                {% if active.active is defined and active.active is null %}
             {{ include('polling/general_meeting_start_test_vote_form.html.twig',{meeting:meeting}) }}
                 {% endif %}
             {% endif %}
@@ -96,8 +96,12 @@
             <div class="row">
                 <div class="col-12 col-lg-6">
                     {% if active.active is defined and active.active is not null %}
+                    {% if active.active == 0 %}
+                        <h4>{% trans %}Trwa sprawdzanie obecności uczestników{% endtrans %}</h4>
+                        {% else %}
                         <p>{% trans %}Aktualne głosowanie:{% endtrans %}</p>
                         <h4>{{ meeting.resolutions[active.active-1].content }}</h4>
+                    {% endif %}
                     {% endif %}
                 </div>
                 <div class="col-12 col-lg-6">
@@ -121,7 +125,7 @@
                         {% endfor %}
                     </div>
                     <div class="presence">
-                        {% if active.votes[active.active] is defined%}
+                        {% if active.votes is defined and active.votes[active.active] is defined%}
                             <p>{% trans %}Zagłosowało{% endtrans %}: <span class="counter">{{ active.votes[active.active]|length }}</span>/<span class="sum">{{ (meeting.participantList.participants|length) }}</span></p>
                         {% endif %}
                         {#<p>{% trans %}Na sali znajduje się{% endtrans %}:</p>

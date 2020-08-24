@@ -640,7 +640,7 @@ class PollingController extends AbstractController
         }
 
         $meeting->setStatus(1);
-        $active=array('active'=>null,'votes'=>array());
+        $active=array('active'=>null,'votes'=>array(),'last'=>null);
         $meeting->setActiveStatus($active);
         $em=$this->getDoctrine()->getManager();
         $em->persist($meeting);
@@ -701,6 +701,7 @@ class PollingController extends AbstractController
             return new JsonResponse(array('status'=>'error'));
         }
         $active=$meeting->getActiveStatus();
+        $active['last']=$active['active'];
         $active['active']=null;
         $meeting->setActiveStatus($active);
         $em=$this->getDoctrine()->getManager();
