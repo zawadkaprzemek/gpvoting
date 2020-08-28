@@ -125,6 +125,16 @@ class GeneralMeeting
      */
     private $hashId;
 
+    /**
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    private $totalVotes;
+
+    /**
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    private $totalActions;
+
     public function __construct()
     {
         $this->candidates = new ArrayCollection();
@@ -379,6 +389,30 @@ class GeneralMeeting
     public function setHashId(string $hashId): self
     {
         $this->hashId = $hashId;
+
+        return $this;
+    }
+
+    public function getTotalVotes(): ?int
+    {
+        return $this->totalVotes;
+    }
+
+    public function setTotalVotes(?int $totalVotes): self
+    {
+        $this->totalVotes = $totalVotes;
+
+        return $this;
+    }
+
+    public function getTotalActions(): ?int
+    {
+        return $this->totalActions;
+    }
+
+    public function setTotalActions(?int $totalActions): self
+    {
+        $this->totalActions = $totalActions;
 
         return $this;
     }

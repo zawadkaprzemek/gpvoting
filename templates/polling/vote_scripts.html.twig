@@ -8,7 +8,6 @@
     function addMessage(name, message,type,votes,actions) {
         if(type==="vote")
         {
-        var res = name.split("_");
         $('#vote_'+name).addClass(getVoteColor(message));
 
             let a=parseInt($('.presence span.counter').text());
@@ -147,6 +146,30 @@
                     const message = {
                         name:"organizator",
                         message: "meeting_start",
+                        type: 'gm_management'
+                    }
+                    socket.send(JSON.stringify(message));
+                    location.reload();
+                }
+            });
+        }
+    })
+
+    $('#btn-gm-end').on('click touch',function () {
+        let url=$(this).data('href');
+        if(confirm('{% trans %}Na pewno chcesz zakończyć to zgromadzenie?{% endtrans %}'))
+        {
+            $.ajax({
+                type: 'PATCH',
+                url: url,
+                processData: false,
+                contentType: 'application/merge-patch+json',
+            }).done(function (result) {
+                if(result.status==="success")
+                {
+                    const message = {
+                        name:"organizator",
+                        message: "meeting_end",
                         type: 'gm_management'
                     }
                     socket.send(JSON.stringify(message));

@@ -15,6 +15,50 @@
                         {% if active.last >0 and active.last is not null %}
                             <p>{% trans %}Poprzednie głosowanie{% endtrans %}</p>
                             <h4>{{ meeting.resolutions[active.last-1].content }}</h4>
+
+                            <div class="row">
+                                <div class="col-12 d-inline-flex mb-2">
+                                    <div class="vote-box bg-success mr-2"></div>
+                                        {% trans %}Za{% endtrans %} -
+                                    {% if meeting.weight==1 %}
+                                        {{ meeting.resolutions[active.last-1].votesOnCount.actions }}
+                                        {% trans %}co stanowi {% endtrans %}
+                                        {{ ((meeting.resolutions[active.last-1].votesOnCount.actions/meeting.totalActions)*100)|number_format(2,".","") }}%
+                                    {% else %}
+                                        {{ meeting.resolutions[active.last-1].votesOnCount.votes }}
+                                        {% trans %}co stanowi {% endtrans %}
+                                        {{ ((meeting.resolutions[active.last-1].votesOnCount.votes/meeting.totalVotes)*100)|number_format(2,".","") }}%
+                                    {% endif %}
+                                </div>
+                                <div class="col-12 d-inline-flex mb-2">
+                                    <div class="vote-box bg-danger mr-2"></div>
+                                    {% trans %}Przeciw{% endtrans %} -
+                                    {% if meeting.weight==1 %}
+                                        {{ meeting.resolutions[active.last-1].votesAgainstCount.actions }}
+                                        {% trans %}co stanowi {% endtrans %}
+                                        {{ ((meeting.resolutions[active.last-1].votesAgainstCount.actions/meeting.totalActions)*100)|number_format(2,".","") }}%
+                                    {% else %}
+                                        {{ meeting.resolutions[active.last-1].votesAgainstCount.votes }}
+                                        {% trans %}co stanowi {% endtrans %}
+                                        {{ ((meeting.resolutions[active.last-1].votesAgainstCount.votes/meeting.totalVotes)*100)|number_format(2,".","") }}%
+                                    {% endif %}
+                                </div>
+                                {% if meeting.holdBack %}
+                                <div class="col-12 d-inline-flex mb-2">
+                                    <div class="vote-box bg-warning mr-2"></div>
+                                    {% trans %}Wstrzymuje się{% endtrans %} -
+                                    {% if meeting.weight==1 %}
+                                        {{ meeting.resolutions[active.last-1].votesHoldCount.actions }}
+                                        {% trans %}co stanowi {% endtrans %}
+                                        {{ ((meeting.resolutions[active.last-1].votesHoldCount.actions/meeting.totalActions)*100)|number_format(2,".","") }}%
+                                    {% else %}
+                                        {{ meeting.resolutions[active.last-1].votesHoldCount.votes }}
+                                        {% trans %}co stanowi {% endtrans %}
+                                        {{ ((meeting.resolutions[active.last-1].votesHoldCount.votes/meeting.totalVotes)*100)|number_format(2,".","") }}%
+                                    {% endif %}
+                                </div>
+                                {% endif %}
+                            </div>
                         {% endif %}
                     </div>
                 {% else %}
@@ -55,6 +99,12 @@
                 </div>
                 </div>
                 </div>
+            {% else %}
+                <div class="alert alert-info">
+                    <h4>{% trans %}Zgromadzenie zakończone{% endtrans %}</h4>
+                    <p>{% trans %}Serdecznie dziękujemy za udział w głosowaniu!{% endtrans %}</p>
+                </div>
+
         {% endif %}
     </div>
 {% endblock %}

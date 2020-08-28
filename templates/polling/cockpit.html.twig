@@ -43,7 +43,7 @@
             {% endif %}
             {{ include('polling/general_meeting_status.html.twig',{meeting:meeting}) }}
             {% if meeting.status==1 %}
-                {% if active.active is defined and active.active is null %}
+                {% if active.active is defined and active.active is null and active.votes[0] is empty %}
             {{ include('polling/general_meeting_start_test_vote_form.html.twig',{meeting:meeting}) }}
                 {% endif %}
             {% endif %}
@@ -72,11 +72,43 @@
             {% for key,resolution in meeting.resolutions %}
                 <tr>
                     <td>{{ resolution.content }}</td>
-                    <td>{{ resolution.accepted }}</td>
-                    <td>{{ resolution.votesOnCount }}</td>
-                    <td>{{ resolution.votesAgainstCount }}</td>
+                    <td>{% if resolution.accepted is not null %}
+                            {% if resolution.accepted %}
+                                {% trans %}Zaakceptowane{% endtrans %}
+                                {% else %}
+                                    {% trans %}Odrzucone{% endtrans %}
+                                {% endif %}
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if resolution.votesOnCount is not null %}
+                        {% if(meeting.weight==1) %}
+                        {{ ((resolution.votesOnCount.actions/meeting.totalActions)*100)|number_format(2,"."," ") }}
+                        {% else %}
+                            {{ ((resolution.votesOnCount.votes/meeting.totalVotes)*100)|number_format(2,"."," ") }}
+                            {% endif %}
+                            %
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if resolution.votesAgainstCount is not null %}
+                        {% if(meeting.weight==1) %}
+                            {{ ((resolution.votesAgainstCount.actions/meeting.totalActions)*100)|number_format(2,"."," ") }}
+                        {% else %}
+                            {{ ((resolution.votesAgainstCount.votes/meeting.totalVotes)*100)|number_format(2,"."," ") }}
+                        {% endif %}%
+                        {% endif %}
+                    </td>
                     {% if meeting.holdBack %}
-                    <td>{{ resolution.votesAgainstCount }}</td>
+                    <td>
+                        {% if resolution.votesHoldCount is not null %}
+                        {% if(meeting.weight==1) %}
+                            {{ ((resolution.votesHoldCount.actions/meeting.totalActions)*100)|number_format(2,"."," ") }}
+                        {% else %}
+                            {{ ((resolution.votesHoldCount.votes/meeting.totalVotes)*100)|number_format(2,"."," ") }}
+                        {% endif %}%
+                        {% endif %}
+                    </td>
                     {% endif %}
                     <td>
                         {% if active.active is defined and active.active is null %}

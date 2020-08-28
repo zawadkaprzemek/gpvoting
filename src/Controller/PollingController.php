@@ -700,40 +700,97 @@ class PollingController extends AbstractController
         {
             return new JsonResponse(array('status'=>'error'));
         }
+        $em=$this->getDoctrine()->getManager();
         $active=$meeting->getActiveStatus();
+        if($active['active']==0)
+        {
+            $tot_a=0;
+            $tot_v=0;
+            $participants=$meeting->getParticipantList()->getParticipants();
+            foreach ($participants as $participant)
+            {
+                $tot_a=$tot_a+$participant->getActions();
+                $tot_v=$tot_v+$participant->getVotes();
+            }
+            $meeting->setTotalActions($tot_a)->setTotalVotes($tot_v);
+        }
+        if($active['active']>0)
+        {
+            $curr=$active['active'];
+            $on=array('actions'=>0,'votes'=>0);
+            $against=array('actions'=>0,'votes'=>0);
+            $hold=array('actions'=>0,'votes'=>0);
+            $participants=$meeting->getParticipantList()->getParticipants();
+            foreach ($participants as $participant)
+            {
+                switch ($active['votes'][$curr][$participant->getAid()])
+                {
+                    case 1:
+                        $on['actions']=$on['actions']+$participant->getActions();
+                        $on['votes']=$on['votes']+$participant->getVotes();
+                        break;
+                    case 0:
+                        $against['actions']=$against['actions']+$participant->getActions();
+                        $against['votes']=$against['votes']+$participant->getVotes();
+                        break;
+                    case 2:
+                        $hold['actions']=$hold['actions']+$participant->getActions();
+                        $hold['votes']=$hold['votes']+$participant->getVotes();
+                        break;
+                    default:
+                        break;
+                }
+            }
+
+            if($meeting->getWeight()==1)
+            {
+                $accepted=$on['actions']>$against['actions']&&$on['actions']>$hold['actions'];
+            }else{
+                $accepted=$on['votes']>$against['votes']&&$on['votes']>$hold['votes'];
+            }
+
+            /** @var Resolution $resolution */
+            $resolution=$meeting->getResolutions()->get($curr-1);
+            $resolution
+                ->setVotesOnCount($on)
+                ->setVotesAgainstCount($against)
+                ->setVotesHoldCount($hold)
+                ->setAccepted($accepted)
+            ;
+
+            $em->persist($resolution);
+        }
         $active['last']=$active['active'];
         $active['active']=null;
         $meeting->setActiveStatus($active);
-        $em=$this->getDoctrine()->getManager();
+
         $em->persist($meeting);
         $em->flush();
         return new JsonResponse(array('status'=>'success'));
     }
 
     /**
-     * @Route("/{_locale}/manage/general_meeting/{id}/end", name="app_manage_general_meeting_end")
+     * @Route("/{_locale}/manage/general_meeting/{id}/end", name="app_manage_general_meeting_end", methods={"PATCH"}))
      * @param GeneralMeeting $meeting
      * @param Request $request
-     * @return RedirectResponse
+     * @return JsonResponse
      */
     public function endGeneralMeeting(GeneralMeeting $meeting,Request $request)
     {
         if($meeting->getRoom()->getEvent()->getUser()!==$this->getUser())
         {
-            return $this->redirectToRoute('app_manage');
+            return new JsonResponse(array('status'=>'error'));
         }
         if($meeting->getStatus()!==1)
         {
-            $this->addFlash('danger',$this->translator->trans("Nie można zakończyć tego zgromadzenia"));
-            return $this->redirect($request->server->all()['HTTP_REFERER']);
+            return new JsonResponse(array('status'=>'error'));
         }
 
         $meeting->setStatus(2);
         $em=$this->getDoctrine()->getManager();
         $em->persist($meeting);
         $em->flush();
-        $this->addFlash('success',$this->translator->trans('Walne zgromadzenie zostało zakońćzone'));
-        return $this->redirectToRoute('app_manage_general_meeting_cockpit',['slug'=>$meeting->getSlug()]);
+        return new JsonResponse(array('status'=>'success'));
 
     }
 
