@@ -1,9 +1,14 @@
 <script type="text/javascript">
-    const socket = new WebSocket("ws://localhost:3001/meeting_{{ meeting.hashId }}");
+    //const socket = new WebSocket("ws://localhost:3001/meeting_{{ meeting.hashId }}");
+    const socket = new WebSocket("ws://gpvoting.gpedulife.pl:8080");
 
-    socket.addEventListener("open", function() {
+    /*socket.addEventListener("open", function() {
         console.log("CONNECTED");
-    });
+    });*/
+    socket.onopen = function(e) {
+        console.log("Connection established!");
+    };
+
 
     function addMessage(name, message,type,votes,actions) {
         if(type==="vote")
