@@ -8,7 +8,83 @@
     function addMessage(name, message,type,votes,actions) {
         if(type==="vote")
         {
-        $('#vote_'+name).addClass(getVoteColor(message));
+            let v_total=$('#votes_total').val();
+            let a_total=$('#actions_total').val();
+            var res = name.split("_");
+            if(res[(res.length-1)]==="0")
+            {
+                let v_count=parseInt($('#votes_count').val())+parseInt(votes);
+                let a_count=parseInt($('#actions_count').val())+parseInt(actions);
+                $('#votes_count').val(v_count);
+                $('#actions_count').val(a_count);
+                $('#act_span').text(a_count);
+                $('#vot_span').text(v_count);
+                let v_p=(v_count/v_total)*100;
+                v_p=v_p.toFixed(2);
+                let a_p=(a_count/a_total)*100;
+                a_p=a_p.toFixed(2);
+                $('#act_span_total').text(a_p);
+                $('#vot_span_total').text(v_p);
+            }
+
+            {% if meeting.secret %}
+            let votes_count;
+            let actions_count;
+            let percent;
+                switch (message) {
+                    case 1:
+                        votes_count=$('#progressOn_'+res[(res.length-1)]).data('votes');
+                        actions_count=$('#progressOn_'+res[(res.length-1)]).data('actions');
+                        votes_count=parseInt(votes_count)+parseInt(votes);
+                        actions_count=parseInt(actions_count)+parseInt(actions);
+                    {% if meeting.weight==1 %}
+                        percent=(votes_count/v_total)*100;
+                        percent=percent.toFixed(2);
+                    {% else %}
+                        percent=(actions_count/a_total)*100;
+                        percent=percent.toFixed(2);
+                    {% endif %}
+                        $('#progressOn_'+res[(res.length-1)]).data('votes',votes_count).data('actions',actions_count)
+                            .attr('aria-valuenow',percent).prop('title',percent+'%')
+                            .css({'width':percent+'%'})
+                    break;
+                    case 0:
+                        votes_count=$('#progressAgainst_'+res[(res.length-1)]).data('votes');
+                        actions_count=$('#progressAgainst_'+res[(res.length-1)]).data('actions');
+                        votes_count=parseInt(votes_count)+parseInt(votes);
+                        actions_count=parseInt(actions_count)+parseInt(actions);
+                    {% if meeting.weight==1 %}
+                        percent=(votes_count/v_total)*100;
+                        percent=percent.toFixed(2);
+                    {% else %}
+                        percent=(actions_count/a_total)*100;
+                        percent=percent.toFixed(2);
+                    {% endif %}
+                        $('#progressAgainst_'+res[(res.length-1)]).data('votes',votes_count).data('actions',actions_count)
+                            .attr('aria-valuenow',percent).prop('title',percent+'%')
+                            .css({'width':percent+'%'})
+                        break;
+                    case 2:
+                        votes_count=$('#progressHold_'+res[(res.length-1)]).data('votes');
+                        actions_count=$('#progressHold_'+res[(res.length-1)]).data('actions');
+                        votes_count=parseInt(votes_count)+parseInt(votes);
+                        actions_count=parseInt(actions_count)+parseInt(actions);
+                    {% if meeting.weight==1 %}
+                        percent=(votes_count/v_total)*100;
+                        percent=percent.toFixed(2);
+                    {% else %}
+                        percent=(actions_count/a_total)*100;
+                        percent=percent.toFixed(2);
+                    {% endif %}
+                        $('#progressHold_'+res[(res.length-1)]).data('votes',votes_count).data('actions',actions_count)
+                            .attr('aria-valuenow',percent).prop('title',percent+'%')
+                            .css({'width':percent+'%'})
+                        break;
+                    default:
+                        break;
+                }
+            {% endif %}
+            $('#vote_'+name).addClass(getVoteColor(message));
 
             let a=parseInt($('.presence span.counter').text());
             let sum=parseInt($('.presence span.sum').text());

@@ -43,8 +43,10 @@
             {% endif %}
             {{ include('polling/general_meeting_status.html.twig',{meeting:meeting}) }}
             {% if meeting.status==1 %}
-                {% if active.active is defined and active.active is null and active.votes[0] is empty %}
+                {% if active.active is defined and active.active is null %}
+                    {% if active.votes[0] is not defined %}
             {{ include('polling/general_meeting_start_test_vote_form.html.twig',{meeting:meeting}) }}
+                        {% endif %}
                 {% endif %}
             {% endif %}
             {% if active.active is defined and active.active is not null %}
@@ -81,7 +83,7 @@
                         {% endif %}
                     </td>
                     <td>
-                        {% if resolution.votesOnCount is not null %}
+                        {% if resolution.votesOnCount is defined and resolution.votesOnCount is not empty %}
                         {% if(meeting.weight==1) %}
                         {{ ((resolution.votesOnCount.actions/meeting.totalActions)*100)|number_format(2,"."," ") }}
                         {% else %}
@@ -91,7 +93,7 @@
                         {% endif %}
                     </td>
                     <td>
-                        {% if resolution.votesAgainstCount is not null %}
+                        {% if resolution.votesAgainstCount is defined and resolution.votesAgainstCount is not empty %}
                         {% if(meeting.weight==1) %}
                             {{ ((resolution.votesAgainstCount.actions/meeting.totalActions)*100)|number_format(2,"."," ") }}
                         {% else %}
@@ -101,7 +103,7 @@
                     </td>
                     {% if meeting.holdBack %}
                     <td>
-                        {% if resolution.votesHoldCount is not null %}
+                        {% if resolution.votesHoldCount is defined and resolution.votesHoldCount is not empty %}
                         {% if(meeting.weight==1) %}
                             {{ ((resolution.votesHoldCount.actions/meeting.totalActions)*100)|number_format(2,"."," ") }}
                         {% else %}
@@ -137,43 +139,114 @@
                     {% endif %}
                 </div>
                 <div class="col-12 col-lg-6">
-                    <div class="votes my-3">
-                        <div class="vote-row">
-                            <div class="vote-box"></div>
-                            {% for item in meeting.participantList.participants %}
-                                <div class="vote-box">
-                                    {{ item.aid }}
-                                </div>
+                    {% set act=0 %}
+                    {% set vot=0 %}
+                    {% set t_act=0 %}
+                    {% set t_vot=0 %}
+                    {% for participant in meeting.participantList.participants %}
+                        {% set t_act=t_act+participant.actions %}
+                        {% set t_vot=t_vot+participant.votes %}
+                    {% endfor %}
+                    {% if active.votes[0] is defined %}
+                        {% for key,vote in active.votes[0] %}
+                            {% for participant in meeting.participantList.participants %}
+                                {% if key==participant.aid %}
+                                    {% set act=act+participant.actions %}
+                                    {% set vot=vot+participant.votes %}
+                                {% endif %}
                             {% endfor %}
-                        </div>
-                        {% for i in 0..meeting.count %}
+                        {% endfor %}
+                    {% endif %}
+                    <div class="votes my-3">
+                    {% if meeting.secret %}
+                        <div class="vote_progress">
+
+                        {% for i in 1..meeting.count %}
+                        {% set a_o=0 %} {# akcje za #}
+                        {% set a_a=0 %} {# akcje przeciw#}
+                        {% set a_h=0 %} {# akcje wstrzymane#}
+                        {% set v_o=0 %} {# głosy za #}
+                        {% set v_a=0 %} {# głosy przeciw#}
+                        {% set v_h=0 %} {# głosy wstrzymane#}
+
+                            {% if active.votes[i] is defined and active.votes[i] is not empty %}
+                                {% for key,item in active.votes[i] %}
+                                    {% for participant in meeting.participantList.participants %}
+                                        {% if key==participant.aid %}
+                                            {% if item==1 %}
+                                                {% set a_o=a_o+participant.actions %}
+                                                {% set v_o=v_o+participant.votes %}
+                                            {% elseif item==0 %}
+                                                {% set a_a=a_a+participant.actions %}
+                                                {% set v_a=v_a+participant.votes %}
+                                            {% else %}
+                                                {% set a_h=a_h+participant.actions %}
+                                                {% set v_h=v_h+participant.votes %}
+                                            {% endif %}
+                                        {% endif %}
+                                    {% endfor %}
+                                {% endfor %}
+                            {% else %}
+                                {% set v_o=0 %}
+                                {% set v_a=0 %}
+                                {% set v_h=0 %}
+                                {% set a_o=0 %}
+                                {% set a_a=0 %}
+                                {% set a_h=0 %}
+                            {% endif %}
+                            {% set o_width=(meeting.weight==1? ((v_o/t_vot)*100)|number_format(2) : ((a_o/t_act)*100)|number_format(2) ) %}
+                            {% set a_width=(meeting.weight==1? ((v_a/t_vot)*100)|number_format(2) : ((a_a/t_act)*100)|number_format(2) ) %}
+                            {% set h_width=(meeting.weight==1? ((v_h/t_vot)*100)|number_format(2) : ((a_h/t_act)*100)|number_format(2) ) %}
                             <div class="vote-row" id="vote_{{ i }}">
-                                <div class="vote-box">{% if i==0 %}T{% else %}{{ i }}{% endif %}</div>
+                                <div class="vote-box">{{ i }}</div>
+                                <div class="progress" id="progress_{{ i }}">
+                                    <div class="progress-bar bg-success" data-votes="{{ v_o }}" data-actions="{{ a_o }}" id="progressOn_{{ i }}" title="{{ o_width }}%" role="progressbar" style="width: {{ o_width }}%" aria-valuenow="{{ o_width }}" aria-valuemin="0" aria-valuemax="100"></div>
+                                    <div class="progress-bar bg-danger" data-votes="{{ v_a }}" data-actions="{{ a_a }}"  id="progressAgainst_{{ i }}" title="{{ a_width }}%" role="progressbar" style="width: {{ a_width }}%" aria-valuenow="{{ a_width }}" aria-valuemin="0" aria-valuemax="100"></div>
+                                    <div class="progress-bar bg-warning" data-votes="{{ v_h }}" data-actions="{{ a_h }}"  id="progressHold_{{ i }}" title="{{ h_width }}%" role="progressbar" style="width: {{ h_width }}%" aria-valuenow="{{ h_width }}" aria-valuemin="0" aria-valuemax="100"></div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                        </div>
+                        {% else %}
+                            <div class="vote-row">
+                                <div class="vote-box"></div>
                                 {% for item in meeting.participantList.participants %}
-                                    <div class="vote-box {%if active.votes[i][item.aid] is defined %}{{active.votes[i][item.aid]|gm_vote_color}}{% endif %}" id="vote_{{ item.aid }}_{{ i }}">
+                                    <div class="vote-box">
+                                        {{ item.aid }}
                                     </div>
                                 {% endfor %}
                             </div>
-                        {% endfor %}
+                            {% for i in 0..meeting.count %}
+                                <div class="vote-row" id="vote_{{ i }}">
+                                    <div class="vote-box">{% if i==0 %}T{% else %}{{ i }}{% endif %}</div>
+                                    {% for item in meeting.participantList.participants %}
+                                        <div class="vote-box {%if active.votes[i][item.aid] is defined %}{{active.votes[i][item.aid]|gm_vote_color}}{% endif %}" id="vote_{{ item.aid }}_{{ i }}">
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            {% endfor %}
+                    {% endif %}
                     </div>
                     <div class="presence">
                         {% if active.votes is defined and active.votes[active.active] is defined%}
                             <p>{% trans %}Zagłosowało{% endtrans %}: <span class="counter">{{ active.votes[active.active]|length }}</span>/<span class="sum">{{ (meeting.participantList.participants|length) }}</span></p>
                         {% endif %}
-                        {#<p>{% trans %}Na sali znajduje się{% endtrans %}:</p>
+                        <p>{% trans %}Na sali znajduje się{% endtrans %}:</p>
                         <p>
-                            {% set act=0 %}
-                            {% set vot=0 %}
-                            {% for participant in meeting.participantList.participants %}
-                                {% set act=act+participant.actions %}
-                                {% set vot=vot+participant.votes %}
-                            {% endfor %}
+                            {% if active.active is not null and active.active >0 %}
+
+                            {% endif %}
+
+                            <input type="hidden" id="votes_count" value="{{ vot }}">
+                            <input type="hidden" id="actions_count" value="{{ act }}">
+                            <input type="hidden" id="actions_total" value="{{ t_act }}">
+                            <input type="hidden" id="votes_total" value="{{ t_vot }}">
                         {% if meeting.weight==1 %}
-                           {{ act }} - {% trans %}co stanowi{% endtrans %}
+                            <span id="vot_span">{{ vot }}</span> {% trans %}głosów - co stanowi{% endtrans %} <span id="vot_span_total">{{ ((vot/t_vot)*100)|number_format(2) }}</span>%
                         {% else %}
-                            {% trans %}{% endtrans %}
+                            <span id="act_span">{{ act }}</span> {% trans %}akcji - co stanowi{% endtrans %} <span id="act_span_total">{{ ((act/t_act)*100)|number_format(2) }}</span>%
                         {% endif %}
-                        </p>#}
+                        </p>
                     </div>
                 </div>
             </div>

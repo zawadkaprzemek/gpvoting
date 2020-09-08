@@ -33,3 +33,15 @@ input:checked+label.list-group-item{
     flex-direction: row;
     justify-content: flex-start;
 }
+.vote_progress .vote-row{
+ width: 100%;
+}
+.vote_progress .progress{
+    width: 500px;
+    max-width: 95%;
+    height: 30px;
+    border-bottom: 1px solid black;
+    border-right: 1px solid black;
+    border-top: 1px solid black;
+    border-radius: 0;
+}

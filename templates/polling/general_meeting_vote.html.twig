@@ -82,18 +82,14 @@
                 <div class="votes mt-3">
                     <div class="vote-row">
                         <div class="vote-box"></div>
-                        {% for item in list %}
-                            <div class="vote-box">
-                                {{ item.aid }}
+                            <div class="vote-box font-weight-bold">
+                                {{ participant.aid }}
                             </div>
-                        {% endfor %}
                     </div>
                     {% for i in 0..meeting.count %}
                         <div class="vote-row" id="vote_{{ i }}">
                             <div class="vote-box">{% if i==0 %}T{% else %}{{ i }}{% endif %}</div>
-                            {% for item in list %}
-                                <div class="vote-box {%if active.votes[i][item.aid] is defined %}{{active.votes[i][item.aid]|gm_vote_color}}{% endif %}" id="vote_{{ item.aid }}_{{ i }}"></div>
-                            {% endfor %}
+                            <div class="vote-box {%if active.votes[i][participant.aid] is defined %}{{active.votes[i][participant.aid]|gm_vote_color}}{% endif %}" id="vote_{{ participant.aid }}_{{ i }}"></div>
                         </div>
                     {% endfor %}
                 </div>
