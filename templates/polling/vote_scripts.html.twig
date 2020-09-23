@@ -1,10 +1,7 @@
 <script type="text/javascript">
-    //const socket = new WebSocket("ws://localhost:3001/meeting_{{ meeting.hashId }}");
-    const socket = new WebSocket("ws://gpvoting.gpedulife.pl:8080");
+    const socket = new WebSocket("ws://localhost:3100/meeting_{{ meeting.hashId }}");
+    //const socket = new WebSocket("ws://gpvoting.bolprzewlekly.pl:3100/meeting_{{ meeting.hashId }}");
 
-    /*socket.addEventListener("open", function() {
-        console.log("CONNECTED");
-    });*/
     socket.onopen = function(e) {
         console.log("Connection established!");
     };
@@ -264,23 +261,35 @@
        let url=$(this).data('href');
        if(confirm('{% trans %}Na pewno chcesza aktywować głosowanie nad tą uchwałą?{% endtrans %}'))
        {
-           $.ajax({
-               type: 'PATCH',
-               url: url,
-               processData: false,
-               contentType: 'application/merge-patch+json',
-           }).done(function (result) {
-               if(result.status==="success")
-               {
-                   const message = {
-                       name:"organizator",
-                       message: "activate_vote",
-                       type: 'gm_management'
-                   }
-                   socket.send(JSON.stringify(message));
-                   location.reload();
-               }
-           });
+           activateVote(url);
        }
     });
+
+    $('.btn-gm-repeat-vote').on('click',function(){
+        let url=$(this).data('href');
+        if(confirm('{% trans %}Na pewno chcesza powtórzyć głosowanie nad tą uchwałą?{% endtrans %}'))
+        {
+            activateVote(url);
+        }
+    });
+
+    function activateVote(url) {
+        $.ajax({
+            type: 'PATCH',
+            url: url,
+            processData: false,
+            contentType: 'application/merge-patch+json',
+        }).done(function (result) {
+            if(result.status==="success")
+            {
+                const message = {
+                    name:"organizator",
+                    message: "activate_vote",
+                    type: 'gm_management'
+                }
+                socket.send(JSON.stringify(message));
+                location.reload();
+            }
+        });
+    }
 </script>

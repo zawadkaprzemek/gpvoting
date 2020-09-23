@@ -60,6 +60,7 @@
             {% if meeting.variant==1 %}
                 <thead>
                 <tr>
+                    <th></th>
                     <th>{% trans %}Treść uchwały{% endtrans %}</th>
                     <th>{% trans %}Status{% endtrans %}</th>
                     <th>{% trans %}Głosy za{% endtrans %}</th>
@@ -73,6 +74,7 @@
                 <tbody>
             {% for key,resolution in meeting.resolutions %}
                 <tr>
+                    <td>{{ key+1 }}</td>
                     <td>{{ resolution.content }}</td>
                     <td>{% if resolution.accepted is not null %}
                             {% if resolution.accepted %}
@@ -116,6 +118,10 @@
                         {% if active.active is defined and active.active is null %}
                         {% if resolution.accepted is null %}
                         <button class="btn btn-primary btn-sm btn-gm-activate-vote" data-href="{{ path('app_general_meeting_activate_vote',{slug:meeting.slug,number:(key+1)}) }}">{% trans %}Aktywuj{% endtrans %}</button>
+                        {% else %}
+                            {% if meeting.status==1 %}
+                            <button class="btn btn-primary btn-sm btn-gm-repeat-vote" data-href="{{ path('app_general_meeting_activate_vote',{slug:meeting.slug,number:(key+1)}) }}">{% trans %}Powtórz{% endtrans %}</button>
+                                {% endif %}
                         {% endif %}
                         {% endif %}
                     </td>
@@ -123,7 +129,24 @@
             {% endfor %}
                 </tbody>
             {% else %}
-                <a href="{{ path('app_manage_general_meeting_candidates_list',{slug:meeting.slug}) }}" class="btn btn-sm btn-secondary">{% trans %}Lista kandydatów{% endtrans %}</a>
+                <thead>
+                <tr>
+                    <th></th>
+                    <th>{% trans %}Dane kandydata{% endtrans %}</th>
+                    <th>{% trans %}Głosy{% endtrans %}</th>
+                    <th></th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for key,candidate in meeting.candidates %}
+                    <tr>
+                        <td>{{ key+1 }}</td>
+                        <td>{{ candidate.name }}</td>
+                        <td>{{ candidate.votesCount }}</td>
+                        <td></td>
+                    </tr>
+                {% endfor %}
+                </tbody>
             {% endif %}
             </table>
         </div>
