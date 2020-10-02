@@ -25,16 +25,14 @@ class ParticipantType extends AbstractType
                 'label'=>"Głosy",
                 'html5'=>true,
                 'attr'=>[
-                    'min'=>1,
-                    'max'=>100
+                    'min'=>1
                 ]
                 ))
             ->add('actions',NumberType::class,array(
                 'label'=>"Akcje",
                 'html5'=>true,
                 'attr'=>[
-                    'min'=>1,
-                    'max'=>100
+                    'min'=>1
                 ]
                 ))
             ->add('submit',SubmitType::class,array('label'=>'Zapisz'))

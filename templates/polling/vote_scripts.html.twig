@@ -209,7 +209,7 @@
         });
     });
 
-    $('#btn-gm-begin').on('click touch',function () {
+    $('.btn-gm-begin').on('click touch',function () {
         let url=$(this).data('href');
         if(confirm('{% trans %}Na pewno chcesz rozpocząć to zgromadzenie?{% endtrans %}'))
         {
@@ -233,7 +233,7 @@
         }
     })
 
-    $('#btn-gm-end').on('click touch',function () {
+    $('.btn-gm-end').on('click touch',function () {
         let url=$(this).data('href');
         if(confirm('{% trans %}Na pewno chcesz zakończyć to zgromadzenie?{% endtrans %}'))
         {

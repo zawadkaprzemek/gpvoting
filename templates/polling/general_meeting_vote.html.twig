@@ -133,9 +133,9 @@
                             <td>
                                 {% if resolution.votesOnCount is defined and resolution.votesOnCount is not empty %}
                                     {% if(meeting.weight==1) %}
-                                        {{ ((resolution.votesOnCount.actions/meeting.totalActions)*100)|number_format(2,"."," ") }}
-                                    {% else %}
                                         {{ ((resolution.votesOnCount.votes/meeting.totalVotes)*100)|number_format(2,"."," ") }}
+                                    {% else %}
+                                        {{ ((resolution.votesOnCount.actions/meeting.totalActions)*100)|number_format(2,"."," ") }}
                                     {% endif %}
                                     %
                                 {% endif %}
@@ -143,9 +143,9 @@
                             <td>
                                 {% if resolution.votesAgainstCount is defined and resolution.votesAgainstCount is not empty %}
                                     {% if(meeting.weight==1) %}
-                                        {{ ((resolution.votesAgainstCount.actions/meeting.totalActions)*100)|number_format(2,"."," ") }}
-                                    {% else %}
                                         {{ ((resolution.votesAgainstCount.votes/meeting.totalVotes)*100)|number_format(2,"."," ") }}
+                                    {% else %}
+                                        {{ ((resolution.votesAgainstCount.actions/meeting.totalActions)*100)|number_format(2,"."," ") }}
                                     {% endif %}%
                                 {% endif %}
                             </td>
@@ -153,9 +153,9 @@
                                 <td>
                                     {% if resolution.votesHoldCount is defined and resolution.votesHoldCount is not empty %}
                                         {% if(meeting.weight==1) %}
-                                            {{ ((resolution.votesHoldCount.actions/meeting.totalActions)*100)|number_format(2,"."," ") }}
-                                        {% else %}
                                             {{ ((resolution.votesHoldCount.votes/meeting.totalVotes)*100)|number_format(2,"."," ") }}
+                                        {% else %}
+                                            {{ ((resolution.votesHoldCount.actions/meeting.totalActions)*100)|number_format(2,"."," ") }}
                                         {% endif %}%
                                     {% endif %}
                                 </td>
@@ -164,6 +164,10 @@
                                 {% if active.active is defined and active.active is null %}
                                     {% if resolution.accepted is null %}
                                         <button class="btn btn-primary btn-sm btn-gm-activate-vote" data-href="{{ path('app_general_meeting_activate_vote',{slug:meeting.slug,number:(key+1)}) }}">{% trans %}Aktywuj{% endtrans %}</button>
+                                    {% else %}
+                                        {% if meeting.status==1 %}
+                                            <button class="btn btn-primary btn-sm btn-gm-repeat-vote" data-href="{{ path('app_general_meeting_activate_vote',{slug:meeting.slug,number:(key+1)}) }}">{% trans %}Powtórz{% endtrans %}</button>
+                                        {% endif %}
                                     {% endif %}
                                 {% endif %}
                             </td>

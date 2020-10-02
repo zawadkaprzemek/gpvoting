@@ -87,9 +87,9 @@
                     <td>
                         {% if resolution.votesOnCount is defined and resolution.votesOnCount is not empty %}
                         {% if(meeting.weight==1) %}
-                        {{ ((resolution.votesOnCount.actions/meeting.totalActions)*100)|number_format(2,"."," ") }}
+                        {{ ((resolution.votesOnCount.votes/meeting.totalVotes)*100)|number_format(2,"."," ") }}
                         {% else %}
-                            {{ ((resolution.votesOnCount.votes/meeting.totalVotes)*100)|number_format(2,"."," ") }}
+                            {{ ((resolution.votesOnCount.actions/meeting.totalActions)*100)|number_format(2,"."," ") }}
                             {% endif %}
                             %
                         {% endif %}
@@ -97,9 +97,9 @@
                     <td>
                         {% if resolution.votesAgainstCount is defined and resolution.votesAgainstCount is not empty %}
                         {% if(meeting.weight==1) %}
-                            {{ ((resolution.votesAgainstCount.actions/meeting.totalActions)*100)|number_format(2,"."," ") }}
-                        {% else %}
                             {{ ((resolution.votesAgainstCount.votes/meeting.totalVotes)*100)|number_format(2,"."," ") }}
+                        {% else %}
+                            {{ ((resolution.votesAgainstCount.actions/meeting.totalActions)*100)|number_format(2,"."," ") }}
                         {% endif %}%
                         {% endif %}
                     </td>
@@ -107,9 +107,9 @@
                     <td>
                         {% if resolution.votesHoldCount is defined and resolution.votesHoldCount is not empty %}
                         {% if(meeting.weight==1) %}
-                            {{ ((resolution.votesHoldCount.actions/meeting.totalActions)*100)|number_format(2,"."," ") }}
-                        {% else %}
                             {{ ((resolution.votesHoldCount.votes/meeting.totalVotes)*100)|number_format(2,"."," ") }}
+                        {% else %}
+                            {{ ((resolution.votesHoldCount.actions/meeting.totalActions)*100)|number_format(2,"."," ") }}
                         {% endif %}%
                         {% endif %}
                     </td>

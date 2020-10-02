@@ -27,7 +27,19 @@
                     <td>{{ participant.phone }}</td>
                     <td>{{ participant.votes }}</td>
                     <td>{{ participant.actions }}</td>
-                    <td><a href="{{ path('app_manage_participant_edit',{id:participant.id}) }}" class="btn btn-sm btn-outline-primary">{% trans %}Edytuj{% endtrans %}</a></td>
+                    <td>
+                        <div class="btn-group">
+                        <a href="{{ path('app_manage_participant_edit',{id:participant.id}) }}" class="btn btn-sm btn-outline-primary">{% trans %}Edytuj{% endtrans %}</a>
+                        <form method="post" action="{{ path('app_manage_participant_delete', {'id': participant.id}) }}"
+                                    onsubmit="return confirm('{% trans %}Na pewno chcesz usunąć tego uczestnika?{% endtrans %}');">
+                            <input type="hidden" name="_method" value="DELETE">
+                            <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ participant.id) }}">
+                            <button class="btn btn-sm btn-outline-dark">
+                                {% trans %}Usuń{% endtrans %}
+                            </button>
+                        </form>
+                        </div>
+                    </td>
                 </tr>
                 {% else %}
                 <tr>

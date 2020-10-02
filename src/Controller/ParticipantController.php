@@ -304,4 +304,23 @@ class ParticipantController extends AbstractController
         }
         return $this->redirectToRoute('app_manage_participant_list_show',['id'=>$list->getId()]);
     }
+
+    /**
+     * @Route("/{_locale}/manage/participant/{id}/delete", name="app_manage_participant_delete", methods={"DELETE"})
+     * @param Participant $participant
+     * @return RedirectResponse
+     */
+    public function removeParticipant(Participant $participant)
+    {
+        if($participant->getList()->getUser()!==$this->getUser())
+        {
+            return $this->redirectToRoute('app_manage');
+        }
+
+        $em=$this->getDoctrine()->getManager();
+        $em->remove($participant);
+        $em->flush();
+        $this->addFlash('success',$this->translator->trans("Usunięto uczestnika"));
+        return $this->redirectToRoute("app_manage_participant_list_show_participants",['id'=>$participant->getList()->getId()]);
+    }
 }
