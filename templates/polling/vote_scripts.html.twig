@@ -257,6 +257,32 @@
         }
     })
 
+    $('.btn-gm-reset').on('click touch',function () {
+        let href=$(this).data('href');
+        let hash=$(this).data('hash');
+        let url=$(this).data('url');
+        if(confirm('{% trans %}Na pewno chcesz rozpocząć od nowa to zgromadzenie?{% endtrans %}'))
+        {
+            $.ajax({
+                type: 'PATCH',
+                url: href,
+                processData: false,
+                contentType: 'application/merge-patch+json',
+            }).done(function (result) {
+                if(result.status==="success")
+                {
+                    const message = {
+                        name:"organizator",
+                        message: "meeting_start",
+                        type: 'gm_management'
+                    }
+                    socket.send(JSON.stringify(message));
+                    location.reload();
+                }
+            });
+        }
+    })
+
     $('.btn-gm-activate-vote').on('click',function(){
        let url=$(this).data('href');
        if(confirm('{% trans %}Na pewno chcesza aktywować głosowanie nad tą uchwałą?{% endtrans %}'))

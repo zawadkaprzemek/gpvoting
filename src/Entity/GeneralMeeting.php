@@ -128,12 +128,22 @@ class GeneralMeeting
     /**
      * @ORM\Column(type="integer", nullable=true)
      */
-    private $totalVotes;
+    private $totalVotes=0;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
      */
-    private $totalActions;
+    private $totalActions=0;
+
+    /**
+     * @ORM\Column(type="integer")
+     */
+    private $absenceVotes=0;
+
+    /**
+     * @ORM\Column(type="integer")
+     */
+    private $absenceActions=0;
 
     public function __construct()
     {
@@ -413,6 +423,30 @@ class GeneralMeeting
     public function setTotalActions(?int $totalActions): self
     {
         $this->totalActions = $totalActions;
+
+        return $this;
+    }
+
+    public function getAbsenceVotes(): ?int
+    {
+        return $this->absenceVotes;
+    }
+
+    public function setAbsenceVotes(int $absenceVotes): self
+    {
+        $this->absenceVotes = $absenceVotes;
+
+        return $this;
+    }
+
+    public function getAbsenceActions(): ?int
+    {
+        return $this->absenceActions;
+    }
+
+    public function setAbsenceActions(int $absenceActions): self
+    {
+        $this->absenceActions = $absenceActions;
 
         return $this;
     }

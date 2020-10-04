@@ -114,7 +114,7 @@
                             socket.onopen = function(e) {
                                 console.log("Connection established!");
                                 socket.send(JSON.stringify(message));
-                                window.location.replace(url);
+                                window.location.href=url;
                             };
                         }
                     });
@@ -146,7 +146,39 @@
                             socket.onopen = function(e) {
                                 console.log("Connection established!");
                                 socket.send(JSON.stringify(message));
-                                window.location.replace(url);
+                                window.location.href=url;
+                            };
+                        }
+                    });
+                }
+            })
+
+            $('.btn-gm-reset').on('click touch',function () {
+                let href=$(this).data('href');
+                let hash=$(this).data('hash');
+                let url=$(this).data('url');
+                if(confirm('{% trans %}Na pewno chcesz rozpocząć od nowa to zgromadzenie?{% endtrans %}'))
+                {
+                    $.ajax({
+                        type: 'PATCH',
+                        url: href,
+                        processData: false,
+                        contentType: 'application/merge-patch+json',
+                    }).done(function (result) {
+                        if(result.status==="success")
+                        {
+                            const message = {
+                                name:"organizator",
+                                message: "meeting_start",
+                                type: 'gm_management'
+                            }
+                            //const socket = new WebSocket("ws://gpvoting.bolprzewlekly.pl:3100/meeting_"+hash+"");
+                            const socket = new WebSocket("ws://localhost:3100/meeting_"+hash+"");
+
+                            socket.onopen = function(e) {
+                                console.log("Connection established!");
+                                socket.send(JSON.stringify(message));
+                                window.location.href=url;
                             };
                         }
                     });

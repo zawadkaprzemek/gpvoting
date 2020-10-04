@@ -44,16 +44,13 @@
             {{ include('polling/general_meeting_status.html.twig',{meeting:meeting}) }}
             {% if meeting.status==1 %}
                 {% if active.active is defined and active.active is null %}
-                    {% if active.votes[0] is not defined %}
-            {{ include('polling/general_meeting_start_test_vote_form.html.twig',{meeting:meeting}) }}
-                        {% endif %}
+                    {{ include('polling/general_meeting_start_test_vote_form.html.twig',{meeting:meeting}) }}
                 {% endif %}
             {% endif %}
             {% if active.active is defined and active.active is not null %}
-                <button class="btn btn-outline-primary" data-href="{{ path('app_ajax_general_meeting_end_vote',{slug:meeting.slug}) }}" id="gm-end-vote" {% if active.votes[active.active]|length != meeting.participantList.participants|length %}disabled{% endif %}>{% trans %}Zakończ obecne głosowanie{% endtrans %}</button>
+                <button class="btn btn-outline-primary" data-href="{{ path('app_ajax_general_meeting_end_vote',{slug:meeting.slug}) }}" id="gm-end-vote">{% trans %}Zakończ obecne głosowanie{% endtrans %}</button>
             {% endif %}
         </div>
-
         {% if meeting.status!=0 %}
         <div class="table-responsive">
             <table class="table table-striped">
@@ -68,7 +65,7 @@
                     {% if meeting.holdBack %}
                     <th>{% trans %}Głosy wstrzymane{% endtrans %}</th>
                     {% endif %}
-                    <th></th>
+                    {% if meeting.status==1 %}<th></th>{% endif %}
                 </tr>
                 </thead>
                 <tbody>
@@ -87,9 +84,9 @@
                     <td>
                         {% if resolution.votesOnCount is defined and resolution.votesOnCount is not empty %}
                         {% if(meeting.weight==1) %}
-                        {{ ((resolution.votesOnCount.votes/meeting.totalVotes)*100)|number_format(2,"."," ") }}
+                        {{ (meeting.totalVotes > 0 ?((resolution.votesOnCount.votes/meeting.totalVotes)*100):0)|number_format(2,"."," ") }}
                         {% else %}
-                            {{ ((resolution.votesOnCount.actions/meeting.totalActions)*100)|number_format(2,"."," ") }}
+                            {{ (meeting.totalActions> 0?((resolution.votesOnCount.actions/meeting.totalActions)*100):0)|number_format(2,"."," ") }}
                             {% endif %}
                             %
                         {% endif %}
@@ -97,9 +94,9 @@
                     <td>
                         {% if resolution.votesAgainstCount is defined and resolution.votesAgainstCount is not empty %}
                         {% if(meeting.weight==1) %}
-                            {{ ((resolution.votesAgainstCount.votes/meeting.totalVotes)*100)|number_format(2,"."," ") }}
+                            {{ (meeting.totalVotes > 0 ?((resolution.votesAgainstCount.votes/meeting.totalVotes)*100):0)|number_format(2,"."," ") }}
                         {% else %}
-                            {{ ((resolution.votesAgainstCount.actions/meeting.totalActions)*100)|number_format(2,"."," ") }}
+                            {{ (meeting.totalActions> 0?((resolution.votesAgainstCount.actions/meeting.totalActions)*100):0)|number_format(2,"."," ") }}
                         {% endif %}%
                         {% endif %}
                     </td>
@@ -107,24 +104,24 @@
                     <td>
                         {% if resolution.votesHoldCount is defined and resolution.votesHoldCount is not empty %}
                         {% if(meeting.weight==1) %}
-                            {{ ((resolution.votesHoldCount.votes/meeting.totalVotes)*100)|number_format(2,"."," ") }}
+                            {{ (meeting.totalVotes>0 ?((resolution.votesHoldCount.votes/meeting.totalVotes)*100):0)|number_format(2,"."," ") }}
                         {% else %}
-                            {{ ((resolution.votesHoldCount.actions/meeting.totalActions)*100)|number_format(2,"."," ") }}
+                            {{ (meeting.totalActions>0 ?((resolution.votesHoldCount.actions/meeting.totalActions)*100):0)|number_format(2,"."," ") }}
                         {% endif %}%
                         {% endif %}
                     </td>
                     {% endif %}
+                    {% if meeting.status==1 %}
                     <td>
                         {% if active.active is defined and active.active is null %}
                         {% if resolution.accepted is null %}
-                        <button class="btn btn-primary btn-sm btn-gm-activate-vote" data-href="{{ path('app_general_meeting_activate_vote',{slug:meeting.slug,number:(key+1)}) }}">{% trans %}Aktywuj{% endtrans %}</button>
+                            <button class="btn btn-primary btn-sm btn-gm-activate-vote" data-href="{{ path('app_general_meeting_activate_vote',{slug:meeting.slug,number:(key+1)}) }}">{% trans %}Aktywuj{% endtrans %}</button>
                         {% else %}
-                            {% if meeting.status==1 %}
                             <button class="btn btn-primary btn-sm btn-gm-repeat-vote" data-href="{{ path('app_general_meeting_activate_vote',{slug:meeting.slug,number:(key+1)}) }}">{% trans %}Powtórz{% endtrans %}</button>
-                                {% endif %}
                         {% endif %}
                         {% endif %}
                     </td>
+                    {% endif %}
                 </tr>
             {% endfor %}
                 </tbody>
@@ -182,6 +179,24 @@
                     {% endif %}
                     <div class="votes my-3">
                     {% if meeting.secret %}
+                        <div class="vote-row">
+                            <div class="vote-box"></div>
+                            {% for item in meeting.participantList.participants %}
+                                <div class="vote-box">
+                                    {{ item.aid }}
+                                </div>
+                            {% endfor %}
+                        </div>
+                        {% for i in 0..0 %}
+                            <div class="vote-row" id="vote_{{ i }}">
+                                <div class="vote-box">{% if i==0 %}T{% else %}{{ i }}{% endif %}</div>
+                                {% for item in meeting.participantList.participants %}
+                                    <div class="vote-box {%if active.votes[i][item.aid] is defined %}{{active.votes[i][item.aid]|gm_vote_color}}{% endif %}" id="vote_{{ item.aid }}_{{ i }}">
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        {% endfor %}
+
                         <div class="vote_progress">
 
                         {% for i in 1..meeting.count %}
@@ -217,9 +232,9 @@
                                 {% set a_a=0 %}
                                 {% set a_h=0 %}
                             {% endif %}
-                            {% set o_width=(meeting.weight==1? ((v_o/t_vot)*100)|number_format(2) : ((a_o/t_act)*100)|number_format(2) ) %}
-                            {% set a_width=(meeting.weight==1? ((v_a/t_vot)*100)|number_format(2) : ((a_a/t_act)*100)|number_format(2) ) %}
-                            {% set h_width=(meeting.weight==1? ((v_h/t_vot)*100)|number_format(2) : ((a_h/t_act)*100)|number_format(2) ) %}
+                            {% set o_width=(meeting.weight==1? ((v_o/meeting.totalVotes)*100)|number_format(2) : ((a_o/meeting.totalActions)*100)|number_format(2) ) %}
+                            {% set a_width=(meeting.weight==1? ((v_a/meeting.totalVotes)*100)|number_format(2) : ((a_a/meeting.totalActions)*100)|number_format(2) ) %}
+                            {% set h_width=(meeting.weight==1? ((v_h/meeting.totalVotes)*100)|number_format(2) : ((a_h/meeting.totalActions)*100)|number_format(2) ) %}
                             <div class="vote-row" id="vote_{{ i }}">
                                 <div class="vote-box">{{ i }}</div>
                                 <div class="progress" id="progress_{{ i }}">
@@ -262,8 +277,8 @@
 
                             <input type="hidden" id="votes_count" value="{{ vot }}">
                             <input type="hidden" id="actions_count" value="{{ act }}">
-                            <input type="hidden" id="actions_total" value="{{ t_act }}">
-                            <input type="hidden" id="votes_total" value="{{ t_vot }}">
+                            <input type="hidden" id="actions_total" value="{{ meeting.totalActions }}">
+                            <input type="hidden" id="votes_total" value="{{ meeting.totalVotes }}">
                         {% if meeting.weight==1 %}
                             <span id="vot_span">{{ vot }}</span> {% trans %}głosów - co stanowi{% endtrans %} <span id="vot_span_total">{{ ((vot/t_vot)*100)|number_format(2) }}</span>%
                         {% else %}

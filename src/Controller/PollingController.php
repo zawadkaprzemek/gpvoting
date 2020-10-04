@@ -706,13 +706,25 @@ class PollingController extends AbstractController
         {
             $tot_a=0;
             $tot_v=0;
+            $abs_a=0;
+            $abs_v=0;
             $participants=$meeting->getParticipantList()->getParticipants();
             foreach ($participants as $participant)
             {
-                $tot_a=$tot_a+$participant->getActions();
-                $tot_v=$tot_v+$participant->getVotes();
+                if(array_key_exists($participant->getAid(),$active['votes'][0]))
+                {
+                    $tot_a=$tot_a+$participant->getActions();
+                    $tot_v=$tot_v+$participant->getVotes();
+                }else{
+                    $abs_a=$abs_a+$participant->getActions();
+                    $abs_v=$abs_v+$participant->getVotes();
+                }
+
             }
-            $meeting->setTotalActions($tot_a)->setTotalVotes($tot_v);
+            $meeting
+                ->setTotalActions($tot_a)->setTotalVotes($tot_v)
+                ->setAbsenceActions($abs_a)->setAbsenceVotes($abs_v)
+            ;
         }
         if($active['active']>0)
         {
@@ -723,23 +735,27 @@ class PollingController extends AbstractController
             $participants=$meeting->getParticipantList()->getParticipants();
             foreach ($participants as $participant)
             {
-                switch ($active['votes'][$curr][$participant->getAid()])
+                if(array_key_exists($participant->getAid(),$active['votes'][$curr]))
                 {
-                    case 1:
-                        $on['actions']=$on['actions']+$participant->getActions();
-                        $on['votes']=$on['votes']+$participant->getVotes();
-                        break;
-                    case 0:
-                        $against['actions']=$against['actions']+$participant->getActions();
-                        $against['votes']=$against['votes']+$participant->getVotes();
-                        break;
-                    case 2:
-                        $hold['actions']=$hold['actions']+$participant->getActions();
-                        $hold['votes']=$hold['votes']+$participant->getVotes();
-                        break;
-                    default:
-                        break;
+                    switch ($active['votes'][$curr][$participant->getAid()])
+                    {
+                        case 1:
+                            $on['actions']=$on['actions']+$participant->getActions();
+                            $on['votes']=$on['votes']+$participant->getVotes();
+                            break;
+                        case 0:
+                            $against['actions']=$against['actions']+$participant->getActions();
+                            $against['votes']=$against['votes']+$participant->getVotes();
+                            break;
+                        case 2:
+                            $hold['actions']=$hold['actions']+$participant->getActions();
+                            $hold['votes']=$hold['votes']+$participant->getVotes();
+                            break;
+                        default:
+                            break;
+                    }
                 }
+
             }
 
             if($meeting->getWeight()==1)
@@ -794,6 +810,49 @@ class PollingController extends AbstractController
 
     }
 
+    /**
+     * @Route("/{_locale}/manage/general_meeting/{id}/reset", name="app_manage_general_meeting_reset", methods={"PATCH"}))
+     * @param GeneralMeeting $meeting
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function resetGeneralMeeting(GeneralMeeting $meeting,Request $request)
+    {
+        if($meeting->getRoom()->getEvent()->getUser()!==$this->getUser())
+        {
+            return new JsonResponse(array('status'=>'error'));
+        }
+        if($meeting->getStatus()!==2)
+        {
+            return new JsonResponse(array('status'=>'error'));
+        }
+        $em=$this->getDoctrine()->getManager();
+        $meeting->setStatus(1);
+        if($meeting->getVariant()==1)
+        {
+            foreach ($meeting->getResolutions() as $resolution)
+            {
+                $resolution
+                    ->setAccepted(null)
+                    ->setVotesHoldCount(null)
+                    ->setVotesOnCount(null)
+                    ->setVotesHoldCount(null)
+                    ->setVotesAgainstCount(null);
+                $em->persist($resolution);
+            }
+            $meeting
+                ->setTotalVotes(null)
+                ->setTotalActions(null)
+                ->setActiveStatus(array('active'=>null,'votes'=>array(),'last'=>null));
+            ;
+        }
+
+        $em->persist($meeting);
+        $em->flush();
+        return new JsonResponse(array('status'=>'success'));
+
+    }
+
 
     /**
      * @Route("/{_locale}/manage/general_meeting/{slug}/cockpit", name="app_manage_general_meeting_cockpit")
@@ -836,11 +895,11 @@ class PollingController extends AbstractController
     public function generalMeetingJoin(GeneralMeeting $meeting,Request $request,ParticipantRepository $repository)
     {
         $session=$request->getSession();
-        if($meeting->getStatus()>1)
+        /*if($meeting->getStatus()>1)
         {
             $this->addFlash('warning',$this->translator->trans("Nie można przystąpić do tego zgromadzenia"));
             return $this->redirect($request->server->all()['HTTP_REFERER']);
-        }
+        }*/
 
         $uData=$session->get("user_gm_".$meeting->getSlug());
         if(!is_null($uData))
