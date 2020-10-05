@@ -664,7 +664,11 @@ class PollingController extends AbstractController
         $active=$meeting->getActiveStatus();
         $active['active']=0;
         $active["votes"][0]=array();
-        $meeting->setActiveStatus($active);
+        $meeting->setActiveStatus($active)
+                ->setTotalActions(0)
+                ->setTotalVotes(0)
+                ->setAbsenceVotes(0)
+                ->setAbsenceActions(0);
         $em=$this->getDoctrine()->getManager();
         $em->persist($meeting);
         $em->flush();
