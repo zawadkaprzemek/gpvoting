@@ -1,6 +1,6 @@
 <script type="text/javascript">
-    const socket = new WebSocket("ws://localhost:3100/meeting_{{ meeting.hashId }}");
-    //const socket = new WebSocket("ws://gpvoting.bolprzewlekly.pl:3100/meeting_{{ meeting.hashId }}");
+    //const socket = new WebSocket("ws://localhost:3100/meeting_{{ meeting.hashId }}");
+    const socket = new WebSocket("ws://gpvoting.bolprzewlekly.pl:3100/meeting_{{ meeting.hashId }}");
 
     socket.onopen = function(e) {
         console.log("Connection established!");
