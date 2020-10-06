@@ -108,8 +108,7 @@
                                 message: "meeting_start",
                                 type: 'gm_management'
                             }
-                            //const socket = new WebSocket("ws://gpvoting.bolprzewlekly.pl:3100/meeting_"+hash+"");
-                            const socket = new WebSocket("ws://localhost:3100/meeting_"+hash+"");
+                            const socket = new WebSocket("ws://{{app.request.getHost()}}:3100/meeting_"+hash+"");
 
                             socket.onopen = function(e) {
                                 console.log("Connection established!");
@@ -140,8 +139,7 @@
                                 message: "meeting_end",
                                 type: 'gm_management'
                             }
-                            const socket = new WebSocket("ws://gpvoting.bolprzewlekly.pl:3100/meeting_"+hash+"");
-                            //const socket = new WebSocket("ws://localhost:3100/meeting_"+hash+"");
+                            const socket = new WebSocket("ws://{{app.request.getHost()}}:3100/meeting_"+hash+"");
 
                             socket.onopen = function(e) {
                                 console.log("Connection established!");
@@ -172,8 +170,7 @@
                                 message: "meeting_start",
                                 type: 'gm_management'
                             }
-                            const socket = new WebSocket("ws://gpvoting.bolprzewlekly.pl:3100/meeting_"+hash+"");
-                            //const socket = new WebSocket("ws://localhost:3100/meeting_"+hash+"");
+                            const socket = new WebSocket("ws://{{app.request.getHost()}}:3100/meeting_"+hash+"");
 
                             socket.onopen = function(e) {
                                 console.log("Connection established!");
