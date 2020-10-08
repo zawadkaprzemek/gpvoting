@@ -34,6 +34,10 @@
         {% if meeting.participantList is null %}
             <p class="text-danger">{% trans %}Nie wybrałeś jeszcze listy uczestników!!!{% endtrans %}</p>
         {% endif %}
+
+        {% if meeting.variant==2 %}
+            <p>{% trans %}Maksymalnie do wyboru{% endtrans %}: {{ meeting.toChoose }}</p>
+        {% endif %}
         <div class="btn-group btn-group-sm">
         {% if meeting.status==0 %}
             <a href="{{ path('app_manage_general_meeting_edit',{slug:meeting.slug}) }}" class="btn btn-secondary">{% trans %}Edytuj{% endtrans %}</a>
@@ -46,6 +50,9 @@
                 {% if active.active is defined and active.active is null %}
                     {{ include('polling/general_meeting_start_test_vote_form.html.twig',{meeting:meeting}) }}
                 {% endif %}
+            {% endif %}
+            {% if meeting.variant==2 %}
+                <button class="btn btn-outline-success">{% trans %}Ustaw tytuł głosowania{% endtrans %}</button>
             {% endif %}
             {% if active.active is defined and active.active is not null %}
                 <button class="btn btn-outline-primary" data-href="{{ path('app_ajax_general_meeting_end_vote',{slug:meeting.slug}) }}" id="gm-end-vote">{% trans %}Zakończ obecne głosowanie{% endtrans %}</button>
@@ -277,8 +284,8 @@
 
                             <input type="hidden" id="votes_count" value="{{ vot }}">
                             <input type="hidden" id="actions_count" value="{{ act }}">
-                            <input type="hidden" id="actions_total" value="{{ meeting.totalActions }}">
-                            <input type="hidden" id="votes_total" value="{{ meeting.totalVotes }}">
+                            <input type="hidden" id="actions_total" value="{{ t_act }}">
+                            <input type="hidden" id="votes_total" value="{{ t_vot }}">
                         {% if meeting.weight==1 %}
                             <span id="vot_span">{{ vot }}</span> {% trans %}głosów - co stanowi{% endtrans %} <span id="vot_span_total">{{ ((vot/t_vot)*100)|number_format(2) }}</span>%
                         {% else %}
