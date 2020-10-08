@@ -52,7 +52,7 @@
                 {% endif %}
             {% endif %}
             {% if meeting.variant==2 %}
-                <button class="btn btn-outline-success">{% trans %}Ustaw tytuł głosowania{% endtrans %}</button>
+                <button class="btn btn-outline-success" data-toggle="modal" data-target="#titleModal">{% trans %}Ustaw tytuł głosowania{% endtrans %}</button>
             {% endif %}
             {% if active.active is defined and active.active is not null %}
                 <button class="btn btn-outline-primary" data-href="{{ path('app_ajax_general_meeting_end_vote',{slug:meeting.slug}) }}" id="gm-end-vote">{% trans %}Zakończ obecne głosowanie{% endtrans %}</button>
@@ -297,7 +297,38 @@
             </div>
         {% endif %}
     </div>
-
+{% if meeting.variant==2 %}
+    <div class="modal" id="titleModal" tabindex="-1" role="dialog" aria-labelledby="titleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <form id="titleForm">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="titleModalLabel">{% trans %}Ustaw tytuł głosowania{% endtrans %}</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                        <div class="form-group">
+                            <label for="title_title">{% trans %}Tytuł{% endtrans %}</label>
+                            <input type="text" id="title_title" class="form-control" required value="{% if meeting.activeStatus.title is defined %}{{ meeting.activeStatus.title }}{% endif %}" placeholder="{% trans %}Wprowadź tytuł głosowania{% endtrans %}">
+                        </div>
+                </div>
+                <div class="modal-footer">
+                    <div class="row w-100">
+                        <div class="col-6">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">{% trans %}Zamknij{% endtrans %}</button>
+                        </div>
+                        <div class="col-6 text-right">
+                            <button type="button" class="btn btn-primary">{% trans %}Zapisz{% endtrans %}</button>
+                        </div>
+                    </div>
+                </div>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endif %}
 {% endblock %}
 {% block javascripts %}
     {{ parent() }}
