@@ -298,6 +298,24 @@
         }
     });
 
+    $('#titleForm').on('submit',function (e){
+        e.preventDefault();
+        let title=$('#title_title').val();
+        let url=$(this).data('href');
+        $.ajax({
+            type: 'PATCH',
+            url: url,
+            dataType: 'json',
+            data:JSON.stringify({title:title}),
+            contentType: 'application/merge-patch+json',
+        }).done(function (result) {
+            if(result.status==="success")
+            {
+                $('#titleModal').modal('hide');
+            }
+        });
+    });
+
     function activateVote(url) {
         $.ajax({
             type: 'PATCH',

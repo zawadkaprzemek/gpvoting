@@ -301,7 +301,7 @@
     <div class="modal" id="titleModal" tabindex="-1" role="dialog" aria-labelledby="titleModalLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
-                <form id="titleForm">
+                <form id="titleForm" data-href="{{ path('app_meeting_save_title',{id:meeting.id}) }}">
                 <div class="modal-header">
                     <h5 class="modal-title" id="titleModalLabel">{% trans %}Ustaw tytuł głosowania{% endtrans %}</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -320,7 +320,7 @@
                             <button type="button" class="btn btn-secondary" data-dismiss="modal">{% trans %}Zamknij{% endtrans %}</button>
                         </div>
                         <div class="col-6 text-right">
-                            <button type="button" class="btn btn-primary">{% trans %}Zapisz{% endtrans %}</button>
+                            <button type="submit" class="btn btn-primary">{% trans %}Zapisz{% endtrans %}</button>
                         </div>
                     </div>
                 </div>

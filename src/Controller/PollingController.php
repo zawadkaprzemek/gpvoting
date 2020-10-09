@@ -641,6 +641,10 @@ class PollingController extends AbstractController
 
         $meeting->setStatus(1);
         $active=array('active'=>null,'votes'=>array(),'last'=>null);
+        if($meeting->getVariant()==2)
+        {
+            $active['title']=null;
+        }
         $meeting->setActiveStatus($active);
         $em=$this->getDoctrine()->getManager();
         $em->persist($meeting);
@@ -990,6 +994,28 @@ class PollingController extends AbstractController
         $em->flush();
         return new JsonResponse(array('status'=>'success'));
 
+    }
+
+    /**
+     * @Route("/{_locale}/manage/general_meeting/{id}/save_title", name="app_meeting_save_title", methods={"PATCH"})
+     * @param GeneralMeeting $meeting
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function saveMeetingTitle(GeneralMeeting $meeting,Request $request): JsonResponse
+    {
+        if($meeting->getRoom()->getEvent()->getUser()!==$this->getUser())
+        {
+            return new JsonResponse(array('status'=>'error'));
+        }
+        $em=$this->getDoctrine()->getManager();
+        $content=json_decode($request->getContent());
+        $active=$meeting->getActiveStatus();
+        $active['title']=$content->title;
+        $meeting->setActiveStatus($active);
+        $em->persist($meeting);
+        $em->flush();
+        return new JsonResponse(array('status'=>'success'));
     }
 
 }
