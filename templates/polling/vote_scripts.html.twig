@@ -6,24 +6,22 @@
     };
 
 
-    function addMessage(name, message,type,votes,actions) {
-        if(type==="vote")
-        {
-            let v_total=$('#votes_total').val();
-            let a_total=$('#actions_total').val();
+    function addMessage(name, message,type,votes,actions,valid=true) {
+        if(type==="vote") {
+            let v_total = $('#votes_total').val();
+            let a_total = $('#actions_total').val();
             let res = name.split("_");
-            if(res[(res.length-1)]==="0")
-            {
-                let v_count=parseInt($('#votes_count').val())+parseInt(votes);
-                let a_count=parseInt($('#actions_count').val())+parseInt(actions);
+            if (res[(res.length - 1)] === "0") {
+                let v_count = parseInt($('#votes_count').val()) + parseInt(votes);
+                let a_count = parseInt($('#actions_count').val()) + parseInt(actions);
                 $('#votes_count').val(v_count);
                 $('#actions_count').val(a_count);
                 $('#act_span').text(a_count);
                 $('#vot_span').text(v_count);
-                let v_p=(v_count/v_total)*100;
-                v_p=v_p.toFixed(2);
-                let a_p=(a_count/a_total)*100;
-                a_p=a_p.toFixed(2);
+                let v_p = (v_count / v_total) * 100;
+                v_p = v_p.toFixed(2);
+                let a_p = (a_count / a_total) * 100;
+                a_p = a_p.toFixed(2);
                 $('#act_span_total').text(a_p);
                 $('#vot_span_total').text(v_p);
             }
@@ -32,70 +30,72 @@
             let votes_count;
             let actions_count;
             let percent;
-                switch (message) {
-                    case 1:
-                        votes_count=$('#progressOn_'+res[(res.length-1)]).data('votes');
-                        actions_count=$('#progressOn_'+res[(res.length-1)]).data('actions');
-                        votes_count=parseInt(votes_count)+parseInt(votes);
-                        actions_count=parseInt(actions_count)+parseInt(actions);
-                    {% if meeting.weight==1 %}
-                        percent=(votes_count/v_total)*100;
-                        percent=percent.toFixed(2);
-                    {% else %}
-                        percent=(actions_count/a_total)*100;
-                        percent=percent.toFixed(2);
-                    {% endif %}
-                        $('#progressOn_'+res[(res.length-1)]).data('votes',votes_count).data('actions',actions_count)
-                            .attr('aria-valuenow',percent).prop('title',percent+'%')
-                            .css({'width':percent+'%'})
+            switch (message) {
+                case 1:
+                    votes_count = $('#progressOn_' + res[(res.length - 1)]).data('votes');
+                    actions_count = $('#progressOn_' + res[(res.length - 1)]).data('actions');
+                    votes_count = parseInt(votes_count) + parseInt(votes);
+                    actions_count = parseInt(actions_count) + parseInt(actions);
+                {% if meeting.weight==1 %}
+                    percent = (votes_count / v_total) * 100;
+                    percent = percent.toFixed(2);
+                {% else %}
+                    percent = (actions_count / a_total) * 100;
+                    percent = percent.toFixed(2);
+                {% endif %}
+                    $('#progressOn_' + res[(res.length - 1)]).data('votes', votes_count).data('actions', actions_count)
+                        .attr('aria-valuenow', percent).prop('title', percent + '%')
+                        .css({'width': percent + '%'})
                     break;
-                    case 0:
-                        votes_count=$('#progressAgainst_'+res[(res.length-1)]).data('votes');
-                        actions_count=$('#progressAgainst_'+res[(res.length-1)]).data('actions');
-                        votes_count=parseInt(votes_count)+parseInt(votes);
-                        actions_count=parseInt(actions_count)+parseInt(actions);
-                    {% if meeting.weight==1 %}
-                        percent=(votes_count/v_total)*100;
-                        percent=percent.toFixed(2);
-                    {% else %}
-                        percent=(actions_count/a_total)*100;
-                        percent=percent.toFixed(2);
-                    {% endif %}
-                        $('#progressAgainst_'+res[(res.length-1)]).data('votes',votes_count).data('actions',actions_count)
-                            .attr('aria-valuenow',percent).prop('title',percent+'%')
-                            .css({'width':percent+'%'})
-                        break;
-                    case 2:
-                        votes_count=$('#progressHold_'+res[(res.length-1)]).data('votes');
-                        actions_count=$('#progressHold_'+res[(res.length-1)]).data('actions');
-                        votes_count=parseInt(votes_count)+parseInt(votes);
-                        actions_count=parseInt(actions_count)+parseInt(actions);
-                    {% if meeting.weight==1 %}
-                        percent=(votes_count/v_total)*100;
-                        percent=percent.toFixed(2);
-                    {% else %}
-                        percent=(actions_count/a_total)*100;
-                        percent=percent.toFixed(2);
-                    {% endif %}
-                        $('#progressHold_'+res[(res.length-1)]).data('votes',votes_count).data('actions',actions_count)
-                            .attr('aria-valuenow',percent).prop('title',percent+'%')
-                            .css({'width':percent+'%'})
-                        break;
-                    default:
-                        break;
-                }
+                case 0:
+                    votes_count = $('#progressAgainst_' + res[(res.length - 1)]).data('votes');
+                    actions_count = $('#progressAgainst_' + res[(res.length - 1)]).data('actions');
+                    votes_count = parseInt(votes_count) + parseInt(votes);
+                    actions_count = parseInt(actions_count) + parseInt(actions);
+                {% if meeting.weight==1 %}
+                    percent = (votes_count / v_total) * 100;
+                    percent = percent.toFixed(2);
+                {% else %}
+                    percent = (actions_count / a_total) * 100;
+                    percent = percent.toFixed(2);
+                {% endif %}
+                    $('#progressAgainst_' + res[(res.length - 1)]).data('votes', votes_count).data('actions', actions_count)
+                        .attr('aria-valuenow', percent).prop('title', percent + '%')
+                        .css({'width': percent + '%'})
+                    break;
+                case 2:
+                    votes_count = $('#progressHold_' + res[(res.length - 1)]).data('votes');
+                    actions_count = $('#progressHold_' + res[(res.length - 1)]).data('actions');
+                    votes_count = parseInt(votes_count) + parseInt(votes);
+                    actions_count = parseInt(actions_count) + parseInt(actions);
+                {% if meeting.weight==1 %}
+                    percent = (votes_count / v_total) * 100;
+                    percent = percent.toFixed(2);
+                {% else %}
+                    percent = (actions_count / a_total) * 100;
+                    percent = percent.toFixed(2);
+                {% endif %}
+                    $('#progressHold_' + res[(res.length - 1)]).data('votes', votes_count).data('actions', actions_count)
+                        .attr('aria-valuenow', percent).prop('title', percent + '%')
+                        .css({'width': percent + '%'})
+                    break;
+                default:
+                    break;
+            }
             {% endif %}
-            $('#vote_'+name).addClass(getVoteColor(message));
+            $('#vote_' + name).addClass(getVoteColor(message));
 
-            let a=parseInt($('.presence span.counter').text());
-            let sum=parseInt($('.presence span.sum').text());
+            let a = parseInt($('.presence span.counter').text());
             a++;
             $('.presence span.counter').text(a);
-            if (a==sum)
-            {
-                $('#gm-end-vote').prop('disabled',false);
-            }
 
+        }else if(type ==="vote_turn"){
+            $.each(message,function (k,vote){
+               $("#vote_"+name+"_"+vote).addClass(getVoteColor(valid));
+            });
+            let a = parseInt($('.presence span.counter').text());
+            a++;
+            $('.presence span.counter').text(a);
         }else if(type==="gm_management"){
             location.reload();
         }
@@ -105,9 +105,11 @@
         let _class="bg-";
         switch (vote) {
             case 1:
+            case true:
                 _class+="success";
                 break;
             case 0:
+            case false:
                 _class+="danger";
                 break;
             case 2:
@@ -124,7 +126,7 @@
         try
         {
             const message = JSON.parse(e.data);
-            addMessage(message.name, message.message,message.type,message.votes,message.actions);
+            addMessage(message.name, message.message,message.type,message.votes,message.actions,message.valid);
         }
         catch(e)
         {
@@ -284,7 +286,7 @@
 
     $('.btn-gm-activate-vote').on('click',function(){
        let url=$(this).data('href');
-       if(confirm('{% trans %}Na pewno chcesza aktywować głosowanie nad tą uchwałą?{% endtrans %}'))
+       if(confirm('{% trans %}Na pewno chcesz aktywować głosowanie nad tą uchwałą?{% endtrans %}'))
        {
            activateVote(url);
        }
@@ -292,11 +294,21 @@
 
     $('.btn-gm-repeat-vote').on('click',function(){
         let url=$(this).data('href');
-        if(confirm('{% trans %}Na pewno chcesza powtórzyć głosowanie nad tą uchwałą?{% endtrans %}'))
+        if(confirm('{% trans %}Na pewno chcesz powtórzyć głosowanie nad tą uchwałą?{% endtrans %}'))
         {
             activateVote(url);
         }
     });
+
+    $('.btn-activate-turn').on('click',function(){
+        let url=$(this).data('href');
+        if(confirm($(this).data('confirm')))
+        {
+            activateVote(url);
+        }
+    });
+
+
 
     $('#titleForm').on('submit',function (e){
         e.preventDefault();
@@ -315,6 +327,77 @@
             }
         });
     });
+    {% if meeting.variant==2 %}
+    $('#voteCandidateForm').on('submit',function (e){
+       e.preventDefault();
+        let theCheckboxes = $(this).find("input[type='checkbox']");
+        const max={{ meeting.toChoose }};
+        let checked=theCheckboxes.filter(":checked");
+        let data=candidatesVoteData($(this).serializeArray());
+        if(checked.length===0)
+        {
+            alert("{% trans %}Wybierz kandydata/ów aby zagłosować{% endtrans %}")
+        }else if(checked.length>max)
+        {
+            {% if meeting.badVoteSettings==1 %}
+                candidatesVoteSend(data,false);
+            {% else %}
+                let warned=$(this).data('warned');
+                let warning=$(this).data('warning');
+                {% if meeting.badVoteSettings==2 %}
+                    alert(warning)
+                {% else %}
+                    if(!warned)
+                    {
+                        alert(warning);
+                        $(this).data('warned',true);
+                    }else{
+                        candidatesVoteSend(data,false);
+                    }
+                {% endif %}
+            {% endif %}
+        }else{
+            candidatesVoteSend(data,true);
+        }
+    });
+    {% endif %}
+
+    function candidatesVoteSend(votes,valid)
+    {
+        let url='{{ path('app_ajax_general_meeting_save',{slug:meeting.slug}) }}';
+        let aid='{% if participant is defined %}{{ participant.aid }}{% else %}A0{% endif %}'
+        const message = {
+            name: aid,
+            message: votes,
+            type:'vote_turn',
+            votes: '{% if participant is defined %}{{ participant.votes }}{% else %}0{% endif %}',
+            actions: '{% if participant is defined %}{{ participant.actions }}{% else %}0{% endif %}',
+            valid :valid
+        };
+        $.ajax({
+            type: 'PATCH',
+            url: url,
+            data: JSON.stringify({user:aid,votes:votes,valid:valid}),
+            processData: true,
+            contentType: 'application/merge-patch+json',
+        }).done(function (result) {
+            if(result.status==="success")
+            {
+                socket.send(JSON.stringify(message));
+                addMessage(message.name, message.message,message.type,message.votes,message.actions,message.valid);
+                $('#voteCandidateForm').find('button').prop('disabled',true);
+            }
+        });
+    }
+
+    function candidatesVoteData(data)
+    {
+        let res=[];
+        $.each(data,function (k,item){
+            res.push(item.value);
+        });
+        return res;
+    }
 
     function activateVote(url) {
         $.ajax({

@@ -644,6 +644,8 @@ class PollingController extends AbstractController
         if($meeting->getVariant()==2)
         {
             $active['title']=null;
+            $active['turn']=null;
+            $active['vote']=[];
         }
         $meeting->setActiveStatus($active);
         $em=$this->getDoctrine()->getManager();
@@ -689,7 +691,18 @@ class PollingController extends AbstractController
     {
         $data=json_decode($request->getContent());
         $active=$meeting->getActiveStatus();
-        $active['votes'][$active['active']][$data->user]=$data->vote;
+        if($meeting->getVariant()==1)
+        {
+            $active['votes'][$active['active']][$data->user]=$data->vote;
+        }else{
+            foreach ($data->votes as $vote)
+            {
+                $active['votes'][$active['turn']][$vote][$data->user]=$data->valid;
+            }
+            $active['vote'][]=$data->user;
+            $active['vote']=array_unique($active['vote']);
+        }
+
         $meeting->setActiveStatus($active);
         $em=$this->getDoctrine()->getManager();
         $em->persist($meeting);
@@ -734,56 +747,86 @@ class PollingController extends AbstractController
                 ->setAbsenceActions($abs_a)->setAbsenceVotes($abs_v)
             ;
         }
-        if($active['active']>0)
+        if($meeting->getVariant()==1)
         {
-            $curr=$active['active'];
-            $on=array('actions'=>0,'votes'=>0);
-            $against=array('actions'=>0,'votes'=>0);
-            $hold=array('actions'=>0,'votes'=>0);
-            $participants=$meeting->getParticipantList()->getParticipants();
-            foreach ($participants as $participant)
+            if($active['active']>0)
             {
-                if(array_key_exists($participant->getAid(),$active['votes'][$curr]))
+                $curr=$active['active'];
+                $on=array('actions'=>0,'votes'=>0);
+                $against=array('actions'=>0,'votes'=>0);
+                $hold=array('actions'=>0,'votes'=>0);
+                $participants=$meeting->getParticipantList()->getParticipants();
+                foreach ($participants as $participant)
                 {
-                    switch ($active['votes'][$curr][$participant->getAid()])
+                    if(array_key_exists($participant->getAid(),$active['votes'][$curr]))
                     {
-                        case 1:
-                            $on['actions']=$on['actions']+$participant->getActions();
-                            $on['votes']=$on['votes']+$participant->getVotes();
-                            break;
-                        case 0:
-                            $against['actions']=$against['actions']+$participant->getActions();
-                            $against['votes']=$against['votes']+$participant->getVotes();
-                            break;
-                        case 2:
-                            $hold['actions']=$hold['actions']+$participant->getActions();
-                            $hold['votes']=$hold['votes']+$participant->getVotes();
-                            break;
-                        default:
-                            break;
+                        switch ($active['votes'][$curr][$participant->getAid()])
+                        {
+                            case 1:
+                                $on['actions']=$on['actions']+$participant->getActions();
+                                $on['votes']=$on['votes']+$participant->getVotes();
+                                break;
+                            case 0:
+                                $against['actions']=$against['actions']+$participant->getActions();
+                                $against['votes']=$against['votes']+$participant->getVotes();
+                                break;
+                            case 2:
+                                $hold['actions']=$hold['actions']+$participant->getActions();
+                                $hold['votes']=$hold['votes']+$participant->getVotes();
+                                break;
+                            default:
+                                break;
+                        }
                     }
+
                 }
 
-            }
+                if($meeting->getWeight()==1)
+                {
+                    $accepted=$on['actions']>$against['actions']&&$on['actions']>$hold['actions'];
+                }else{
+                    $accepted=$on['votes']>$against['votes']&&$on['votes']>$hold['votes'];
+                }
 
-            if($meeting->getWeight()==1)
+                /** @var Resolution $resolution */
+                $resolution=$meeting->getResolutions()->get($curr-1);
+                $resolution
+                    ->setVotesOnCount($on)
+                    ->setVotesAgainstCount($against)
+                    ->setVotesHoldCount($hold)
+                    ->setAccepted($accepted)
+                ;
+
+                $em->persist($resolution);
+            }
+        }else{
+            if($active['turn']>0)
             {
-                $accepted=$on['actions']>$against['actions']&&$on['actions']>$hold['actions'];
-            }else{
-                $accepted=$on['votes']>$against['votes']&&$on['votes']>$hold['votes'];
+                $curr=$active['active'];
+                $participants=$meeting->getParticipantList()->getParticipants();
+                $candidates=$meeting->getCandidates();
+                foreach ($active['votes'][$active['turn']] as $key=>$row)
+                {
+                    $actions=0;
+                    $votes=0;
+                    foreach ($participants as $participant)
+                    {
+                        if(array_key_exists($participant->getAid(),$row))
+                        {
+                            if($row[$participant->getAid()])
+                            {
+                                $actions+=$participant->getActions();
+                                $votes+=$participant->getVotes();
+                            }
+                        }
+                    }
+                    $candidates[$key-1]->setActionsCount(array($curr=>array('count'=>$actions,'percent'=>round(($actions/$meeting->getTotalActions())*100,2))));
+                    $candidates[$key-1]->setVotesCount(array($curr=>array('count'=>$votes,'percent'=>round(($votes/$meeting->getTotalVotes())*100,2))));
+                    $em->persist($candidates[$key-1]);
+                }
             }
-
-            /** @var Resolution $resolution */
-            $resolution=$meeting->getResolutions()->get($curr-1);
-            $resolution
-                ->setVotesOnCount($on)
-                ->setVotesAgainstCount($against)
-                ->setVotesHoldCount($hold)
-                ->setAccepted($accepted)
-            ;
-
-            $em->persist($resolution);
         }
+
         $active['last']=$active['active'];
         $active['active']=null;
         $meeting->setActiveStatus($active);
@@ -852,7 +895,9 @@ class PollingController extends AbstractController
                 ->setTotalVotes(null)
                 ->setTotalActions(null)
                 ->setActiveStatus(array('active'=>null,'votes'=>array(),'last'=>null));
-            ;
+
+        }else{
+            $meeting->setActiveStatus(array('active'=>null,'votes'=>array(),'last'=>null,'title'=>null,'turn'=>null,'vote'=>array()));
         }
 
         $em->persist($meeting);
@@ -903,11 +948,6 @@ class PollingController extends AbstractController
     public function generalMeetingJoin(GeneralMeeting $meeting,Request $request,ParticipantRepository $repository)
     {
         $session=$request->getSession();
-        /*if($meeting->getStatus()>1)
-        {
-            $this->addFlash('warning',$this->translator->trans("Nie można przystąpić do tego zgromadzenia"));
-            return $this->redirect($request->server->all()['HTTP_REFERER']);
-        }*/
 
         $uData=$session->get("user_gm_".$meeting->getSlug());
         if(!is_null($uData))
@@ -987,7 +1027,21 @@ class PollingController extends AbstractController
 
         $active=$meeting->getActiveStatus();
         $active['active']=$number;
-        $active['votes'][$number]=array();
+
+        if($meeting->getVariant()==1)
+        {
+            $active['votes'][$number]=array();
+        }
+        if($meeting->getVariant()==2)
+        {
+            $votes_arr=[];
+            foreach ($meeting->getCandidates() as $key=>$candidate)
+            {
+                $votes_arr[$key+1]=array();
+            }
+            $active['votes'][$number]=$votes_arr;
+            $active['turn']=$number;
+        }
         $meeting->setActiveStatus($active);
         $em=$this->getDoctrine()->getManager();
         $em->persist($meeting);

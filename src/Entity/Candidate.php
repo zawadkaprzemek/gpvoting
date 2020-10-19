@@ -29,9 +29,14 @@ class Candidate
     private $name;
 
     /**
-     * @ORM\Column(type="integer", nullable=true)
+     * @ORM\Column(type="array")
      */
     private $votes_count;
+
+    /**
+     * @ORM\Column(type="array")
+     */
+    private $actions_count = [];
 
     public function getId(): ?int
     {
@@ -62,14 +67,26 @@ class Candidate
         return $this;
     }
 
-    public function getVotesCount(): ?int
+    public function getVotesCount(): ?array
     {
         return $this->votes_count;
     }
 
-    public function setVotesCount(?int $votes_count): self
+    public function setVotesCount(array $votes_count): self
     {
         $this->votes_count = $votes_count;
+
+        return $this;
+    }
+
+    public function getActionsCount(): ?array
+    {
+        return $this->actions_count;
+    }
+
+    public function setActionsCount(array $actionsCount): self
+    {
+        $this->actions_count = $actionsCount;
 
         return $this;
     }

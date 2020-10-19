@@ -68,6 +68,9 @@ class GeneralMeeting
     /**
      * @ORM\Column(type="integer", nullable=true)
      * ustawienia błędnej ilości odpowiedzi
+     * Pozwól, nie ostrzegaj=>1,
+     * Nie pozwól, blokuj=>2,
+     * Ostrzegaj ale pozwól=>3
      */
     private $badVoteSettings;
 

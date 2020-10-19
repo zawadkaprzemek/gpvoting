@@ -53,6 +53,13 @@
             {% endif %}
             {% if meeting.variant==2 %}
                 <button class="btn btn-outline-success" data-toggle="modal" data-target="#titleModal">{% trans %}Ustaw tytuł głosowania{% endtrans %}</button>
+                {% if active.active is null %}
+                {% if active.turn is defined %}
+                    <button class="btn btn-outline-dark btn-activate-turn" data-confirm="{% trans with { '%turn%':(active.turn+1)} %}Na pewno chcesz rozpocząć %turn% turę?{% endtrans %}" data-href="{{ path('app_general_meeting_activate_vote',{slug:meeting.slug,number:(active.turn+1)}) }}">
+                        {% trans with { '%turn%':(active.turn+1)} %}Rozpocznij %turn% turę{% endtrans %}
+                    </button>
+                {% endif %}
+                    {% endif %}
             {% endif %}
             {% if active.active is defined and active.active is not null %}
                 <button class="btn btn-outline-primary" data-href="{{ path('app_ajax_general_meeting_end_vote',{slug:meeting.slug}) }}" id="gm-end-vote">{% trans %}Zakończ obecne głosowanie{% endtrans %}</button>
@@ -146,7 +153,17 @@
                     <tr>
                         <td>{{ key+1 }}</td>
                         <td>{{ candidate.name }}</td>
-                        <td>{{ candidate.votesCount }}</td>
+                        <td>
+                            {% if meeting.weight==1 %}
+                                {% for key,item in candidate.votesCount %}
+                                    <p>{% trans %}Tura{% endtrans %} 1: {{ item.percent|number_format() }}%</p>
+                                {% endfor %}
+                            {% else %}
+                                {% for key,item in candidate.actionsCount %}
+                                    <p>{% trans %}Tura{% endtrans %} 1: {{ item.percent }}%
+                                {% endfor %}
+                            {% endif %}
+                        </td>
                         <td></td>
                     </tr>
                 {% endfor %}
@@ -161,7 +178,11 @@
                         <h4>{% trans %}Trwa sprawdzanie obecności uczestników{% endtrans %}</h4>
                         {% else %}
                         <p>{% trans %}Aktualne głosowanie:{% endtrans %}</p>
-                        <h4>{{ meeting.resolutions[active.active-1].content }}</h4>
+                            {% if meeting.variant==1 %}
+                                    <h4>{{ meeting.resolutions[active.active-1].content }}</h4>
+                                {% else %}
+                                    <h2>{{ active.title }} - {% trans with {'%turn%':active.turn} %}%turn% tura{% endtrans %}</h2>
+                                {% endif %}
                     {% endif %}
                     {% endif %}
                 </div>
@@ -264,17 +285,30 @@
                             {% for i in 0..meeting.count %}
                                 <div class="vote-row" id="vote_{{ i }}">
                                     <div class="vote-box">{% if i==0 %}T{% else %}{{ i }}{% endif %}</div>
+                                    {% if meeting.variant==1 %}
                                     {% for item in meeting.participantList.participants %}
                                         <div class="vote-box {%if active.votes[i][item.aid] is defined %}{{active.votes[i][item.aid]|gm_vote_color}}{% endif %}" id="vote_{{ item.aid }}_{{ i }}">
                                         </div>
                                     {% endfor %}
+                                    {% else %}
+                                        {% for item in meeting.participantList.participants %}
+                                            {% if i==0 %}
+                                                <div class="vote-box {%if active.votes[i][item.aid] is defined %}{{active.votes[i][item.aid]|gm_vote_color}}{% endif %}" id="vote_{{ item.aid }}_{{ i }}">
+                                                </div>
+                                            {% else %}
+                                            <div class="vote-box {%if active.votes[active.turn][i][item.aid] is defined %}{{active.votes[active.turn][i][item.aid]|gm_vote_color}}{% endif %}" id="vote_{{ item.aid }}_{{ i }}">
+                                            </div>
+                                                {% endif %}
+                                        {% endfor %}
+                                        {% endif %}
                                 </div>
                             {% endfor %}
                     {% endif %}
                     </div>
                     <div class="presence">
                         {% if active.votes is defined and active.votes[active.active] is defined%}
-                            <p>{% trans %}Zagłosowało{% endtrans %}: <span class="counter">{{ active.votes[active.active]|length }}</span>/<span class="sum">{{ (meeting.participantList.participants|length) }}</span></p>
+                            <p>{% trans %}Zagłosowało{% endtrans %}:
+                                <span class="counter">{% if meeting.variant==1 %}{{ active.votes[active.active]|length }}{% else %}{{active.vote|length}}{% endif %}</span>/<span class="sum">{{ (meeting.participantList.participants|length) }}</span></p>
                         {% endif %}
                         <p>{% trans %}Na sali znajduje się{% endtrans %}:</p>
                         <p>
