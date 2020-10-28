@@ -74,7 +74,7 @@
                                 {% if meeting.variant==1 %}
                                 <h2>{{ meeting.resolutions[(active.active-1)].content }}</h2>
                                     {% else %}
-                                        <h2>{{ active.title }} - {% trans with {'%turn%':active.turn} %}%turn% tura{% endtrans %}</h2>
+                                        <h2>{% if active.title=='' %}{{ meeting.name }}{% else %}{{ active.title }}{% endif %} - {% trans with {'%turn%':active.turn} %}%turn% tura{% endtrans %}</h2>
                                     {% endif %}
                         {% endif %}
                         {% if meeting.variant==1 %}
@@ -100,19 +100,36 @@
                             <ul class="list-group mb-2 vote-ul">
                                 {% set voted=false %}
                                 {% for key,candidate in meeting.candidates %}
-                                    <input name="vote[]"
-                                           type="checkbox"
-                                           {% if active.votes[active.turn][(key+1)][participant.aid] is defined %}
-                                               {% set voted=true %}
-                                               checked
-                                            {% endif %}
-                                           value="{{ candidate.id }}" class="d-none" id="candidate_{{ (key+1) }}">
-                                    <label class="list-group-item list-group-item-action mb-0" for="candidate_{{ (key+1) }}">{{ candidate.name }}</label>
+                                    {% if active.turn==2 %}
+                                        {% if candidate.secondTurn %}
+                                        <input name="vote"
+                                               type="radio"
+                                                {% if active.votes[active.turn][(key+1)][participant.aid] is defined %}
+                                                    {% set voted=true %}
+                                                    checked
+                                                {% endif %}
+                                               value="{{ candidate.id }}" class="d-none" id="candidate_{{ (key+1) }}">
+                                        <label class="list-group-item list-group-item-action mb-0" for="candidate_{{ (key+1) }}">{{ candidate.name }}</label>
+                                        {% endif %}
+                                    {% else %}
+                                        <input name="vote[]"
+                                               type="checkbox"
+                                                {% if active.votes[active.turn][(key+1)][participant.aid] is defined %}
+                                                    {% set voted=true %}
+                                                    checked
+                                                {% endif %}
+                                               value="{{ candidate.id }}" class="d-none" id="candidate_{{ (key+1) }}">
+                                        <label class="list-group-item list-group-item-action mb-0" for="candidate_{{ (key+1) }}">{{ candidate.name }}</label>
+                                    {% endif %}
                                 {% endfor %}
                             </ul>
                                 <button type="submit" class="btn btn-outline-primary" {% if voted %}disabled{% endif %}>{% trans %}Głosuj{% endtrans %}</button>
                             </form>
-
+                            {% if voted %}
+                                <script>
+                                    $('#voteCandidateForm input').prop('disabled',true);
+                                </script>
+                                {% endif %}
                             {% endif %}
                         {% endif %}
                     </div>
@@ -126,7 +143,7 @@
                             </div>
                     </div>
                     {% for i in 0..meeting.count %}
-                        <div class="vote-row" id="vote_{{ i }}">
+                        <div class="vote-row {% if meeting.variant==2 and active.turn==2 and i>0 and meeting.candidates[i-1].secondTurn == false %}d-none{% endif%}" id="vote_{{ i }}">
                             <div class="vote-box">{% if i==0 %}T{% else %}{{ i }}{% endif %}</div>
                             {% if meeting.variant==1 %}
                             <div class="vote-box {%if active.votes[i][participant.aid] is defined %}{{active.votes[i][participant.aid]|gm_vote_color}}{% endif %}" id="vote_{{ participant.aid }}_{{ i }}"></div>
@@ -223,7 +240,21 @@
                         <tr>
                             <td>{{ key+1 }}</td>
                             <td>{{ candidate.name }}</td>
-                            <td>{{ candidate.votesCount }}</td>
+                            <td>
+                                {% if meeting.weight==1 %}
+                                    {% for key,item in candidate.votesCount %}
+                                        {% if item.percent is defined %}
+                                            <p>{% trans %}Tura{% endtrans %} {{ key }}: {{ item.percent|number_format() }}%</p>
+                                        {% endif %}
+                                    {% endfor %}
+                                {% else %}
+                                    {% for key,item in candidate.actionsCount %}
+                                        {% if item.percent is defined %}
+                                            <p>{% trans %}Tura{% endtrans %} {{ key }}: {{ item.percent }}%</p>
+                                        {% endif %}
+                                    {% endfor %}
+                                {% endif %}
+                            </td>
                             <td></td>
                         </tr>
                     {% endfor %}

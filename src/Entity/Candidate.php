@@ -38,6 +38,11 @@ class Candidate
      */
     private $actions_count = [];
 
+    /**
+     * @ORM\Column(type="boolean")
+     */
+    private $secondTurn=false;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -87,6 +92,18 @@ class Candidate
     public function setActionsCount(array $actionsCount): self
     {
         $this->actions_count = $actionsCount;
+
+        return $this;
+    }
+
+    public function isSecondTurn(): ?bool
+    {
+        return $this->secondTurn;
+    }
+
+    public function setSecondTurn(bool $secondTurn): self
+    {
+        $this->secondTurn = $secondTurn;
 
         return $this;
     }

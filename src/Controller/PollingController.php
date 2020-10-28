@@ -695,12 +695,18 @@ class PollingController extends AbstractController
         {
             $active['votes'][$active['active']][$data->user]=$data->vote;
         }else{
-            foreach ($data->votes as $vote)
+            if($active['active']==0)
             {
-                $active['votes'][$active['turn']][$vote][$data->user]=$data->valid;
+                $active['votes'][$active['active']][$data->user]=$data->vote;
+            }else{
+                foreach ($data->votes as $vote)
+                {
+                    $active['votes'][$active['turn']][$vote][$data->user]=$data->valid;
+                }
+                $active['vote'][]=$data->user;
+                $active['vote']=array_unique($active['vote']);
             }
-            $active['vote'][]=$data->user;
-            $active['vote']=array_unique($active['vote']);
+
         }
 
         $meeting->setActiveStatus($active);
@@ -805,6 +811,7 @@ class PollingController extends AbstractController
                 $curr=$active['active'];
                 $participants=$meeting->getParticipantList()->getParticipants();
                 $candidates=$meeting->getCandidates();
+                $resultArray=array();
                 foreach ($active['votes'][$active['turn']] as $key=>$row)
                 {
                     $actions=0;
@@ -820,10 +827,43 @@ class PollingController extends AbstractController
                             }
                         }
                     }
-                    $candidates[$key-1]->setActionsCount(array($curr=>array('count'=>$actions,'percent'=>round(($actions/$meeting->getTotalActions())*100,2))));
-                    $candidates[$key-1]->setVotesCount(array($curr=>array('count'=>$votes,'percent'=>round(($votes/$meeting->getTotalVotes())*100,2))));
+                    $cActions=$candidates[$key-1]->getActionsCount();
+                    $cVotes=$candidates[$key-1]->getVotesCount();
+                    $cActions[$curr]=array('count'=>$actions,'percent'=>round(($actions/$meeting->getTotalActions())*100,2));
+                    $cVotes[$curr]=array('count'=>$votes,'percent'=>round(($votes/$meeting->getTotalVotes())*100,2));
+                    $candidates[$key-1]->setActionsCount($cActions);
+                    $candidates[$key-1]->setVotesCount($cVotes);
+                    if($meeting->getVariant()==1)
+                    {
+                        array_push($resultArray,array('candidate'=>$key-1,'result'=>$candidates[$key-1]->getVotesCount()[$active['turn']]['percent']));
+                    }else{
+                        array_push($resultArray,array('candidate'=>$key-1,'result'=>$candidates[$key-1]->getActionsCount()[$active['turn']]['percent']));
+                    }
                     $em->persist($candidates[$key-1]);
                 }
+                $array_column = array_column($resultArray, "result");
+                array_multisort( $array_column, SORT_DESC, $resultArray);
+                if($resultArray[0]['result']>0)
+                {
+                    $candidates[$resultArray[0]['candidate']]->setSecondTurn(true);
+                    $em->persist($candidates[$resultArray[0]['candidate']]);
+                    if($resultArray[1]['result']>0)
+                    {
+                        $candidates[$resultArray[1]['candidate']]->setSecondTurn(true);
+                        $em->persist($candidates[$resultArray[1]['candidate']]);
+                        for($i=2;$i<sizeof($resultArray);$i++)
+                        {
+                            if($resultArray[1]['result']==$resultArray[$i]['result'])
+                            {
+                                $candidates[$resultArray[$i]['candidate']]->setSecondTurn(true);
+                                $em->persist($candidates[$resultArray[$i]['candidate']]);
+                            }else{
+                                break;
+                            }
+                        }
+                    }
+                }
+
             }
         }
 
@@ -897,7 +937,15 @@ class PollingController extends AbstractController
                 ->setActiveStatus(array('active'=>null,'votes'=>array(),'last'=>null));
 
         }else{
-            $meeting->setActiveStatus(array('active'=>null,'votes'=>array(),'last'=>null,'title'=>null,'turn'=>null,'vote'=>array()));
+            foreach ($meeting->getCandidates() as $candidate)
+            {
+                $candidate
+                    ->setActionsCount(array())
+                    ->setVotesCount(array())
+                    ->setSecondTurn(false);
+                $em->persist($candidate);
+                $meeting->setActiveStatus(array('active'=>null,'votes'=>array(),'last'=>null,'title'=>null,'turn'=>null,'vote'=>array()));
+            }
         }
 
         $em->persist($meeting);
@@ -1024,10 +1072,9 @@ class PollingController extends AbstractController
         {
             return new JsonResponse(array('status'=>'error'));
         }
-
+        $em=$this->getDoctrine()->getManager();
         $active=$meeting->getActiveStatus();
         $active['active']=$number;
-
         if($meeting->getVariant()==1)
         {
             $active['votes'][$number]=array();
@@ -1035,15 +1082,39 @@ class PollingController extends AbstractController
         if($meeting->getVariant()==2)
         {
             $votes_arr=[];
+            $active['turn']=$number;
             foreach ($meeting->getCandidates() as $key=>$candidate)
             {
-                $votes_arr[$key+1]=array();
+                if($active['turn']==1)
+                {
+                    $votes_arr[$key+1]=array();
+                    $votes=$candidate->getVotesCount();
+                    $actions=$candidate->getActionsCount();
+                    $votes[1]=array();
+                    $actions[1]=array();
+                    $candidate->setVotesCount($votes)->setActionsCount($actions)->setSecondTurn(false);
+                    $em->persist($candidate);
+                }
+
+                if($active['turn']==2)
+                {
+                    if($candidate->isSecondTurn())
+                    {
+                        $votes_arr[$key+1]=array();
+                        $votes_arr[$key+1]=array();
+                        $votes=$candidate->getVotesCount();
+                        $actions=$candidate->getActionsCount();
+                        $votes[2]=array();
+                        $actions[2]=array();
+                        $candidate->setVotesCount($votes)->setActionsCount($actions);
+                        $em->persist($candidate);
+                    }
+                }
             }
             $active['votes'][$number]=$votes_arr;
-            $active['turn']=$number;
         }
         $meeting->setActiveStatus($active);
-        $em=$this->getDoctrine()->getManager();
+
         $em->persist($meeting);
         $em->flush();
         return new JsonResponse(array('status'=>'success'));

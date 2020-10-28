@@ -7,9 +7,9 @@
 
 
     function addMessage(name, message,type,votes,actions,valid=true) {
+        let v_total = $('#votes_total').val();
+        let a_total = $('#actions_total').val();
         if(type==="vote") {
-            let v_total = $('#votes_total').val();
-            let a_total = $('#actions_total').val();
             let res = name.split("_");
             if (res[(res.length - 1)] === "0") {
                 let v_count = parseInt($('#votes_count').val()) + parseInt(votes);
@@ -91,7 +91,50 @@
 
         }else if(type ==="vote_turn"){
             $.each(message,function (k,vote){
+                {% if meeting.secret %}
+                let votes_count;
+                let actions_count;
+                let percent;
+                switch (valid) {
+                    case true:
+                        votes_count = $('#progressValid_' + vote).data('votes');
+                        actions_count = $('#progressValid_' + vote).data('actions');
+                        votes_count = parseInt(votes_count) + parseInt(votes);
+                        actions_count = parseInt(actions_count) + parseInt(actions);
+                    {% if meeting.weight==1 %}
+                        percent = (votes_count / v_total) * 100;
+                        percent = percent.toFixed(2);
+                    {% else %}
+                        percent = (actions_count / a_total) * 100;
+                        percent = percent.toFixed(2);
+                    {% endif %}
+                        $('#progressValid_' + vote).data('votes', votes_count).data('actions', actions_count)
+                            .attr('aria-valuenow', percent).prop('title', percent + '%')
+                            .css({'width': percent + '%'})
+                        break;
+                    case false:
+                        votes_count = $('#progressError_' + vote).data('votes');
+                        actions_count = $('#progressError_' + vote).data('actions');
+                        votes_count = parseInt(votes_count) + parseInt(votes);
+                        actions_count = parseInt(actions_count) + parseInt(actions);
+                    {% if meeting.weight==1 %}
+                        percent = (votes_count / v_total) * 100;
+                        percent = percent.toFixed(2);
+                    {% else %}
+                        percent = (actions_count / a_total) * 100;
+                        percent = percent.toFixed(2);
+                    {% endif %}
+                        $('#progressError_' + vote).data('votes', votes_count).data('actions', actions_count)
+                            .attr('aria-valuenow', percent).prop('title', percent + '%')
+                            .css({'width': percent + '%'})
+                        break;
+                    default:
+                        break;
+                }
+                $("#vote_"+name+"_"+vote).addClass(getVoteColor(valid));
+                {% else %}
                $("#vote_"+name+"_"+vote).addClass(getVoteColor(valid));
+                {% endif %}
             });
             let a = parseInt($('.presence span.counter').text());
             a++;
@@ -330,7 +373,8 @@
     {% if meeting.variant==2 %}
     $('#voteCandidateForm').on('submit',function (e){
        e.preventDefault();
-        let theCheckboxes = $(this).find("input[type='checkbox']");
+
+        let theCheckboxes ={% if active.turn==1 %}$(this).find("input[type='checkbox']"){% else %}$(this).find("input[type='radio']"){% endif %};
         const max={{ meeting.toChoose }};
         let checked=theCheckboxes.filter(":checked");
         let data=candidatesVoteData($(this).serializeArray());
@@ -341,6 +385,7 @@
         {
             {% if meeting.badVoteSettings==1 %}
                 candidatesVoteSend(data,false);
+                $(theCheckboxes).prop('disabled',true);
             {% else %}
                 let warned=$(this).data('warned');
                 let warning=$(this).data('warning');
@@ -353,11 +398,13 @@
                         $(this).data('warned',true);
                     }else{
                         candidatesVoteSend(data,false);
+                        $(theCheckboxes).prop('disabled',true);
                     }
                 {% endif %}
             {% endif %}
         }else{
             candidatesVoteSend(data,true);
+            $(theCheckboxes).prop('disabled',true);
         }
     });
     {% endif %}
