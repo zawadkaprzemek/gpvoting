@@ -646,6 +646,7 @@ class PollingController extends AbstractController
             $active['title']=null;
             $active['turn']=null;
             $active['vote']=[];
+            $active['voted']=[];
         }
         $meeting->setActiveStatus($active);
         $em=$this->getDoctrine()->getManager();
@@ -704,7 +705,9 @@ class PollingController extends AbstractController
                     $active['votes'][$active['turn']][$vote][$data->user]=$data->valid;
                 }
                 $active['vote'][]=$data->user;
+                $active['voted'][]=$data->user;
                 $active['vote']=array_unique($active['vote']);
+                $active['voted']=array_unique($active['voted']);
             }
 
         }
@@ -789,9 +792,9 @@ class PollingController extends AbstractController
 
                 if($meeting->getWeight()==1)
                 {
-                    $accepted=$on['actions']>$against['actions']&&$on['actions']>$hold['actions'];
-                }else{
                     $accepted=$on['votes']>$against['votes']&&$on['votes']>$hold['votes'];
+                }else{
+                    $accepted=$on['actions']>$against['actions']&&$on['actions']>$hold['actions'];
                 }
 
                 /** @var Resolution $resolution */
@@ -806,7 +809,7 @@ class PollingController extends AbstractController
                 $em->persist($resolution);
             }
         }else{
-            if($active['turn']>0)
+            if($active['turn']>0&&$active['active']!=0)
             {
                 $curr=$active['active'];
                 $participants=$meeting->getParticipantList()->getParticipants();
@@ -944,7 +947,7 @@ class PollingController extends AbstractController
                     ->setVotesCount(array())
                     ->setSecondTurn(false);
                 $em->persist($candidate);
-                $meeting->setActiveStatus(array('active'=>null,'votes'=>array(),'last'=>null,'title'=>null,'turn'=>null,'vote'=>array()));
+                $meeting->setActiveStatus(array('active'=>null,'votes'=>array(),'last'=>null,'title'=>null,'turn'=>null,'vote'=>array(),'voted'=>array()));
             }
         }
 
@@ -1075,6 +1078,7 @@ class PollingController extends AbstractController
         $em=$this->getDoctrine()->getManager();
         $active=$meeting->getActiveStatus();
         $active['active']=$number;
+        $active['voted']=[];
         if($meeting->getVariant()==1)
         {
             $active['votes'][$number]=array();

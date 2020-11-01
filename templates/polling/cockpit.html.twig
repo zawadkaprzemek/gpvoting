@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}{% trans %}Walne zgromadzenie{% endtrans %}:{{ meeting.name }}{% endblock %}
+{% block title %}{% trans %}Walne zgromadzenie{% endtrans %}: {{ meeting.name }}{% endblock %}
 
 {% block body %}
 
@@ -52,9 +52,11 @@
                 {% endif %}
             {% endif %}
             {% if meeting.variant==2 %}
+                {% if meeting.status==1 %}
                 <button class="btn btn-outline-success" data-toggle="modal" data-target="#titleModal">{% trans %}Ustaw tytuł głosowania{% endtrans %}</button>
+                {% endif %}
                 {% if active.active is null %}
-                {% if active.turn is defined %}
+                {% if active.turn is defined and meeting.status==1 %}
                     {% if active.last is not null and active.turn is not null %}
                         <button class="btn btn-outline-danger btn-activate-turn" data-confirm="{% trans with { '%turn%':(active.turn)} %}Na pewno chcesz powtórzyć %turn% turę?{% endtrans %}" data-href="{{ path('app_general_meeting_activate_vote',{slug:meeting.slug,number:(active.turn)}) }}">
                             {% trans with { '%turn%':(active.turn)} %}Powtórz %turn% turę{% endtrans %}
@@ -188,7 +190,7 @@
                     {% if active.active == 0 %}
                         <h4>{% trans %}Trwa sprawdzanie obecności uczestników{% endtrans %}</h4>
                         {% else %}
-                        <p>{% trans %}Aktualne głosowanie:{% endtrans %}</p>
+                        <p>{% trans %}Aktualne głosowanie{% endtrans %}:</p>
                             {% if meeting.variant==1 %}
                                     <h4>{{ meeting.resolutions[active.active-1].content }}</h4>
                                 {% else %}
@@ -366,7 +368,7 @@
                     <div class="presence">
                         {% if active.votes is defined and active.votes[active.active] is defined%}
                             <p>{% trans %}Zagłosowało{% endtrans %}:
-                                <span class="counter">{% if meeting.variant==1 %}{{ active.votes[active.active]|length }}{% else %}{{active.vote|length}}{% endif %}</span>/<span class="sum">{{ (meeting.participantList.participants|length) }}</span></p>
+                                <span class="counter">{% if meeting.variant==1 %}{{ active.votes[active.active]|length }}{% else %}{{active.voted|length}}{% endif %}</span>/<span class="sum">{{ (meeting.participantList.participants|length) }}</span></p>
                         {% endif %}
                         <p>{% trans %}Na sali znajduje się{% endtrans %}:</p>
                         <p>
@@ -376,8 +378,8 @@
 
                             <input type="hidden" id="votes_count" value="{{ vot }}">
                             <input type="hidden" id="actions_count" value="{{ act }}">
-                            <input type="hidden" id="actions_total" value="{{ t_act }}">
-                            <input type="hidden" id="votes_total" value="{{ t_vot }}">
+                            <input type="hidden" id="actions_total" value="{% if meeting.totalActions is null or meeting.totalActions==0 %}{{ t_act }}{% else %}{{ meeting.totalActions }}{% endif %}">
+                            <input type="hidden" id="votes_total" value="{% if meeting.totalVotes is null or meeting.totalVotes==0 %}{{ t_vot }}{% else %}{{ meeting.totalVotes }}{% endif %}">
                         {% if meeting.weight==1 %}
                             <span id="vot_span">{{ vot }}</span> {% trans %}głosów - co stanowi{% endtrans %} <span id="vot_span_total">{{ ((vot/t_vot)*100)|number_format(2) }}</span>%
                         {% else %}
