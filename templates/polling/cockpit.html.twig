@@ -158,21 +158,25 @@
                 </tr>
                 </thead>
                 <tbody>
-                {% for key,candidate in meeting.candidates %}
+                {% for c_key,candidate in meeting.candidates %}
                     <tr {% if candidate.secondTurn %}class="second-turn"{% endif %}>
-                        <td>{{ key+1 }}</td>
+                        <td>{{ c_key+1 }}</td>
                         <td>{{ candidate.name }}</td>
                         <td>
                             {% if meeting.weight==1 %}
                                 {% for key,item in candidate.votesCount %}
                                     {% if item.percent is defined %}
                                         <p>{% trans %}Tura{% endtrans %} {{ key }}: {{ item.percent|number_format() }}%</p>
+                                        <p class="small">{% trans %}Ważne głosy{% endtrans %}: {{ meeting.activeStatus.votes[key][c_key+1]|valid_votes(1) }}</p>
+                                        <p class="small">{% trans %}Nie ważne głosy{% endtrans%}: {{ meeting.activeStatus.votes[key][c_key+1]|valid_votes(0) }}</p>
                                     {% endif %}
                                 {% endfor %}
                             {% else %}
                                 {% for key,item in candidate.actionsCount %}
                                     {% if item.percent is defined %}
                                         <p>{% trans %}Tura{% endtrans %} {{ key }}: {{ item.percent }}%</p>
+                                        <p class="small">{% trans %}Ważne głosy{% endtrans %}: {{ meeting.activeStatus.votes[key][c_key+1]|valid_votes(1) }}</p>
+                                        <p class="small">{% trans %}Nie ważne głosy{% endtrans%}: {{ meeting.activeStatus.votes[key][c_key+1]|valid_votes(0) }}</p>
                                     {% endif %}
                                 {% endfor %}
                             {% endif %}

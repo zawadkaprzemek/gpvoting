@@ -427,7 +427,7 @@
         $.ajax({
             type: 'PATCH',
             url: url,
-            data: JSON.stringify({user:aid,votes:votes,valid:valid,p_actions:{{ participant.actions }},p_votes:{{ participatn.votes }}),
+            data: JSON.stringify({user:aid,votes:votes,valid:valid}),
             processData: true,
             contentType: 'application/merge-patch+json',
         }).done(function (result) {

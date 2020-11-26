@@ -420,7 +420,7 @@ class GeneralMeetingController extends AbstractController
             }else{
                 foreach ($data->votes as $vote)
                 {
-                    $active['votes'][$active['turn']][$vote][$data->user]=array('valid',$data->valid,'votes'=>$data->p_votes/sizeof($data->votes),'actions'=>$data->p_actions/sizeof($data->votes));
+                    $active['votes'][$active['turn']][$vote][$data->user]=$data->valid;
                 }
                 $active['vote'][]=$data->user;
                 $active['voted'][]=$data->user;
