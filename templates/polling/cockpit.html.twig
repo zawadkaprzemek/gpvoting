@@ -62,7 +62,7 @@
                             {% trans with { '%turn%':(active.turn)} %}Powtórz %turn% turę{% endtrans %}
                         </button>
                     {% endif %}
-                    {% if active.turn <2 %}
+                    {% if active.turn <1 %}
                     <button class="btn btn-outline-dark btn-activate-turn" data-confirm="{% trans with { '%turn%':(active.turn+1)} %}Na pewno chcesz rozpocząć %turn% turę?{% endtrans %}" data-href="{{ path('app_general_meeting_activate_vote',{slug:meeting.slug,number:(active.turn+1)}) }}">
                         {% trans with { '%turn%':(active.turn+1)} %}Rozpocznij %turn% turę{% endtrans %}
                     </button>

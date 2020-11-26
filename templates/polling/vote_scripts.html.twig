@@ -411,6 +411,7 @@
     {% endif %}
     {% endif %}
 
+    {% if participant is defined %}
     function candidatesVoteSend(votes,valid)
     {
         let url='{{ path('app_ajax_general_meeting_save',{slug:meeting.slug}) }}';
@@ -426,7 +427,7 @@
         $.ajax({
             type: 'PATCH',
             url: url,
-            data: JSON.stringify({user:aid,votes:votes,valid:valid}),
+            data: JSON.stringify({user:aid,votes:votes,valid:valid,p_actions:{{ participant.actions }},p_votes:{{ participatn.votes }}),
             processData: true,
             contentType: 'application/merge-patch+json',
         }).done(function (result) {
@@ -438,6 +439,7 @@
             }
         });
     }
+    {% endif %}
 
     function candidatesVoteData(data)
     {

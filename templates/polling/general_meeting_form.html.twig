@@ -78,6 +78,17 @@
             </div>
         </div>
     </div>
+
+    <div class="form-group row gm-personal">
+        <div class="col-12 col-sm-3 col-form-label">
+            {{ form_label(form.toChoose) }}
+        </div>
+        <div class="col-12 col-sm-9 d-flex">
+            {{ form_widget(form.toChoose) }}
+            <span id="toChooseSpan" class="font-weight-bold text-primary ml-2 mt-1 valueSpan">20</span>
+        </div>
+    </div>
+
     <div class="row form-group d-none gm-personal">
         <div class="col-12 col-sm-3 col-form-label">
             {{form_label(form.badVoteSettings)}}
@@ -107,6 +118,8 @@
         $(document).ready(function () {
             $('#questionsCountResolutionSpan').html($('#general_meeting_countResolution').val());
             $('#questionsCountPersonalSpan').html($('#general_meeting_countPersonal').val());
+            $('#toChooseSpan').html($('#general_meeting_toChoose').val());
+
             meetingChange($('#general_meeting_variant').val());
 
             $('#general_meeting_countResolution').on('change',function () {
@@ -114,8 +127,17 @@
             });
             $('#general_meeting_countPersonal').on('change',function () {
                 $('#questionsCountPersonalSpan').html($(this).val());
+                $('#general_meeting_toChoose').attr('max',$(this).val()).trigger('change');
+                /*console.log($('#general_meeting_toChoose').val(),$('#general_meeting_toChoose').attr('max'));
+                console.log($('#general_meeting_toChoose').val()>$('#general_meeting_toChoose').attr('max'));
+                if($('#general_meeting_toChoose').val()>$('#general_meeting_toChoose').attr('max')){
+                    $('#general_meeting_toChoose').val($(this).val()).trigger('change');
+                    console.log($('#general_meeting_toChoose').val());
+                }*/
             });
-
+            $('#general_meeting_toChoose').on('change',function () {
+                $('#toChooseSpan').html($(this).val());
+            });
             $('#general_meeting_variant').on('change',function () {
                 meetingChange($(this).val());
             });
@@ -128,6 +150,7 @@
                     $('#general_meeting_badVoteSettings').prop('required',false);
                     $('#general_meeting_countResolution').prop('required',true);
                     $('#general_meeting_countPersonal').prop('required',false);
+                    $('#general_meeting_toChoose').prop('required',false);
                     $('#general_meeting_submit').prop('disabled',false);
                 }else if(value==="2"){
                     $('.gm-both').removeClass('d-none');
@@ -136,6 +159,7 @@
                     $('#general_meeting_badVoteSettings').prop('required',true);
                     $('#general_meeting_countResolution').prop('required',false);
                     $('#general_meeting_countPersonal').prop('required',true);
+                    $('#general_meeting_toChoose').prop('required',true);
                     $('#general_meeting_submit').prop('disabled',false);
                 }else{
                     $('.gm-both').addClass('d-none');

@@ -19,15 +19,6 @@ class GeneralMeetingCandidatesType extends AbstractType
          */
         $meeting=$options['data'];
         $builder
-            ->add('toChoose',RangeType::class,
-                array('label'=>'Ilość kandydatów do wybrania',
-                    'attr' => [
-                        'min' => 1,
-                        'max' => $meeting->getCount(),
-                        'step'=>1,
-                        'class'=>'custom-range'
-                    ]
-                ))
             ->add('candidates',CollectionType::class,[
                 'label'=>'Kandydaci',
                 'entry_type'=>CandidateType::class,

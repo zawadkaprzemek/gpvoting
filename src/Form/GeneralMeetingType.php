@@ -102,6 +102,16 @@ class GeneralMeetingType extends AbstractType
                     return $pl->getUsersListsQuery($user);
                 },
                 'choice_label' => 'name'))
+            ->add('toChoose',RangeType::class,
+                array('label'=>'Liczba kandydatów do wybrania',
+                    'required'=>false,
+                    'attr' => [
+                        'min' => 1,
+                        'max' => 50,
+                        'step'=>1,
+                        'class'=>'custom-range'
+                    ]
+                ))
             ->add('submit',SubmitType::class,array('label'=>'Zapisz'))
         ;
     }
