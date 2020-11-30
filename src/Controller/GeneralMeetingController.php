@@ -550,8 +550,8 @@ class GeneralMeetingController extends AbstractController
                     }
                     $cActions=$candidates[$key-1]->getActionsCount();
                     $cVotes=$candidates[$key-1]->getVotesCount();
-                    $cActions[$curr]=array('count'=>$actions,'percent'=>round(($actions/$meeting->getTotalActions())*100,2));
-                    $cVotes[$curr]=array('count'=>$votes,'percent'=>round(($votes/$meeting->getTotalVotes())*100,2));
+                    $cActions[$curr]=array('count'=>$actions,'percent'=>($meeting->getTotalActions()>0? round(($actions/$meeting->getTotalActions())*100,2) : 0 ));
+                    $cVotes[$curr]=array('count'=>$votes,'percent'=>($meeting->getTotalVotes()>0? round(($votes/$meeting->getTotalVotes())*100,2) : 0 ));
                     $candidates[$key-1]->setActionsCount($cActions);
                     $candidates[$key-1]->setVotesCount($cVotes);
                     if($meeting->getVariant()==1)

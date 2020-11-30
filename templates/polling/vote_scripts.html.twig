@@ -131,8 +131,10 @@
                     default:
                         break;
                 }
+                console.log("#vote_"+name+"_"+vote);
                 $("#vote_"+name+"_"+vote).addClass(getVoteColor(valid));
                 {% else %}
+                console.log("#vote_"+name+"_"+vote);
                $("#vote_"+name+"_"+vote).addClass(getVoteColor(valid));
                 {% endif %}
             });
@@ -159,7 +161,7 @@
                 _class+="warning";
                 break;
             default:
-                _class+="lignt";
+                _class+="light";
                 break;
         }
         return _class;
@@ -411,7 +413,7 @@
     {% endif %}
     {% endif %}
 
-    {% if participant is defined %}
+
     function candidatesVoteSend(votes,valid)
     {
         let url='{{ path('app_ajax_general_meeting_save',{slug:meeting.slug}) }}';
@@ -439,7 +441,6 @@
             }
         });
     }
-    {% endif %}
 
     function candidatesVoteData(data)
     {

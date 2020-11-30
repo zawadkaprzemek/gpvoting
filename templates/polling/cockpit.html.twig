@@ -55,7 +55,7 @@
                 {% if meeting.status==1 %}
                 <button class="btn btn-outline-success" data-toggle="modal" data-target="#titleModal">{% trans %}Ustaw tytuł głosowania{% endtrans %}</button>
                 {% endif %}
-                {% if active.active is null %}
+                {% if active is not empty and active.active is null %}
                 {% if active.turn is defined and meeting.status==1 %}
                     {% if active.last is not null and active.turn is not null %}
                         <button class="btn btn-outline-danger btn-activate-turn" data-confirm="{% trans with { '%turn%':(active.turn)} %}Na pewno chcesz powtórzyć %turn% turę?{% endtrans %}" data-href="{{ path('app_general_meeting_activate_vote',{slug:meeting.slug,number:(active.turn)}) }}">

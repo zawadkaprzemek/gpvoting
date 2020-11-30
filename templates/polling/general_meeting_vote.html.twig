@@ -118,7 +118,7 @@
                                                     {% set voted=true %}
                                                     checked
                                                 {% endif %}
-                                               value="{{ candidate.id }}" class="d-none" id="candidate_{{ (key+1) }}">
+                                               value="{{ (key+1) }}" class="d-none" id="candidate_{{ (key+1) }}">
                                         <label class="list-group-item list-group-item-action mb-0" for="candidate_{{ (key+1) }}">{{ candidate.name }}</label>
                                     {% endif %}
                                 {% endfor %}
