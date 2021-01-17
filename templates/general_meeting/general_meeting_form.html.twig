@@ -1,0 +1,99 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block body %}
+    {{ form_start(form) }}
+    <div class="row form-group">
+        <div class="col-12 col-sm-3 col-form-label">
+            {{form_label(form.name)}}
+        </div>
+        <div class="col-12 col-sm-9">
+            {{ form_widget(form.name) }}
+        </div>
+    </div>
+    <div class="row form-group">
+        <div class="col-12 col-sm-3 col-form-label">
+            {{form_label(form.date)}}
+        </div>
+        <div class="col-12 col-sm-9 d-flex">
+            {{ form_widget(form.date) }}
+        </div>
+    </div>
+    <div class="row form-group">
+        <div class="col-12 col-sm-3 col-form-label">
+            {{form_label(form.count)}}
+        </div>
+        <div class="col-12 col-sm-9 d-flex">
+            {{ form_widget(form.count) }}
+            <span id="questionsCountSpan" class="font-weight-bold text-primary ml-2 mt-1 valueSpan">20</span>
+        </div>
+    </div>
+    <div class="row form-group">
+        <div class="col-12 col-sm-3 col-form-label">
+            {{form_label(form.holdBack)}}
+        </div>
+        <div class="col-12 col-sm-9">
+            <div class="custom-control custom-switch">
+                <input type="checkbox" {% if form.holdBack.vars.checked %}checked{% endif%} name="{{ form.holdBack.vars.full_name }}"
+                       class="custom-control-input" id="{{ form.holdBack.vars.id }}" value="{{ form.holdBack.vars.value }}">
+                <label class="custom-control-label" for="{{ form.holdBack.vars.id }}">{{ form.holdBack.vars.label }}</label>
+            </div>
+        </div>
+    </div>
+    <div class="row form-group">
+        <div class="col-12 col-sm-3 col-form-label">
+            {{form_label(form.weight)}}
+        </div>
+        <div class="col-12 col-sm-9 d-flex">
+            {{ form_widget(form.weight) }}
+        </div>
+    </div>
+    <div class="row form-group">
+        <div class="col-12 col-sm-3 col-form-label">
+            {{form_label(form.secret)}}
+        </div>
+        <div class="col-12 col-sm-9">
+            <div class="custom-control custom-switch">
+                <input type="checkbox" {% if form.secret.vars.checked %}checked{% endif%} name="{{ form.secret.vars.full_name }}"
+                       class="custom-control-input" id="{{ form.secret.vars.id }}" value="{{ form.secret.vars.value }}">
+                <label class="custom-control-label" for="{{ form.secret.vars.id }}">{{ form.secret.vars.label }}</label>
+            </div>
+        </div>
+    </div>
+
+    <div class="row form-group">
+        <div class="col-12 col-sm-3 col-form-label">
+            {{form_label(form.badVoteSettings)}}
+        </div>
+        <div class="col-12 col-sm-9 d-flex">
+            {{ form_widget(form.badVoteSettings) }}
+        </div>
+    </div>
+
+    <div class="row form-group ">
+        <div class="col-12 col-sm-3 col-form-label">
+            {{form_label(form.participantList)}}
+        </div>
+        <div class="col-12 col-sm-9 d-flex">
+            {{ form_widget(form.participantList) }}
+        </div>
+    </div>
+
+
+    {{ form_row(form._token) }}
+    {{ form_row(form.submit) }}
+    {#{{ form_end(form,{render_rest:false}) }}#}
+{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        $(document).ready(function () {
+            $('#questionsCountSpan').html($('#general_meeting_count').val());
+
+            $('#general_meeting_count').on('change',function () {
+                $('#questionsCountSpan').html($(this).val());
+            });
+        })
+    </script>
+{% endblock %}

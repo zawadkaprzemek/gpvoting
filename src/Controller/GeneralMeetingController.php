@@ -5,13 +5,15 @@ namespace App\Controller;
 use App\Entity\Candidate;
 use App\Entity\Event;
 use App\Entity\GeneralMeeting;
-use App\Entity\Resolution;
+use App\Entity\MeetingAnswer;
+use App\Entity\MeetingVoting;
 use App\Entity\Room;
-use App\Form\GeneralMeetingCandidatesType;
 use App\Form\GeneralMeetingJoinType;
-use App\Form\GeneralMeetingResolutionsType;
 use App\Form\GeneralMeetingType;
+use App\Form\MeetingVotingType;
+use App\Repository\MeetingVotingRepository;
 use App\Repository\ParticipantRepository;
+use Doctrine\Common\Collections\ArrayCollection;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormError;
@@ -52,98 +54,212 @@ class GeneralMeetingController extends AbstractController
         if($form->isSubmitted()&&$form->isValid())
         {
             $em=$this->getDoctrine()->getManager();
-            if($meeting->getVariant()===1)
-            {
-                $meeting->setCount($form->get('countResolution')->getData());
-            }elseif ($meeting->getVariant()===2)
-            {
-                $meeting->setCount($form->get('countPersonal')->getData());
-            }
+
             $meeting->setHashId(uniqid());
             $em->persist($meeting);
             $em->flush();
             $this->addFlash('success',$this->translator->trans('Dodano nowe Walne zgromadzenie'));
-            if($meeting->getVariant()===1)
-            {
-                return $this->redirectToRoute('app_manage_general_meeting_add_resolutins',['slug'=>$meeting->getSlug()]);
-            }elseif($meeting->getVariant()===2)
-            {
-                return $this->redirectToRoute('app_manage_general_meeting_add_candidates',['slug'=>$meeting->getSlug()]);
-            }
+            return $this->redirectToRoute('app_manage_general_meeting_add_voting',['slug'=>$meeting->getSlug()]);
         }
 
-        return $this->render('polling/general_meeting_form.html.twig',[
+        return $this->render('general_meeting/general_meeting_form.html.twig',[
             'title'=>$this->translator->trans('Utwórz walne zgromadzenie'),
             'form'=>$form->createView()
         ]);
     }
 
     /**
-     * @Route("/{_locale}/manage/general_meeting/{slug}/addResolutions",name="app_manage_general_meeting_add_resolutins")
-     * @param GeneralMeeting $meeting
+     * @Route("/{_locale}/manage/{slug}/add_voting", name="app_manage_general_meeting_add_voting")
      * @param Request $request
+     * @param GeneralMeeting $meeting
      * @return RedirectResponse|Response
      */
-    public function addResolutions(GeneralMeeting $meeting,Request $request)
+    public function addMeetingVoting(Request $request,GeneralMeeting $meeting)
     {
-        if($meeting->getRoom()->getEvent()->getUser()!==$this->getUser())
+        $voting=new MeetingVoting();
+        for($i=0;$i<2;$i++)
         {
-            return $this->redirectToRoute('app_manage');
+            $voting->addCandidate(new Candidate())->addAnswer(new MeetingAnswer());
         }
-        for($i=0;$i<$meeting->getCount();$i++)
-        {
-            $meeting->addResolution(new Resolution());
-        }
-
-        $form=$this->createForm(GeneralMeetingResolutionsType::class,$meeting);
+        $voting->setMeeting($meeting);
+        $form=$this->createForm(MeetingVotingType::class,$voting);
         $form->handleRequest($request);
         if($form->isSubmitted()&&$form->isValid())
         {
             $em=$this->getDoctrine()->getManager();
-            $em->persist($meeting);
-            $em->flush();
-            $this->addFlash('success',$this->translator->trans('Dodano uchwały!'));
-            return $this->redirectToRoute('app_manage_general_meeting_show',['slug'=>$meeting->getSlug()]);
-        }
+            $voting->setSort(sizeof($meeting->getMeetingVotings())+1);
 
-        return $this->render('polling/resolutions_form.html.twig',[
-            'form'=>$form->createView(),
-            'meeting'=>$meeting
+            switch ($voting->getType())
+            {
+                case 1:
+                    $voting->removeCandidates()->removeAnswers();
+                    break;
+                case 2:
+                    $voting->removeAnswers();
+                    foreach ($voting->getCandidates() as $candidate)
+                    {
+                        $em->persist($candidate);
+                    }
+                    break;
+                case 3:
+                    $voting->removeCandidates();
+                    foreach ($voting->getAnswers() as $answer)
+                    {
+                        $answer->setMeetingVoting($voting);
+                        $em->persist($answer);
+                    }
+                    break;
+            }
+            $em->persist($voting);
+            $em->flush();
+            $this->addFlash('success',$this->translator->trans('Dodano nowe głosowanie'));
+            if($form->get('add_next')->getData())
+            {
+                return $this->redirectToRoute('app_manage_general_meeting_add_voting',['slug'=>$meeting->getSlug()]);
+            }else{
+                return  $this->redirectToRoute('app_manage_show_vottings',['slug'=>$meeting->getSlug()]);
+            }
+        }
+        return $this->render('general_meeting/general_meeting_form_voting.html.twig',[
+            'title'=>$this->translator->trans('Dodaj głosowania'),
+            'form'=>$form->createView()
         ]);
     }
 
     /**
-     * @Route("/{_locale}/manage/general_meeting/{slug}/addCandidates",name="app_manage_general_meeting_add_candidates")
-     * @param GeneralMeeting $meeting
+     * @Route("/{_locale}/manage/{slug}/edit/{sort}", name="app_manage_general_meeting_edit_voting")
      * @param Request $request
+     * @param GeneralMeeting $meeting
+     * @param MeetingVoting $voting
      * @return RedirectResponse|Response
      */
-    public function addCandidates(GeneralMeeting $meeting,Request $request)
+    public function editMeetingVoting(Request $request,GeneralMeeting $meeting,MeetingVoting $voting)
     {
-        if($meeting->getRoom()->getEvent()->getUser()!==$this->getUser())
+        $form=$this->createForm(MeetingVotingType::class,$voting);
+
+        $originalCandidates=new ArrayCollection();
+        foreach ($voting->getCandidates() as $candidate)
         {
-            return $this->redirectToRoute('app_manage');
+            $originalCandidates->add($candidate);
         }
-        for($i=0;$i<$meeting->getCount();$i++)
+        $originalAnswers=new ArrayCollection();
+        foreach ($voting->getAnswers() as $answer)
         {
-            $meeting->addCandidate(new Candidate());
+            $originalAnswers->add($answer);
         }
-        $form=$this->createForm(GeneralMeetingCandidatesType::class,$meeting);
         $form->handleRequest($request);
         if($form->isSubmitted()&&$form->isValid())
         {
             $em=$this->getDoctrine()->getManager();
-            $em->persist($meeting);
+            switch ($voting->getType())
+            {
+                case 1:
+                    $voting->removeCandidates()->removeAnswers();
+                    break;
+                case 2:
+                    $voting->removeAnswers();
+                    foreach ($originalCandidates as $candidate)
+                    {
+                        if(false === $voting->getCandidates()->contains($candidate))
+                        {
+                            $em->remove($candidate);
+                        }
+                    }
+                    foreach ($voting->getCandidates() as $candidate)
+                    {
+                        $em->persist($candidate);
+                    }
+                    break;
+                case 3:
+                    $voting->removeCandidates();
+                    foreach ($originalAnswers as $answer)
+                    {
+                        if(false === $voting->getAnswers()->contains($answer))
+                        {
+                            $em->remove($answer);
+                        }
+                    }
+                    foreach ($voting->getAnswers() as $answer)
+                    {
+                        $answer->setMeetingVoting($voting);
+                        $em->persist($answer);
+                    }
+                    break;
+            }
+            $em->persist($voting);
             $em->flush();
-            $this->addFlash('success',$this->translator->trans('Dodano kandydatów'));
-            return $this->redirectToRoute('app_manage_general_meeting_show',[
-                'slug'=>$meeting->getSlug()
-            ]);
+            $this->addFlash('success',$this->translator->trans('Edycja głosowania zakończona sukcesem'));
+            if($voting->getMeeting()->getStatus()==1)
+            {
+                return $this->redirectToRoute('app_manage_general_meeting_cockpit',['slug' =>$voting->getMeeting()->getSlug()]);
+            }else{
+                return  $this->redirectToRoute('app_manage_show_vottings',['slug'=>$meeting->getSlug()]);
+            }
+        }
+        return $this->render('general_meeting/general_meeting_form_voting.html.twig',[
+            'title'=>$this->translator->trans('Edytuj głosowanie'),
+            'form'=>$form->createView()
+        ]);
+    }
+
+    /**
+     * @Route("/{_locale}/manage/voting/{id}/delete", name="app_manage_meeting_voting_delete", methods={"DELETE"})
+     * @param Request $request
+     * @param MeetingVoting $voting
+     * @return Response
+     */
+    public function delete(Request $request, MeetingVoting $voting): Response
+    {
+        $user=$this->getUser();
+        if($voting->getMeeting()->getRoom()->getEvent()->getUser()!==$user)
+        {
+            return $this->redirectToRoute('home');
+        }
+        if ($this->isCsrfTokenValid('delete'.$voting->getId(), $request->request->get('_token'))) {
+            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager->remove($voting);
+            $meeting=$voting->getMeeting();
+            foreach ($voting->getCandidates() as $candidate)
+            {
+                $entityManager->remove($candidate);
+            }
+            foreach ($voting->getAnswers() as $answer)
+            {
+                $entityManager->remove($answer);
+            }
+            foreach ($meeting->getMeetingVotings() as $mVoting)
+            {
+                if($mVoting->getSort()>$voting->getSort())
+                {
+                    $mVoting->setSort($mVoting->getSort()-1);
+                    $entityManager->persist($mVoting);
+                }
+            }
+            $entityManager->flush();
+            $this->addFlash('success','Usunięto głosowanie');
+        }
+        return $this->redirectToRoute('app_manage_show_vottings',[
+            'slug'=>$voting->getMeeting()->getSlug()
+        ]);
+    }
+
+    /**
+     * @Route("/{_locale}/manage/meeting/{slug}/vottings", name="app_manage_show_vottings")
+     * @param GeneralMeeting $meeting
+     * @return RedirectResponse|Response
+     */
+    public function showVottings(GeneralMeeting $meeting)
+    {
+        if($this->getUser()!=$meeting->getRoom()->getEvent()->getUser())
+        {
+            return $this->redirectToRoute('app_manage');
         }
 
-        return $this->render('polling/candidates_form.html.twig',[
-            'form'=>$form->createView(),
-            'meeting'=>$meeting
+        $votings=$meeting->getMeetingVotings();
+
+        return $this->render('general_meeting/vottings_list.html.twig',[
+            'meeting'=>$meeting,
+            'votings'=>$votings
         ]);
     }
 
@@ -159,124 +275,14 @@ class GeneralMeetingController extends AbstractController
             return $this->redirectToRoute('app_manage');
         }
 
+        $votings=$meeting->getMeetingVotings();
         return $this->render('polling/general_meeting_show.html.twig',[
             'meeting'=>$meeting,
-            'manage'=>true
+            'manage'=>true,
+            'votings'=>$votings
         ]);
     }
 
-    /**
-     * @Route("/{_locale}/manage/general_meeting/{slug}/resolutions", name="app_manage_general_meeting_resolutions_list")
-     * @param GeneralMeeting $meeting
-     * @return RedirectResponse|Response
-     */
-    public function resolutionsList(GeneralMeeting $meeting)
-    {
-        if($meeting->getRoom()->getEvent()->getUser()!==$this->getUser())
-        {
-            return $this->redirectToRoute('app_manage');
-        }
-        if($meeting->getVariant()==2)
-        {
-            return $this->redirectToRoute('app_manage_general_meeting_candidates_list',['slug'=>$meeting->getSlug()]);
-        }
-
-        $resolutions=$meeting->getResolutions();
-        return $this->render('polling/resolutions_list.html.twig',[
-            'resolutions'=>$resolutions,
-            'meeting'=>$meeting
-        ]);
-
-    }
-
-    /**
-     * @Route("/{_locale}/manage/general_meeting/{slug}/candidates", name="app_manage_general_meeting_candidates_list")
-     * @param GeneralMeeting $meeting
-     * @return Response
-     */
-    public function candidatesList(GeneralMeeting $meeting)
-    {
-        if($meeting->getRoom()->getEvent()->getUser()!==$this->getUser())
-        {
-            return $this->redirectToRoute('app_manage');
-        }
-        if($meeting->getVariant()==1)
-        {
-            return $this->redirectToRoute('app_manage_general_meeting_resolutions_list',['slug'=>$meeting->getSlug()]);
-        }
-
-        $candidates=$meeting->getCandidates();
-        return $this->render('polling/candidates_list.html.twig',[
-            'candidates'=>$candidates,
-            'meeting'=>$meeting
-        ]);
-    }
-
-    /**
-     * @Route("/{_locale}/manage/general_meeting/{slug}/edit_candidates", name="app_manage_general_meeting_edit_candidates")
-     * @param GeneralMeeting $meeting
-     * @param Request $request
-     * @return Response
-     */
-    public function editCandidates(GeneralMeeting $meeting,Request $request)
-    {
-        if($meeting->getCount()!==sizeof($meeting->getCandidates()))
-        {
-            $diff=$meeting->getCount()-sizeof($meeting->getCandidates());
-            for($i=0;$i<$diff;$i++)
-            {
-                $meeting->addCandidate(new Candidate());
-            }
-        }
-        $form=$this->createForm(GeneralMeetingCandidatesType::class,$meeting);
-        $form->handleRequest($request);
-        if($form->isSubmitted()&&$form->isValid())
-        {
-            $em=$this->getDoctrine()->getManager();
-            $em->persist($meeting);
-            $em->flush();
-            $this->addFlash('success',$this->translator->trans('Edycja listy kandydatów zakończona sukcesem'));
-            return $this->redirectToRoute('app_manage_general_meeting_candidates_list',['slug'=>$meeting->getSlug()]);
-        }
-
-        return $this->render('polling/candidates_form.html.twig',[
-            'form'=>$form->createView(),
-            'meeting'=>$meeting
-        ]);
-    }
-
-    /**
-     * @Route("/{_locale}/manage/general_meeting/{slug}/edit_resolutions", name="app_manage_general_meeting_edit_resolutions")
-     * @param GeneralMeeting $meeting
-     * @param Request $request
-     * @return Response
-     */
-    public function editResolutions(GeneralMeeting $meeting,Request $request)
-    {
-        if($meeting->getCount()!==sizeof($meeting->getResolutions()))
-        {
-            $diff=$meeting->getCount()-sizeof($meeting->getResolutions());
-            for($i=0;$i<$diff;$i++)
-            {
-                $meeting->addResolution(new Resolution());
-            }
-        }
-        $form=$this->createForm(GeneralMeetingResolutionsType::class,$meeting);
-        $form->handleRequest($request);
-        if($form->isSubmitted()&&$form->isValid())
-        {
-            $em=$this->getDoctrine()->getManager();
-            $em->persist($meeting);
-            $em->flush();
-            $this->addFlash('success',$this->translator->trans('Edycja listy uchwał zakończona sukcesem'));
-            return $this->redirectToRoute('app_manage_general_meeting_resolutions_list',['slug'=>$meeting->getSlug()]);
-        }
-
-        return $this->render('polling/resolutions_form.html.twig',[
-            'form'=>$form->createView(),
-            'meeting'=>$meeting
-        ]);
-    }
 
     /**
      * @Route("/{_locale}/manage/general_meeting/{slug}/edit", name="app_manage_general_meeting_edit")
@@ -297,43 +303,18 @@ class GeneralMeetingController extends AbstractController
             return $this->redirect($request->server->get('HTTP_REFERER'));
         }
 
-        $oldCount=$meeting->getCount();
         $form=$this->createForm(GeneralMeetingType::class,$meeting);
         $form->handleRequest($request);
         if($form->isSubmitted()&&$form->isValid())
         {
             $em=$this->getDoctrine()->getManager();
-            if($meeting->getVariant()===1)
-            {
-                $meeting->setCount($form->get('countResolution')->getData());
-            }elseif ($meeting->getVariant()===2)
-            {
-                $meeting->setCount($form->get('countPersonal')->getData());
-            }
-
             $em->persist($meeting);
             $em->flush();
             $this->addFlash('succes',$this->translator->trans('Edycja Walnego zgromadzenia zakończona powodzeniem'));
-            if($meeting->getVariant()===1)
-            {
-                if($meeting->getCount()!=$oldCount)
-                {
-                    return $this->redirectToRoute('app_manage_general_meeting_edit_resolutions',['slug'=>$meeting->getSlug()]);
-                }else{
-                    return  $this->redirectToRoute('app_manage_general_meeting_show',['slug'=>$meeting->getSlug()]);
-                }
-            }elseif($meeting->getVariant()===2)
-            {
-                if($meeting->getCount()!=$oldCount)
-                {
-                    return $this->redirectToRoute('app_manage_general_meeting_edit_candidates',['slug'=>$meeting->getSlug()]);
-                }else{
-                    return  $this->redirectToRoute('app_manage_general_meeting_show',['slug'=>$meeting->getSlug()]);
-                }
-            }
+            return $this->redirectToRoute('app_manage_general_meeting_show',['slug'=>$meeting->getSlug()]);
         }
 
-        return $this->render('polling/general_meeting_form.html.twig',[
+        return $this->render('general_meeting/general_meeting_form.html.twig',[
             'form'=>$form->createView(),
             'title'=>$this->translator->trans('Edytuj Walne zgromadzenie'),
             'meeting'=>$meeting
@@ -359,13 +340,6 @@ class GeneralMeetingController extends AbstractController
 
         $meeting->setStatus(1);
         $active=array('active'=>null,'votes'=>array(),'last'=>null);
-        if($meeting->getVariant()==2)
-        {
-            $active['title']=null;
-            $active['turn']=null;
-            $active['vote']=[];
-            $active['voted']=[];
-        }
         $meeting->setActiveStatus($active);
         $em=$this->getDoctrine()->getManager();
         $em->persist($meeting);
@@ -388,7 +362,7 @@ class GeneralMeetingController extends AbstractController
         }
         $active=$meeting->getActiveStatus();
         $active['active']=0;
-        $active["votes"][0]=array();
+        $active["votes"]=array();
         $meeting->setActiveStatus($active)
             ->setTotalActions(0)
             ->setTotalVotes(0)
@@ -406,32 +380,51 @@ class GeneralMeetingController extends AbstractController
      * @param Request $request
      * @return JsonResponse
      */
-    public function generalMeetingVoteSave(GeneralMeeting $meeting,Request $request)
+    public function generalMeetingVoteSave(GeneralMeeting $meeting,Request $request,MeetingVotingRepository $repository)
     {
         $data=json_decode($request->getContent());
         $active=$meeting->getActiveStatus();
-        if($meeting->getVariant()==1)
+        $em=$this->getDoctrine()->getManager();
+        if($active['active']==0)
         {
-            $active['votes'][$active['active']][$data->user]=$data->vote;
+            $active['votes'][$data->user]=$data->vote;
+            $meeting->setActiveStatus($active);
         }else{
-            if($active['active']==0)
-            {
-                $active['votes'][$active['active']][$data->user]=$data->vote;
-            }else{
-                foreach ($data->votes as $vote)
-                {
-                    $active['votes'][$active['turn']][$vote][$data->user]=$data->valid;
-                }
-                $active['vote'][]=$data->user;
-                $active['voted'][]=$data->user;
-                $active['vote']=array_unique($active['vote']);
-                $active['voted']=array_unique($active['voted']);
-            }
+            /**
+             * @var $voting MeetingVoting
+             */
+            $voting=$repository->getVotingBySort($meeting,$active['active']);
+            $votes=$voting->getVoteStatus();
 
+            switch ($voting->getType())
+            {
+                case 1:
+                    $votes[$data->user]=$data->vote;
+                    break;
+                case 2:
+                    foreach ($data->votes as $vote)
+                    {
+                        $votes[$vote][$data->user]=$data->valid;
+                    }
+                    break;
+                case 3:
+                    foreach ($data->votes as $vote)
+                    {
+                        $votes[$vote][]=$data->user;
+                        $votes[$vote]=array_unique($votes[$vote]);
+                    }
+                    break;
+                default:
+                    break;
+            }
+            $active['voted'][]=$data->user;
+            $active['voted']=array_unique($active['voted']);
+
+            $voting->setVoteStatus($votes);
+            $meeting->setActiveStatus($active);
+            $em->persist($voting);
         }
 
-        $meeting->setActiveStatus($active);
-        $em=$this->getDoctrine()->getManager();
         $em->persist($meeting);
         $em->flush();
         return new JsonResponse(array('status'=>'success'));
@@ -459,7 +452,7 @@ class GeneralMeetingController extends AbstractController
             $participants=$meeting->getParticipantList()->getParticipants();
             foreach ($participants as $participant)
             {
-                if(array_key_exists($participant->getAid(),$active['votes'][0]))
+                if(array_key_exists($participant->getAid(),$active['votes']))
                 {
                     $tot_a=$tot_a+$participant->getActions();
                     $tot_v=$tot_v+$participant->getVotes();
@@ -473,120 +466,136 @@ class GeneralMeetingController extends AbstractController
                 ->setTotalActions($tot_a)->setTotalVotes($tot_v)
                 ->setAbsenceActions($abs_a)->setAbsenceVotes($abs_v)
             ;
-        }
-        if($meeting->getVariant()==1)
-        {
-            if($active['active']>0)
-            {
-                $curr=$active['active'];
-                $on=array('actions'=>0,'votes'=>0);
-                $against=array('actions'=>0,'votes'=>0);
-                $hold=array('actions'=>0,'votes'=>0);
-                $participants=$meeting->getParticipantList()->getParticipants();
-                foreach ($participants as $participant)
-                {
-                    if(array_key_exists($participant->getAid(),$active['votes'][$curr]))
-                    {
-                        switch ($active['votes'][$curr][$participant->getAid()])
-                        {
-                            case 1:
-                                $on['actions']=$on['actions']+$participant->getActions();
-                                $on['votes']=$on['votes']+$participant->getVotes();
-                                break;
-                            case 0:
-                                $against['actions']=$against['actions']+$participant->getActions();
-                                $against['votes']=$against['votes']+$participant->getVotes();
-                                break;
-                            case 2:
-                                $hold['actions']=$hold['actions']+$participant->getActions();
-                                $hold['votes']=$hold['votes']+$participant->getVotes();
-                                break;
-                            default:
-                                break;
-                        }
-                    }
-
-                }
-
-                if($meeting->getWeight()==1)
-                {
-                    $accepted=$on['votes']>$against['votes']&&$on['votes']>$hold['votes'];
-                }else{
-                    $accepted=$on['actions']>$against['actions']&&$on['actions']>$hold['actions'];
-                }
-
-                /** @var Resolution $resolution */
-                $resolution=$meeting->getResolutions()->get($curr-1);
-                $resolution
-                    ->setVotesOnCount($on)
-                    ->setVotesAgainstCount($against)
-                    ->setVotesHoldCount($hold)
-                    ->setAccepted($accepted)
-                ;
-
-                $em->persist($resolution);
-            }
         }else{
-            if($active['turn']>0&&$active['active']!=0)
+            $repository=$em->getRepository(MeetingVoting::class);
+            /** @var MeetingVoting $voting */
+            $voting=$repository->getVotingBySort($meeting,$active['active']);
+            switch ($voting->getType())
             {
-                $curr=$active['active'];
-                $participants=$meeting->getParticipantList()->getParticipants();
-                $candidates=$meeting->getCandidates();
-                $resultArray=array();
-                foreach ($active['votes'][$active['turn']] as $key=>$row)
-                {
-                    $actions=0;
-                    $votes=0;
-                    foreach ($participants as $participant)
+                case 1:
+                    $results=array('votes'=>array(1=>0,0=>0,2=>0),'actions'=>array(1=>0,0=>0,2=>0));
+                    foreach ($voting->getVoteStatus() as $key=>$vote)
                     {
-                        if(array_key_exists($participant->getAid(),$row))
+                        foreach ($meeting->getParticipantList()->getParticipants() as $participant)
                         {
-                            if($row[$participant->getAid()])
+                            if($participant->getAid()===$key)
                             {
-                                $actions+=$participant->getActions();
-                                $votes+=$participant->getVotes();
+                                $results['votes'][$vote]+=$participant->getVotes();
+                                $results['actions'][$vote]+=$participant->getActions();
+                                continue;
                             }
                         }
                     }
-                    $cActions=$candidates[$key-1]->getActionsCount();
-                    $cVotes=$candidates[$key-1]->getVotesCount();
-                    $cActions[$curr]=array('count'=>$actions,'percent'=>($meeting->getTotalActions()>0? round(($actions/$meeting->getTotalActions())*100,2) : 0 ));
-                    $cVotes[$curr]=array('count'=>$votes,'percent'=>($meeting->getTotalVotes()>0? round(($votes/$meeting->getTotalVotes())*100,2) : 0 ));
-                    $candidates[$key-1]->setActionsCount($cActions);
-                    $candidates[$key-1]->setVotesCount($cVotes);
-                    if($meeting->getVariant()==1)
+                    foreach ($results['votes'] as $vote=>$val)
                     {
-                        array_push($resultArray,array('candidate'=>$key-1,'result'=>$candidates[$key-1]->getVotesCount()[$active['turn']]['percent']));
-                    }else{
-                        array_push($resultArray,array('candidate'=>$key-1,'result'=>$candidates[$key-1]->getActionsCount()[$active['turn']]['percent']));
+                        $results['votes'][$vote]=round(($val/$meeting->getTotalVotes())*100,2);
                     }
-                    $em->persist($candidates[$key-1]);
-                }
-                $array_column = array_column($resultArray, "result");
-                array_multisort( $array_column, SORT_DESC, $resultArray);
-                if($resultArray[0]['result']>0)
-                {
-                    $candidates[$resultArray[0]['candidate']]->setSecondTurn(true);
-                    $em->persist($candidates[$resultArray[0]['candidate']]);
-                    if($resultArray[1]['result']>0)
+                    foreach ($results['actions'] as $vote=>$val)
                     {
-                        $candidates[$resultArray[1]['candidate']]->setSecondTurn(true);
-                        $em->persist($candidates[$resultArray[1]['candidate']]);
-                        for($i=2;$i<sizeof($resultArray);$i++)
+                        $results['actions'][$vote]=round(($val/$meeting->getTotalActions())*100,2);
+                    }
+                    $results['votes']['accepted']=($results['votes'][1]>$results['votes'][0]&&$results['votes'][1]>$results['votes'][2]);
+                    $results['actions']['accepted']=($results['actions'][1]>$results['actions'][0]&&$results['actions'][1]>$results['actions'][2]);
+                    $voting->setVotesSummary($results);
+                    break;
+                case 2:
+                    $results=array('valid'=>array(),'invalid'=>array());
+                    for($i=0;$i<sizeof($voting->getCandidates());$i++)
+                    {
+                        $results['valid']['votes'][$i]=0;
+                        $results['invalid']['votes'][$i]=0;
+                        $results['valid']['actions'][$i]=0;
+                        $results['invalid']['actions'][$i]=0;
+                    }
+                    foreach ($voting->getVoteStatus() as $vote =>$status)
+                    {
+                        foreach ($status as $aid => $valid)
                         {
-                            if($resultArray[1]['result']==$resultArray[$i]['result'])
+                            if($valid)
                             {
-                                $candidates[$resultArray[$i]['candidate']]->setSecondTurn(true);
-                                $em->persist($candidates[$resultArray[$i]['candidate']]);
+                                foreach ($meeting->getParticipantList()->getParticipants() as $participant)
+                                {
+                                    if($aid===$participant->getAid())
+                                    {
+                                        $results['valid']['votes'][$vote-1]+=$participant->getVotes();
+                                        $results['valid']['actions'][$vote-1]+=$participant->getActions();
+                                    }
+                                }
                             }else{
-                                break;
+                                foreach ($meeting->getParticipantList()->getParticipants() as $participant)
+                                {
+                                    if($aid===$participant->getAid())
+                                    {
+                                        $results['invalid']['votes'][$vote-1]+=$participant->getVotes();
+                                        $results['invalid']['actions'][$vote-1]+=$participant->getActions();
+                                    }
+                                }
                             }
+
                         }
                     }
-                }
+                    foreach ($results['valid']['votes'] as $vote=>$val)
+                    {
+                        $results['valid']['votes'][$vote]=round(($val/$meeting->getTotalVotes())*100,2);
+                    }
 
+                    foreach ($results['invalid']['votes'] as $vote=>$val)
+                    {
+                        $results['invalid']['votes'][$vote]=round(($val/$meeting->getTotalVotes())*100,2);
+                    }
+
+                    foreach ($results['valid']['actions'] as $vote=>$val)
+                    {
+                        $results['valid']['actions'][$vote]=round(($val/$meeting->getTotalActions())*100,2);
+                    }
+
+                    foreach ($results['invalid']['actions'] as $vote=>$val)
+                    {
+                        $results['invalid']['actions'][$vote]=round(($val/$meeting->getTotalActions())*100,2);
+                    }
+
+                    arsort($results['valid']['votes']);
+                    arsort($results['valid']['actions']);
+                    $voting->setVotesSummary($results);
+                    break;
+                case 3:
+                    $results=array();
+                    for($i=0;$i<sizeof($voting->getAnswers());$i++)
+                    {
+                        $results['votes'][$i]=0;
+                        $results['actions'][$i]=0;
+                    }
+                    foreach ($voting->getVoteStatus() as $vote =>$votes)
+                    {
+                        foreach ($meeting->getParticipantList()->getParticipants() as $participant)
+                        {
+                            if(in_array($participant->getAid(),$votes))
+                            {
+                                $results['votes'][$vote-1]+=$participant->getVotes();
+                                $results['actions'][$vote-1]+=$participant->getActions();
+                            }
+                        }
+
+                    }
+                    foreach ($results['votes'] as $vote=>$val)
+                    {
+                        $results['votes'][$vote]=round(($val/$meeting->getTotalVotes())*100,2);
+                    }
+                    foreach ($results['actions'] as $vote=>$val)
+                    {
+                        $results['actions'][$vote]=round(($val/$meeting->getTotalActions())*100,2);
+                    }
+                    arsort($results['votes']);
+                    arsort($results['actions']);
+                    $voting->setVotesSummary($results);
+                    break;
+                default:
+                    break;
             }
+            $voting->setStatus(2);
+            $em->persist($voting);
         }
+
 
         $active['last']=$active['active'];
         $active['active']=null;
@@ -625,10 +634,9 @@ class GeneralMeetingController extends AbstractController
     /**
      * @Route("/{_locale}/manage/general_meeting/{id}/reset", name="app_manage_general_meeting_reset", methods={"PATCH"}))
      * @param GeneralMeeting $meeting
-     * @param Request $request
      * @return JsonResponse
      */
-    public function resetGeneralMeeting(GeneralMeeting $meeting,Request $request)
+    public function resetGeneralMeeting(GeneralMeeting $meeting): JsonResponse
     {
         if($meeting->getRoom()->getEvent()->getUser()!==$this->getUser())
         {
@@ -640,33 +648,12 @@ class GeneralMeetingController extends AbstractController
         }
         $em=$this->getDoctrine()->getManager();
         $meeting->setStatus(1);
-        if($meeting->getVariant()==1)
+        $active=array('active'=>null,'votes'=>array(),'last'=>null);
+        $meeting->setActiveStatus($active);
+        foreach ($meeting->getMeetingVotings() as $voting)
         {
-            foreach ($meeting->getResolutions() as $resolution)
-            {
-                $resolution
-                    ->setAccepted(null)
-                    ->setVotesHoldCount(null)
-                    ->setVotesOnCount(null)
-                    ->setVotesHoldCount(null)
-                    ->setVotesAgainstCount(null);
-                $em->persist($resolution);
-            }
-            $meeting
-                ->setTotalVotes(null)
-                ->setTotalActions(null)
-                ->setActiveStatus(array('active'=>null,'votes'=>array(),'last'=>null));
-
-        }else{
-            foreach ($meeting->getCandidates() as $candidate)
-            {
-                $candidate
-                    ->setActionsCount(array())
-                    ->setVotesCount(array())
-                    ->setSecondTurn(false);
-                $em->persist($candidate);
-                $meeting->setActiveStatus(array('active'=>null,'votes'=>array(),'last'=>null,'title'=>null,'turn'=>null,'vote'=>array(),'voted'=>array()));
-            }
+            $voting->setStatus(0)->setVotesSummary(array())->setVoteStatus(array());
+            $em->persist($voting);
         }
 
         $em->persist($meeting);
@@ -679,30 +666,43 @@ class GeneralMeetingController extends AbstractController
     /**
      * @Route("/{_locale}/manage/general_meeting/{slug}/cockpit", name="app_manage_general_meeting_cockpit")
      * @param GeneralMeeting $meeting
+     * @param MeetingVotingRepository $repository
      * @return RedirectResponse|Response
      */
-    public function generalMeetingCockpit(GeneralMeeting $meeting)
+    public function generalMeetingCockpit(GeneralMeeting $meeting,MeetingVotingRepository $repository)
     {
         if($meeting->getRoom()->getEvent()->getUser()!==$this->getUser())
         {
             return $this->redirectToRoute('app_manage');
         }
         $aStatus=$meeting->getActiveStatus();
-        $participants=$meeting->getParticipantList()->getParticipants();
+        if(!is_null($meeting->getParticipantList()))
+        {
+            $participants=$meeting->getParticipantList()->getParticipants();
+        }else{
+            $participants=array();
+        }
         $actions=0; $votes=0;
         foreach ($participants as $participant)
         {
             $actions=$actions+$participant->getActions();
             $votes=$votes+$participant->getVotes();
         }
+        if(isset($aStatus['active']) and !is_null($aStatus['active']))
+        {
+            $voting=$repository->getVotingBySort($meeting,$aStatus['active']);
+        }else{
+            $voting=null;
+        }
 
 
-        return $this->render('polling/cockpit.html.twig',[
+        return $this->render('general_meeting/cockpit.html.twig',[
             'meeting'=>$meeting,
             'active'=>$aStatus,
             'hash'=>$meeting->getHashId(),
             'actions'=>$actions,
-            'votes'=>$votes
+            'votes'=>$votes,
+            'voting'=>$voting
         ]);
     }
 
@@ -758,9 +758,10 @@ class GeneralMeetingController extends AbstractController
      * @Route("/{_locale}/general_meeting/{slug}/vote", name="app_general_meeting_vote")
      * @param GeneralMeeting $meeting
      * @param Request $request
+     * @param MeetingVotingRepository $repository
      * @return RedirectResponse|Response
      */
-    public function generalMeetingVote(GeneralMeeting $meeting,Request $request)
+    public function generalMeetingVote(GeneralMeeting $meeting,Request $request,MeetingVotingRepository $repository)
     {
         $session=$request->getSession();
         $participant=$session->get("user_gm_".$meeting->getSlug());
@@ -770,24 +771,37 @@ class GeneralMeetingController extends AbstractController
         }
         $aStatus=$meeting->getActiveStatus();
         $list=$meeting->getParticipantList()->getParticipants();
+        if(isset($aStatus['active']) && !is_null($aStatus['active']))
+        {
+            $voting=$repository->getVotingBySort($meeting,$aStatus['active']);
+        }else{
+            $voting=null;
+        }
+        if($aStatus['last']>0)
+        {
+            $last=$repository->getVotingBySort($meeting,$aStatus['last']);
+        }else{
+            $last=null;
+        }
 
         return $this->render('polling/general_meeting_vote.html.twig',[
             'meeting'=>$meeting,
             'hash'=>$meeting->getHashId(),
             'active'=>$aStatus,
             'participant'=>$participant,
-            'list'=>$list
+            'list'=>$list,
+            'voting'=>$voting,
+            'last'=>$last
         ]);
     }
 
     /**
-     * @Route("/{_locale}/general_meeting/{slug}/activate_vote/{number}", name="app_general_meeting_activate_vote", methods={"PATCH"})
+     * @Route("/{_locale}/general_meeting/{slug}/activate_vote/{sort}", name="app_general_meeting_activate_vote", methods={"PATCH"})
      * @param GeneralMeeting $meeting
-     * @param int $number
-     * @param Request $request
+     * @param MeetingVoting $voting
      * @return JsonResponse
      */
-    public function activateVote(GeneralMeeting $meeting,int $number,Request $request)
+    public function activateVote(GeneralMeeting $meeting,MeetingVoting $voting): JsonResponse
     {
         if($meeting->getRoom()->getEvent()->getUser()!==$this->getUser())
         {
@@ -795,73 +809,16 @@ class GeneralMeetingController extends AbstractController
         }
         $em=$this->getDoctrine()->getManager();
         $active=$meeting->getActiveStatus();
-        $active['active']=$number;
-        $active['voted']=[];
-        if($meeting->getVariant()==1)
-        {
-            $active['votes'][$number]=array();
-        }
-        if($meeting->getVariant()==2)
-        {
-            $votes_arr=[];
-            $active['turn']=$number;
-            foreach ($meeting->getCandidates() as $key=>$candidate)
-            {
-                if($active['turn']==1)
-                {
-                    $votes_arr[$key+1]=array();
-                    $votes=$candidate->getVotesCount();
-                    $actions=$candidate->getActionsCount();
-                    $votes[1]=array();
-                    $actions[1]=array();
-                    $candidate->setVotesCount($votes)->setActionsCount($actions)->setSecondTurn(false);
-                    $em->persist($candidate);
-                }
+        $active['active']=$voting->getSort();
+        $active['voted']=array();
+        $voting->setStatus(1)->setVoteStatus(array())->setVotesSummary(array());
 
-                if($active['turn']==2)
-                {
-                    if($candidate->isSecondTurn())
-                    {
-                        $votes_arr[$key+1]=array();
-                        $votes_arr[$key+1]=array();
-                        $votes=$candidate->getVotesCount();
-                        $actions=$candidate->getActionsCount();
-                        $votes[2]=array();
-                        $actions[2]=array();
-                        $candidate->setVotesCount($votes)->setActionsCount($actions);
-                        $em->persist($candidate);
-                    }
-                }
-            }
-            $active['votes'][$number]=$votes_arr;
-        }
         $meeting->setActiveStatus($active);
 
         $em->persist($meeting);
+        $em->persist($voting);
         $em->flush();
         return new JsonResponse(array('status'=>'success'));
 
-    }
-
-    /**
-     * @Route("/{_locale}/manage/general_meeting/{id}/save_title", name="app_meeting_save_title", methods={"PATCH"})
-     * @param GeneralMeeting $meeting
-     * @param Request $request
-     * @return JsonResponse
-     */
-    public function saveMeetingTitle(GeneralMeeting $meeting,Request $request): JsonResponse
-    {
-        if($meeting->getRoom()->getEvent()->getUser()!==$this->getUser())
-        {
-            return new JsonResponse(array('status'=>'error'));
-        }
-        $em=$this->getDoctrine()->getManager();
-        $content=json_decode($request->getContent());
-        $active=$meeting->getActiveStatus();
-        $active['title']=$content->title;
-        $meeting->setActiveStatus($active);
-        $em->persist($meeting);
-        $em->flush();
-        return new JsonResponse(array('status'=>'success'));
     }
 }

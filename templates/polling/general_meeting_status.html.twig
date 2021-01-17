@@ -1,5 +1,5 @@
 {% if meeting.status==0 %}
-    <button class="btn btn-sm btn-dark btn-gm-begin" data-hash="{{ meeting.hashId }}" data-url="{{ path('app_manage_general_meeting_cockpit',{slug:meeting.slug}) }}" data-href="{{ path('app_manage_general_meeting_begin', {'id':meeting.id}) }}">{% trans %}Rozpocznij{% endtrans %}</button>
+    <button class="btn btn-sm btn-dark btn-gm-begin" {% if meeting.participantList is null %}disabled{% endif%} data-hash="{{ meeting.hashId }}" data-url="{{ path('app_manage_general_meeting_cockpit',{slug:meeting.slug}) }}" data-href="{{ path('app_manage_general_meeting_begin', {'id':meeting.id}) }}">{% trans %}Rozpocznij{% endtrans %}</button>
 {% elseif meeting.status==1 %}
     {% if meeting.activeStatus.active is defined and meeting.activeStatus.active is null %}
     <button class="btn btn-sm btn-dark btn-gm-end" data-hash="{{ meeting.hashId }}" data-url="{{ path('app_manage_general_meeting_cockpit',{slug:meeting.slug}) }}" data-href="{{ path('app_manage_general_meeting_end', {'id':meeting.id}) }}">{% trans %}Zakończ{% endtrans %}</button>

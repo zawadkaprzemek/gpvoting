@@ -1,0 +1,25 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{% trans with {'%title%': meeting.name } %}Walne zgromadzenie %title% - lista głosowań{% endtrans %}{% endblock %}
+
+{% block body %}
+    <div class="col-12">
+        <h3>{% trans %}Lista głosowań{% endtrans %}</h3>
+
+        <div class="col-12">
+            {% if votings|length<meeting.count %}
+                <div><a class="btn btn-sm btn-primary" href="{{ path('app_manage_general_meeting_add_voting',{slug:meeting.slug}) }}">{% trans %}Dodaj głosowanie{% endtrans %}</a></div>
+            {% endif %}
+            {% for voting in votings %}
+                <div>{{ voting.content }} - {{ voting|voting_type }}
+                    <div class="btn-group btn-group-sm">
+                        <a href="{{ path('app_manage_general_meeting_edit_voting',{slug:meeting.slug,sort:voting.sort}) }}" class="btn btn-outline-primary">{% trans %}Edycja{% endtrans %}</a>
+                    {{ include('general_meeting/_delete_form.html.twig',{voting:voting}) }}
+                    </div>
+                </div>
+                {% else %}
+                <p>{% trans %}Brak głosowań{% endtrans %}</p>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}

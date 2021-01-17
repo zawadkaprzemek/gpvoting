@@ -28,11 +28,6 @@ class ParticipantList
     private $name;
 
     /**
-     * @ORM\OneToMany(targetEntity=GeneralMeeting::class, mappedBy="participantList")
-     */
-    private $meeting;
-
-    /**
      * @ORM\ManyToOne(targetEntity=User::class, inversedBy="participantLists")
      * @ORM\JoinColumn(nullable=false)
      */
@@ -52,6 +47,12 @@ class ParticipantList
      * @ORM\OneToMany(targetEntity=Participant::class, mappedBy="list")
      */
     private $participants;
+
+    /**
+     * @ORM\OneToMany(targetEntity=GeneralMeeting::class, mappedBy="participantList")
+     */
+    private $meeting;
+
 
     public function __construct()
     {
@@ -76,36 +77,6 @@ class ParticipantList
         return $this;
     }
 
-    /**
-     * @return Collection|GeneralMeeting[]
-     */
-    public function getMeeting(): Collection
-    {
-        return $this->meeting;
-    }
-
-    public function addMeeting(GeneralMeeting $meeting): self
-    {
-        if (!$this->meeting->contains($meeting)) {
-            $this->meeting[] = $meeting;
-            $meeting->setParticipantList($this);
-        }
-
-        return $this;
-    }
-
-    public function removeMeeting(GeneralMeeting $meeting): self
-    {
-        if ($this->meeting->contains($meeting)) {
-            $this->meeting->removeElement($meeting);
-            // set the owning side to null (unless already changed)
-            if ($meeting->getParticipantList() === $this) {
-                $meeting->setParticipantList(null);
-            }
-        }
-
-        return $this;
-    }
 
     public function getUser(): ?User
     {
@@ -173,4 +144,36 @@ class ParticipantList
 
         return $this;
     }
+
+    /**
+     * @return Collection|GeneralMeeting[]
+     */
+    public function getMeeting(): Collection
+    {
+        return $this->meeting;
+    }
+
+    public function addMeeting(GeneralMeeting $meeting): self
+    {
+        if (!$this->meeting->contains($meeting)) {
+            $this->meeting[] = $meeting;
+            $meeting->setParticipantList($this);
+        }
+
+        return $this;
+    }
+
+    public function removeMeeting(GeneralMeeting $meeting): self
+    {
+        if ($this->meeting->contains($meeting)) {
+            $this->meeting->removeElement($meeting);
+            // set the owning side to null (unless already changed)
+            if ($meeting->getParticipantList() === $this) {
+                $meeting->setParticipantList(null);
+            }
+        }
+
+        return $this;
+    }
+
 }

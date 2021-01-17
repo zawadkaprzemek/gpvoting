@@ -233,7 +233,7 @@
         let vote=$(this).data('vote');
         let aid='{% if participant is defined %}{{ participant.aid }}{% else %}A0{% endif %}'
         const message = {
-            name: aid+'_{{ (active.active is defined ? active.active : '') }}',
+            name: aid+'_{{ (voting is not null ? '1' : '0') }}',
             message: vote,
             type:'vote',
             votes: '{% if participant is defined %}{{ participant.votes }}{% else %}0{% endif %}',
@@ -331,7 +331,7 @@
 
     $('.btn-gm-activate-vote').on('click',function(){
        let url=$(this).data('href');
-       if(confirm('{% trans %}Na pewno chcesz aktywować głosowanie nad tą uchwałą?{% endtrans %}'))
+       if(confirm('{% trans %}Na pewno chcesz aktywować to głosowanie?{% endtrans %}'))
        {
            activateVote(url);
        }
@@ -354,31 +354,12 @@
     });
 
 
-
-    $('#titleForm').on('submit',function (e){
-        e.preventDefault();
-        let title=$('#title_title').val();
-        let url=$(this).data('href');
-        $.ajax({
-            type: 'PATCH',
-            url: url,
-            dataType: 'json',
-            data:JSON.stringify({title:title}),
-            contentType: 'application/merge-patch+json',
-        }).done(function (result) {
-            if(result.status==="success")
-            {
-                $('#titleModal').modal('hide');
-            }
-        });
-    });
-    {% if meeting.variant==2 %}
-    {% if active is not empty %}
+    {% if voting is not null %}
     $('#voteCandidateForm').on('submit',function (e){
        e.preventDefault();
 
-        let theCheckboxes ={% if active.turn==1 %}$(this).find("input[type='checkbox']"){% else %}$(this).find("input[type='radio']"){% endif %};
-        const max={{ meeting.toChoose }};
+        let theCheckboxes =$(this).find("input[type='checkbox']");
+        const max={{ voting.toChoose }};
         let checked=theCheckboxes.filter(":checked");
         let data=candidatesVoteData($(this).serializeArray());
         if(checked.length===0)
@@ -387,8 +368,10 @@
         }else if(checked.length>max)
         {
             {% if meeting.badVoteSettings==1 %}
-                candidatesVoteSend(data,false);
-                $(theCheckboxes).prop('disabled',true);
+            if(confirm('{% trans %}Przy zatwierdzeniu tego wyboru oddasz nieważny głos. Kontynuwać?{% endtrans %}')) {
+                candidatesVoteSend(data, false);
+                $(theCheckboxes).prop('disabled', true);
+            }
             {% else %}
                 let warned=$(this).data('warned');
                 let warning=$(this).data('warning');
@@ -400,8 +383,11 @@
                         alert(warning);
                         $(this).data('warned',true);
                     }else{
-                        candidatesVoteSend(data,false);
-                        $(theCheckboxes).prop('disabled',true);
+                        if(confirm('{% trans %}Przy zatwierdzeniu tego wyboru oddasz nieważny głos. Kontynuwać?{% endtrans %}'))
+                        {
+                            candidatesVoteSend(data,false);
+                            $(theCheckboxes).prop('disabled',true);
+                        }
                     }
                 {% endif %}
             {% endif %}
@@ -410,9 +396,22 @@
             $(theCheckboxes).prop('disabled',true);
         }
     });
-    {% endif %}
-    {% endif %}
 
+    $('#voteAnswerForm').on('submit',function (e){
+        e.preventDefault();
+        let theCheckboxes = {% if voting.multiChoose %}$(this).find("input[type='checkbox']"){% else %}$(this).find("input[type='radio']"){% endif %};
+        let checked=theCheckboxes.filter(":checked");
+        let data=candidatesVoteData($(this).serializeArray());
+        console.log(data);
+        if(checked.length===0)
+        {
+            alert("{% trans %}Zaznacz odpowiedź/odpowiedzi aby zagłosować{% endtrans %}")
+        }else{
+            answersVoteSend(data,true);
+            $(theCheckboxes).prop('disabled',true);
+        }
+    });
+    {% endif %}
 
     function candidatesVoteSend(votes,valid)
     {
@@ -438,6 +437,33 @@
                 socket.send(JSON.stringify(message));
                 addMessage(message.name, message.message,message.type,message.votes,message.actions,message.valid);
                 $('#voteCandidateForm').find('button').prop('disabled',true);
+            }
+        });
+    }
+
+    function answersVoteSend(votes)
+    {
+        let url='{{ path('app_ajax_general_meeting_save',{slug:meeting.slug}) }}';
+        let aid='{% if participant is defined %}{{ participant.aid }}{% else %}A0{% endif %}'
+        const message = {
+            name: aid,
+            message: votes,
+            type:'vote_turn',
+            votes: '{% if participant is defined %}{{ participant.votes }}{% else %}0{% endif %}',
+            actions: '{% if participant is defined %}{{ participant.actions }}{% else %}0{% endif %}'
+        };
+        $.ajax({
+            type: 'PATCH',
+            url: url,
+            data: JSON.stringify({user:aid,votes:votes}),
+            processData: true,
+            contentType: 'application/merge-patch+json',
+        }).done(function (result) {
+            if(result.status==="success")
+            {
+                socket.send(JSON.stringify(message));
+                addMessage(message.name, message.message,message.type,message.votes,message.actions);
+                $('#voteAnswerForm').find('button').prop('disabled',true);
             }
         });
     }

@@ -56,6 +56,7 @@ class Room
      * @ORM\OneToMany(targetEntity=GeneralMeeting::class, mappedBy="room")
      */
     private $generalMeetings;
+    
 
     public function __construct()
     {

@@ -18,12 +18,6 @@ class Candidate
     private $id;
 
     /**
-     * @ORM\ManyToOne(targetEntity=GeneralMeeting::class, inversedBy="candidates",cascade={"persist"})
-     * @ORM\JoinColumn(nullable=false)
-     */
-    private $general_meeting;
-
-    /**
      * @ORM\Column(type="string", length=255)
      */
     private $name;
@@ -43,21 +37,15 @@ class Candidate
      */
     private $secondTurn=false;
 
+    /**
+     * @ORM\ManyToOne(targetEntity=MeetingVoting::class, inversedBy="candidates")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $meetingVoting;
+
     public function getId(): ?int
     {
         return $this->id;
-    }
-
-    public function getGeneralMeeting(): ?GeneralMeeting
-    {
-        return $this->general_meeting;
-    }
-
-    public function setGeneralMeeting(?GeneralMeeting $general_meeting): self
-    {
-        $this->general_meeting = $general_meeting;
-
-        return $this;
     }
 
     public function getName(): ?string
@@ -104,6 +92,18 @@ class Candidate
     public function setSecondTurn(bool $secondTurn): self
     {
         $this->secondTurn = $secondTurn;
+
+        return $this;
+    }
+
+    public function getMeetingVoting(): ?MeetingVoting
+    {
+        return $this->meetingVoting;
+    }
+
+    public function setMeetingVoting(?MeetingVoting $meetingVoting): self
+    {
+        $this->meetingVoting = $meetingVoting;
 
         return $this;
     }

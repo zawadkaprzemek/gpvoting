@@ -7,271 +7,266 @@
     <div>
         {% if meeting.status==0 %}
             <h3 class="text-center">{% trans %}Oczekiwanie na rozpoczęcie Walnego zgromadzenia{% endtrans %}</h3>
+
             {% elseif meeting.status==1 %}
-                <div class="row">
-                {% if active.active is not defined or active.active is null %}
-                    <div class="col-12">
-                        <h3 class="text-center">{% trans %}Oczekiwanie na aktywowanie pytania przez organizatora{% endtrans %}</h3>
-                        {% if meeting.variant==1 %}
-                        {% if active.last >0 and active.last is not null %}
-                            <p>{% trans %}Poprzednie głosowanie{% endtrans %}</p>
-                            <h4>{{ meeting.resolutions[active.last-1].content }}</h4>
+                {% if active.active is null %}
+                    <h3 class="text-center">{% trans %}Oczekiwanie na aktywowanie głosowania przez ogranizatora{% endtrans %}</h3>
 
-                            <div class="row">
-                                <div class="col-12 d-inline-flex mb-2">
-                                    <div class="vote-box bg-success mr-2"></div>
-                                        {% trans %}Za{% endtrans %} -
-                                    {% if meeting.weight==1 %}
-                                        {{ meeting.resolutions[active.last-1].votesOnCount.actions }}
-                                        {% trans %}co stanowi {% endtrans %}
-                                        {{ ((meeting.resolutions[active.last-1].votesOnCount.actions/meeting.totalActions)*100)|number_format(2,".","") }}%
-                                    {% else %}
-                                        {{ meeting.resolutions[active.last-1].votesOnCount.votes }}
-                                        {% trans %}co stanowi {% endtrans %}
-                                        {{ ((meeting.resolutions[active.last-1].votesOnCount.votes/meeting.totalVotes)*100)|number_format(2,".","") }}%
-                                    {% endif %}
-                                </div>
-                                <div class="col-12 d-inline-flex mb-2">
-                                    <div class="vote-box bg-danger mr-2"></div>
-                                    {% trans %}Przeciw{% endtrans %} -
-                                    {% if meeting.weight==1 %}
-                                        {{ meeting.resolutions[active.last-1].votesAgainstCount.actions }}
-                                        {% trans %}co stanowi {% endtrans %}
-                                        {{ ((meeting.resolutions[active.last-1].votesAgainstCount.actions/meeting.totalActions)*100)|number_format(2,".","") }}%
-                                    {% else %}
-                                        {{ meeting.resolutions[active.last-1].votesAgainstCount.votes }}
-                                        {% trans %}co stanowi {% endtrans %}
-                                        {{ ((meeting.resolutions[active.last-1].votesAgainstCount.votes/meeting.totalVotes)*100)|number_format(2,".","") }}%
-                                    {% endif %}
-                                </div>
-                                {% if meeting.holdBack %}
-                                <div class="col-12 d-inline-flex mb-2">
-                                    <div class="vote-box bg-warning mr-2"></div>
-                                    {% trans %}Wstrzymuje się{% endtrans %} -
-                                    {% if meeting.weight==1 %}
-                                        {{ meeting.resolutions[active.last-1].votesHoldCount.actions }}
-                                        {% trans %}co stanowi {% endtrans %}
-                                        {{ ((meeting.resolutions[active.last-1].votesHoldCount.actions/meeting.totalActions)*100)|number_format(2,".","") }}%
-                                    {% else %}
-                                        {{ meeting.resolutions[active.last-1].votesHoldCount.votes }}
-                                        {% trans %}co stanowi {% endtrans %}
-                                        {{ ((meeting.resolutions[active.last-1].votesHoldCount.votes/meeting.totalVotes)*100)|number_format(2,".","") }}%
-                                    {% endif %}
-                                </div>
-                                {% endif %}
-                            </div>
-                        {% endif %}
-                        {% else %}
+                    {% if last is not null %}
+                    <div class="last-voting-results mt-3">
+                        <p class="text-center mb-2">{% trans %}Wynik poprzedniego głosowania{% endtrans %}</p>
+                        <h4 class="text-center">{{ last.content }} </h4>
 
-                        {% endif %}
-                    </div>
-                {% else %}
-                    <div class="col-12 col-lg-6">
-                        {% if active.active==0 %}
-                        <h2>{% trans %}Sprawdzanie obecności{% endtrans %}</h2>
-                    <p>{% trans %}Aby potwierdzić swoją obecność kliknij dowolny przycisk{% endtrans %}</p>
-                            {% else %}
-                                {% if meeting.variant==1 %}
-                                <h2>{{ meeting.resolutions[(active.active-1)].content }}</h2>
+                        {% if last.type==1 %}
+                            <p class="mb-0 font-weight-bold text-center">
+                                {% if meeting.weight==1 %}
+                                    {% if last.votesSummary['votes']['accepted'] %}
+                                        {% trans %}Zaakceptowane{% endtrans %}
                                     {% else %}
-                                        <h2>{% if active.title=='' %}{{ meeting.name }}{% else %}{{ active.title }}{% endif %} - {% trans with {'%turn%':active.turn} %}%turn% tura{% endtrans %}</h2>
+                                        {% trans %}Odrzucone{% endtrans %}
                                     {% endif %}
-                        {% endif %}
-                        {% if meeting.variant==1 %}
-                    <div class="btn-group btn-group-lg">
-                        <button class="btn btn-success btn-vote" {% if active.votes[active.active][participant.aid] is defined%}disabled{% endif%} data-vote="1">{% trans %}Za{% endtrans %}</button>
-                        <button class="btn btn-danger btn-vote" {% if active.votes[active.active][participant.aid] is defined%}disabled{% endif%} data-vote="0">{% trans %}Przeciw{% endtrans %}</button>
-                        {% if meeting.holdBack %}
-                            <button class="btn btn-warning btn-vote" {% if active.votes[active.active][participant.aid] is defined%}disabled{% endif%} data-vote="2">{% trans %}Wstrzymuje się{% endtrans %}</button>
-                        {% endif %}
-                    </div>
-                        {% else %}
-
-                            {% if active.active ==0 %}
-                                <div class="btn-group btn-group-lg">
-                                    <button class="btn btn-success btn-vote" {% if active.votes[active.active][participant.aid] is defined%}disabled{% endif%} data-vote="1">{% trans %}Za{% endtrans %}</button>
-                                    <button class="btn btn-danger btn-vote" {% if active.votes[active.active][participant.aid] is defined%}disabled{% endif%} data-vote="0">{% trans %}Przeciw{% endtrans %}</button>
-                                    {% if meeting.holdBack %}
-                                        <button class="btn btn-warning btn-vote" {% if active.votes[active.active][participant.aid] is defined%}disabled{% endif%} data-vote="2">{% trans %}Wstrzymuje się{% endtrans %}</button>
-                                    {% endif %}
-                                </div>
                                 {% else %}
-                            <form id="voteCandidateForm" data-warned="false" data-warning="{% trans with { '%count%':meeting.toChoose} %}Aby oddać poprawny głos możesz wybrać maksymalnie %count% kandydatów{% endtrans %}">
-                            <ul class="list-group mb-2 vote-ul">
-                                {% set voted=false %}
-                                {% for key,candidate in meeting.candidates %}
-                                    {% if active.turn==2 %}
-                                        {% if candidate.secondTurn %}
-                                        <input name="vote"
-                                               type="radio"
-                                                {% if active.votes[active.turn][(key+1)][participant.aid] is defined %}
-                                                    {% set voted=true %}
-                                                    checked
-                                                {% endif %}
-                                               value="{{ candidate.id }}" class="d-none" id="candidate_{{ (key+1) }}">
-                                        <label class="list-group-item list-group-item-action mb-0" for="candidate_{{ (key+1) }}">{{ candidate.name }}</label>
-                                        {% endif %}
-                                    {% else %}
-                                        <input name="vote[]"
-                                               type="checkbox"
-                                                {% if active.votes[active.turn][(key+1)][participant.aid] is defined %}
-                                                    {% set voted=true %}
-                                                    checked
-                                                {% endif %}
-                                               value="{{ (key+1) }}" class="d-none" id="candidate_{{ (key+1) }}">
-                                        <label class="list-group-item list-group-item-action mb-0" for="candidate_{{ (key+1) }}">{{ candidate.name }}</label>
-                                    {% endif %}
-                                {% endfor %}
-                            </ul>
-                                <button type="submit" class="btn btn-outline-primary" {% if voted %}disabled{% endif %}>{% trans %}Głosuj{% endtrans %}</button>
-                            </form>
-                            {% if voted %}
-                                <script>
-                                    $('#voteCandidateForm input').prop('disabled',true);
-                                </script>
-                                {% endif %}
-                            {% endif %}
-                        {% endif %}
-                    </div>
-                {% endif %}
-                <div class="col-12 col-lg-6">
-                <div class="votes mt-3">
-                    <div class="vote-row">
-                        <div class="vote-box"></div>
-                            <div class="vote-box font-weight-bold">
-                                {{ participant.aid }}
-                            </div>
-                    </div>
-                    {% for i in 0..meeting.count %}
-                        <div class="vote-row {% if meeting.variant==2 and active.turn==2 and i>0 and meeting.candidates[i-1].secondTurn == false %}d-none{% endif%}" id="vote_{{ i }}">
-                            <div class="vote-box">{% if i==0 %}T{% else %}{{ i }}{% endif %}</div>
-                            {% if meeting.variant==1 %}
-                            <div class="vote-box {%if active.votes[i][participant.aid] is defined %}{{active.votes[i][participant.aid]|gm_vote_color}}{% endif %}" id="vote_{{ participant.aid }}_{{ i }}"></div>
-                            {% else %}
-                                {% if i==0 %}
-                                    <div class="vote-box {%if active.votes[i][participant.aid] is defined %}{{active.votes[i][participant.aid]|gm_vote_color}}{% endif %}" id="vote_{{ participant.aid }}_{{ i }}"></div>
-                                    {% else %}
-                                <div class="vote-box {%if active.votes[active.turn][i][participant.aid] is defined %}{{active.votes[active.turn][i][participant.aid]|gm_vote_color}}{% endif %}" id="vote_{{ participant.aid }}_{{ i }}"></div>
-                                {% endif %}
-                            {% endif %}
-                        </div>
-                    {% endfor %}
-                </div>
-                </div>
-                </div>
-            {% else %}
-                <div class="alert alert-info">
-                    <h4>{% trans %}Zgromadzenie zakończone{% endtrans %}</h4>
-                    <p>{% trans %}Serdecznie dziękujemy za udział w głosowaniu!{% endtrans %}</p>
-                </div>
-            <p class="font-weight-bold">{% trans %}Wyniki głosowań{% endtrans %}:</p>
-        <div class="table-responsive">
-            <table class="table table-striped">
-                {% if meeting.variant==1 %}
-                    <thead>
-                    <tr>
-                        <th></th>
-                        <th>{% trans %}Treść uchwały{% endtrans %}</th>
-                        <th>{% trans %}Status{% endtrans %}</th>
-                        <th>{% trans %}Głosy za{% endtrans %}</th>
-                        <th>{% trans %}Głosy przeciw{% endtrans %}</th>
-                        {% if meeting.holdBack %}
-                            <th>{% trans %}Głosy wstrzymane{% endtrans %}</th>
-                        {% endif %}
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {% for key,resolution in meeting.resolutions %}
-                        <tr>
-                            <td>{{ key+1 }}</td>
-                            <td>{{ resolution.content }}</td>
-                            <td>{% if resolution.accepted is not null %}
-                                    {% if resolution.accepted %}
+                                    {% if last.votesSummary['actions']['accepted'] %}
                                         {% trans %}Zaakceptowane{% endtrans %}
                                     {% else %}
                                         {% trans %}Odrzucone{% endtrans %}
                                     {% endif %}
                                 {% endif %}
-                            </td>
-                            <td>
-                                {% if resolution.votesOnCount is defined and resolution.votesOnCount is not empty %}
-                                    {% if(meeting.weight==1) %}
-                                        {{ (meeting.totalVotes > 0 ?((resolution.votesOnCount.votes/meeting.totalVotes)*100):0)|number_format(2,"."," ") }}
-                                    {% else %}
-                                        {{ (meeting.totalActions> 0?((resolution.votesOnCount.actions/meeting.totalActions)*100):0)|number_format(2,"."," ") }}
-                                    {% endif %}
-                                    %
-                                {% endif %}
-                            </td>
-                            <td>
-                                {% if resolution.votesAgainstCount is defined and resolution.votesAgainstCount is not empty %}
-                                    {% if(meeting.weight==1) %}
-                                        {{ (meeting.totalVotes > 0 ?((resolution.votesAgainstCount.votes/meeting.totalVotes)*100):0)|number_format(2,"."," ") }}
-                                    {% else %}
-                                        {{ (meeting.totalActions> 0?((resolution.votesAgainstCount.actions/meeting.totalActions)*100):0)|number_format(2,"."," ") }}
-                                    {% endif %}%
-                                {% endif %}
-                            </td>
+                            </p>
+                            <p class="mb-0">{% trans %}Za{% endtrans %}: {% if meeting.weight==1 %}{{ last.votesSummary['votes'][1] }}{% else %}{{ last.votesSummary['actions'][1] }}{% endif %}%</p>
+                            <p class="mb-0">{% trans %}Przeciw{% endtrans %}: {% if meeting.weight==1 %}{{ last.votesSummary['votes'][0] }}{% else %}{{ last.votesSummary['actions'][0] }}{% endif %}%</p>
                             {% if meeting.holdBack %}
-                                <td>
-                                    {% if resolution.votesHoldCount is defined and resolution.votesHoldCount is not empty %}
-                                        {% if(meeting.weight==1) %}
-                                            {{ (meeting.totalVotes>0 ?((resolution.votesHoldCount.votes/meeting.totalVotes)*100):0)|number_format(2,"."," ") }}
-                                        {% else %}
-                                            {{ (meeting.totalActions>0 ?((resolution.votesHoldCount.actions/meeting.totalActions)*100):0)|number_format(2,"."," ") }}
-                                        {% endif %}%
-                                    {% endif %}
-                                </td>
+                                <p class="mb-0">{% trans %}Wstrzymało się{% endtrans %}: {% if meeting.weight==1 %}{{ last.votesSummary['votes'][2] }}{% else %}{{ last.votesSummary['actions'][2] }}{% endif %}%</p>
                             {% endif %}
-                        </tr>
-                    {% endfor %}
-                    </tbody>
-                {% else %}
-                    <thead>
-                    <tr>
-                        <th></th>
-                        <th>{% trans %}Dane kandydata{% endtrans %}</th>
-                        <th>{% trans %}Głosy{% endtrans %}</th>
-                        <th></th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {% for c_key,candidate in meeting.candidates %}
-                        <tr>
-                            <td>{{ c_key+1 }}</td>
-                            <td>{{ candidate.name }}</td>
-                            <td>
+                        {% elseif last.type==2 %}
+                            {% if last.votesSummary['valid'] is defined %}
                                 {% if meeting.weight==1 %}
-                                    {% for key,item in candidate.votesCount %}
-                                        {% if item.percent is defined %}
-                                            <p>{% trans %}Tura{% endtrans %} {{ key }}: {{ item.percent|number_format() }}%</p>
-                                            <p class="small">{% trans %}Ważne głosy{% endtrans %}: {{ meeting.activeStatus.votes[key][c_key+1]|valid_votes(1) }}</p>
-                                            <p class="small">{% trans %}Nie ważne głosy{% endtrans%}: {{ meeting.activeStatus.votes[key][c_key+1]|valid_votes(0) }}</p>
-                                        {% endif %}
+                                    {% for key,vote in last.votesSummary['valid']['votes'] %}
+                                        <p class="mb-2">
+                                            {{ last.candidates[key].name }} -
+                                            <span class="bg-success votes-span" title="{% trans %}Głosy ważne{% endtrans %}">{{ vote|number_format(2) ~ '%'}}</span>
+                                            <span class="bg-danger votes-span" title="{% trans %}Głosy nie ważne{% endtrans %}">{{ last.votesSummary['invalid']['votes'][key]|number_format(2) ~ '%'}}</span>
+                                        </p>
                                     {% endfor %}
                                 {% else %}
-                                    {% for key,item in candidate.actionsCount %}
-                                        {% if item.percent is defined %}
-                                            <p>{% trans %}Tura{% endtrans %} {{ key }}: {{ item.percent }}%</p>
-                                            <p class="small">{% trans %}Ważne głosy{% endtrans %}: {{ meeting.activeStatus.votes[key][c_key+1]|valid_votes(1) }}</p>
-                                            <p class="small">{% trans %}Nie ważne głosy{% endtrans%}: {{ meeting.activeStatus.votes[key][c_key+1]|valid_votes(0) }}</p>
-                                        {% endif %}
+                                    {% for key,vote in last.votesSummary['valid']['actions'] %}
+                                        <p class="mb-2">
+                                            {{ last.candidates[key].name }} -
+                                            <span class="bg-success votes-span" title="{% trans %}Głosy ważne{% endtrans %}">{{ vote|number_format(2) ~ '%'}}</span>
+                                            <span class="bg-danger votes-span" title="{% trans %}Głosy nie ważne{% endtrans %}">{{ last.votesSummary['invalid']['actions'][key]|number_format(2) ~ '%'}}</span>
+                                        </p>
                                     {% endfor %}
                                 {% endif %}
-                            </td>
-                            <td></td>
-                        </tr>
-                    {% endfor %}
-                    </tbody>
+                            {% endif %}
+                            {% else %}
+                                {% if meeting.weight==1 %}
+                                    {% for key,vote in last.votesSummary['votes'] %}
+                                        <p class="mb-0">{{ last.answers[key].content ~' - '~ vote ~ '%' }}</p>
+                                    {% endfor %}
+                                {% else %}
+                                    {% for key,vote in last.votesSummary['actions'] %}
+                                        <p class="mb-0">{{ last.answers[key].content ~' - '~ vote ~ '%' }}</p>
+                                    {% endfor %}
+                                {% endif %}
+                        {% endif %}
+                    </div>
+                    {% endif %}
+                {% else %}
+                <div class="row">
+                    <div class="col-12 col-md-6 order-0 order-md-2">
+                        <div class="votes mt-3">
+                            <div class="vote-row">
+                                <div class="vote-box"></div>
+                                <div class="vote-box font-weight-bold">
+                                    {{ participant.aid }}
+                                </div>
+                            </div>
+                            {% for i in 0..0 %}
+                                <div class="vote-row" id="vote_{{ i }}">
+                                    <div class="vote-box">T</div>
+                                        <div class="vote-box {%if active.votes[participant.aid] is defined %}{{active.votes[participant.aid]|gm_vote_color}}{% endif %}" id="vote_{{ participant.aid }}_{{ i }}"></div>
+                                </div>
+                            {% endfor %}
+                            {% if voting is not null %}
+                                {% set count = 1 %}
+                                {% if voting.type == 2 %}
+                                    {% set count = voting.candidates|length %}
+                                {% elseif voting.type==3 %}
+                                    {% set count = voting.answers|length %}
+                                {% endif %}
+                                {% for i in 1..count %}
+                                    <div class="vote-row" id="vote_{{ i }}">
+                                        <div class="vote-box">{{ i }}</div>
+                                        {% if voting.type==1 %}
+                                        <div class="vote-box {%if voting.voteStatus[participant.aid] is defined %}{{voting.voteStatus[participant.aid]|gm_vote_color}}{% endif %}" id="vote_{{ participant.aid }}_{{ i }}">
+                                            </div>
+                                        {% elseif voting.type==2 %}
+                                            <div class="vote-box {%if voting.voteStatus[i][participant.aid] is defined %}{{voting.voteStatus[i][participant.aid]|gm_vote_color}}{% endif %}" id="vote_{{participant.aid }}_{{ i }}"></div>
+                                            {% else %}
+                                            <div class="vote-box {%if voting.voteStatus[i] is defined and participant.aid in voting.voteStatus[i] %}bg-success{% endif %}" id="vote_{{ participant.aid }}_{{ i }}"></div>
+                                        {% endif %}
+                                    </div>
+                                {% endfor %}
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-6 order-2 order-md-0">
+                    {% if meeting.activeStatus.active==0 %}
+                        <h2>{% trans %}Sprawdzanie obecności{% endtrans %}</h2>
+                        <p>{% trans %}Aby potwierdzić swoją obecność kliknij dowolny przycisk{% endtrans %}</p>
+                        <div class="btn-group btn-group-lg">
+                            <button class="btn btn-success btn-vote" {% if active.votes[participant.aid] is defined%}disabled{% endif%} data-vote="1">{% trans %}Za{% endtrans %}</button>
+                            <button class="btn btn-danger btn-vote" {% if active.votes[participant.aid] is defined%}disabled{% endif%} data-vote="0">{% trans %}Przeciw{% endtrans %}</button>
+                            {% if meeting.holdBack %}
+                                <button class="btn btn-warning btn-vote" {% if active.votes[participant.aid] is defined%}disabled{% endif%} data-vote="2">{% trans %}Wstrzymuje się{% endtrans %}</button>
+                            {% endif %}
+                        </div>
+                        {% else %}
+                        <h2>{{ voting.content }}</h2>
+                            {% if voting.type==1 %}
+                                    <div class="btn-group btn-group-lg">
+                                        <button class="btn btn-success btn-vote" {% if voting.voteStatus[participant.aid] is defined%}disabled{% endif%} data-vote="1">{% trans %}Za{% endtrans %}</button>
+                                        <button class="btn btn-danger btn-vote" {% if voting.voteStatus[participant.aid] is defined%}disabled{% endif%} data-vote="0">{% trans %}Przeciw{% endtrans %}</button>
+                                        {% if meeting.holdBack %}
+                                            <button class="btn btn-warning btn-vote" {% if voting.voteStatus[participant.aid] is defined%}disabled{% endif%} data-vote="2">{% trans %}Wstrzymuje się{% endtrans %}</button>
+                                        {% endif %}
+                                    </div>
+                                {% elseif voting.type==2 %}
+                                    <p>{% trans with { '%count%': voting.toChoose, '%all%': voting.candidates|length} %}Możesz oddać głos na %count% z %all% kandydatów{% endtrans %}</p>
+                                    <form id="voteCandidateForm" data-warned="false" data-warning="{% trans with { '%count%':voting.toChoose} %}Aby oddać poprawny głos możesz wybrać maksymalnie %count% kandydatów{% endtrans %}">
+                                        <ul class="list-group mb-2 vote-ul">
+                                            {% set voted=false %}
+                                            {% for key,candidate in voting.candidates %}
+                                                <input name="vote[]"
+                                                       type="checkbox"
+                                                        {% if voting.voteStatus[(key+1)][participant.aid] is defined %}
+                                                            {% set voted=true %}
+                                                            checked
+                                                        {% endif %}
+                                                       value="{{ (key+1) }}" class="d-none" id="candidate_{{ (key+1) }}">
+                                                <label class="list-group-item list-group-item-action mb-0" for="candidate_{{ (key+1) }}">{{ candidate.name }}</label>
+                                            {% endfor %}
+                                        </ul>
+                                        <button type="submit" class="btn btn-outline-primary" {% if voted %}disabled{% endif %}>{% trans %}Głosuj{% endtrans %}</button>
+                                    </form>
+                                    <script>
+                                    {% if voted %}
+                                    $('#voteCandidateForm input').prop('disabled',true);
+                                    {% else %}
+                                    $('#voteCandidateForm input').prop('checked',false);
+                                    {% endif %}
+                                    </script>
+                                {% else %}
+                                    {% if voting.multiChoose %}
+                                        <p>{% trans %}Głosowanie wielokrotnego wyboru{% endtrans %}</p>
+                                    {% endif %}
+                                    <form id="voteAnswerForm">
+                                        <ul class="list-group mb-2 vote-ul">
+                                            {% set voted=false %}
+                                            {% for key,answer in voting.answers %}
+                                                <input name="vote[]"
+                                                       type="{% if voting.multiChoose %}checkbox{% else %}radio{% endif %}"
+                                                        {% if voting.voteStatus[(key+1)] is defined and participant.aid in voting.voteStatus[(key+1)] %}
+                                                            {% set voted=true %}
+                                                            checked
+                                                        {% endif %}
+                                                       value="{{ (key+1) }}" class="d-none" id="answer_{{ (key+1) }}">
+                                                <label class="list-group-item list-group-item-action mb-0" for="answer_{{ (key+1) }}">{{ answer.content }}</label>
+                                            {% endfor %}
+                                        </ul>
+                                        <button type="submit" class="btn btn-outline-primary" {% if voted %}disabled{% endif %}>{% trans %}Głosuj{% endtrans %}</button>
+                                    </form>
+                                    <script>
+                                    {% if voted %}
+                                        $('#voteAnswerForm input').prop('disabled',true);
+                                    {% else %}
+                                        $('#voteAnswerForm input').prop('checked',false);
+                                    {% endif %}
+                                    </script>
+                                {% endif %}
+                    {% endif %}
                 {% endif %}
-            </table>
-        </div>
+                </div>
+                </div>
+                {% else %}
+                    <div class="alert alert-info">
+                        <h4>{% trans %}Zgromadzenie zakończone{% endtrans %}</h4>
+                        <p>{% trans %}Serdecznie dziękujemy za udział w głosowaniu!{% endtrans %}</p>
+                    </div>
 
+                    <h4>{% trans %}Wyniki głosowań{% endtrans %}</h4>
+                    <div class="voting-list mb-2">
+                        <div class="row text-center font-weight-bold border align-items-center h-60px">
+                            <div class="col-6 pt-3 border-right h-100">{% trans %}Głosowanie{% endtrans %}:</div>
+                            <div class="col-6 pt-3 border-right h-100">{% trans %}Wynik{% endtrans %}:</div>
+                        </div>
+                        {% for voting in meeting.meetingVotings %}
+                            <div class="row border-bottom border-left">
+                                <div class="col-6 py-1 border-right">{{ voting.content }} - {{ voting|voting_type(false) }}</div>
+                                <div class="col-6 py-1 border-right">
+                                    {% if voting.votesSummary is not empty %}
+                                        {% if voting.type==1 %}
+                                            <p class="mb-0 font-weight-bold text-center">
+                                                {% if meeting.weight==1 %}
+                                                    {% if voting.votesSummary['votes']['accepted'] %}
+                                                        {% trans %}Zaakceptowane{% endtrans %}
+                                                    {% else %}
+                                                        {% trans %}Odrzucone{% endtrans %}
+                                                    {% endif %}
+                                                {% else %}
+                                                    {% if voting.votesSummary['actions']['accepted'] %}
+                                                        {% trans %}Zaakceptowane{% endtrans %}
+                                                    {% else %}
+                                                        {% trans %}Odrzucone{% endtrans %}
+                                                    {% endif %}
+                                                {% endif %}
+                                            </p>
+                                            <p class="mb-0">{% trans %}Za{% endtrans %}: {% if meeting.weight==1 %}{{ voting.votesSummary['votes'][1] }}{% else %}{{ voting.votesSummary['actions'][1] }}{% endif %}%</p>
+                                            <p class="mb-0">{% trans %}Przeciw{% endtrans %}: {% if meeting.weight==1 %}{{ voting.votesSummary['votes'][0] }}{% else %}{{ voting.votesSummary['actions'][0] }}{% endif %}%</p>
+                                            {% if meeting.holdBack %}
+                                                <p class="mb-0">{% trans %}Wstrzymało się{% endtrans %}: {% if meeting.weight==1 %}{{ voting.votesSummary['votes'][2] }}{% else %}{{ voting.votesSummary['actions'][2] }}{% endif %}%</p>
+                                            {% endif %}
+                                        {% elseif voting.type==2 %}
+                                            {% if voting.votesSummary['valid'] is defined %}
+                                                {% if meeting.weight==1 %}
+                                                    {% for key,vote in voting.votesSummary['valid']['votes'] %}
+                                                        <p class="mb-2">
+                                                            {{ voting.candidates[key].name }} -
+                                                            <span class="bg-success votes-span" title="{% trans %}Głosy ważne{% endtrans %}">{{ vote|number_format(2) ~ '%'}}</span>
+                                                            <span class="bg-danger votes-span" title="{% trans %}Głosy nie ważne{% endtrans %}">{{ voting.votesSummary['invalid']['votes'][key]|number_format(2) ~ '%'}}</span>
+                                                        </p>
+                                                    {% endfor %}
+                                                {% else %}
+                                                    {% for key,vote in voting.votesSummary['valid']['actions'] %}
+                                                        <p class="mb-2">
+                                                            {{ voting.candidates[key].name }} -
+                                                            <span class="bg-success votes-span" title="{% trans %}Głosy ważne{% endtrans %}">{{ vote|number_format(2) ~ '%'}}</span>
+                                                            <span class="bg-danger votes-span" title="{% trans %}Głosy nie ważne{% endtrans %}">{{ voting.votesSummary['invalid']['actions'][key]|number_format(2) ~ '%'}}</span>
+                                                        </p>
+                                                    {% endfor %}
+                                                {% endif %}
+                                            {% endif %}
+                                        {% else %}
+                                            {% if meeting.weight==1 %}
+                                                {% for key,vote in voting.votesSummary['votes'] %}
+                                                    <p class="mb-0">{{ voting.answers[key].content ~' - '~ vote ~ '%' }}</p>
+                                                {% endfor %}
+                                            {% else %}
+                                                {% for key,vote in voting.votesSummary['actions'] %}
+                                                    <p class="mb-0">{{ voting.answers[key].content ~' - '~ vote ~ '%' }}</p>
+                                                {% endfor %}
+                                            {% endif %}
+                                        {% endif %}
+                                    {% endif %}
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
         {% endif %}
     </div>
 {% endblock %}
 {% block javascripts %}
     {{ parent() }}
-{{ include('polling/vote_scripts.html.twig',{participant:participant,hash:hash,}) }}
+{{ include('general_meeting/vote_scripts.html.twig',{participant:participant,hash:hash,}) }}
 
 {% endblock %}

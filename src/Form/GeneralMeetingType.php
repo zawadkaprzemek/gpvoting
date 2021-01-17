@@ -28,45 +28,21 @@ class GeneralMeetingType extends AbstractType
         $user=$meeting->getRoom()->getEvent()->getUser();
         $builder
             ->add('name',TextType::class,array('label'=>'Nazwa'))
-            ->add('startDate',DateTimeType::class,array(
+            ->add('date',DateTimeType::class,array(
                 'label'=>'Data zgromadzenia','html5'=>true,
                 'widget'=>'single_text',
-                'data' => (is_null($options['data']->getId()) ? $startDate: $options['data']->getStartDate()),
+                'data' => (is_null($meeting->getId()) ? $startDate: $meeting->getDate()),
                 'with_minutes'=>false,
                 'with_seconds'=>false
             ))
-            ->add('variant',ChoiceType::class,array(
-                    'label'=>'Wariant zgromadzenia',
-                    'disabled'=>sizeof($meeting->getCandidates())>0||sizeof($meeting->getResolutions())>0,
-                    'choices'=>array(
-                        'Głosowanie nad uchwałą'=>1,
-                        'Głosowanie personalne'=>2
-                    ),
-                    'placeholder'=>'Wybierz wariant'
-                ))
-            ->add('countResolution',RangeType::class,
-                array('label'=>'Ilość uchwał',
+            ->add('count',RangeType::class,
+                array('label'=>'Ilość głosowań',
                     'attr' => [
-                        'min' => (sizeof($meeting->getResolutions())>0 ? sizeof($meeting->getResolutions()): 1),
-                        'max' => 99,
-                        'step'=>1,
-                        'class'=>'custom-range'
-                    ],
-                    'data'=>(sizeof($meeting->getResolutions())>0 ? sizeof($meeting->getResolutions()): $meeting->getCount()),
-                    'mapped'=>false,
-                    'required'=>false
-                    ))
-            ->add('countPersonal',RangeType::class,
-                array('label'=>'Ilość kandydatów',
-                    'attr' => [
-                        'min' => (sizeof($meeting->getCandidates())>0 ? sizeof($meeting->getCandidates()): 2),
+                        'min' => (sizeof($meeting->getMeetingVotings())>0 ? sizeof($meeting->getMeetingVotings()): 1),
                         'max' => 50,
                         'step'=>1,
                         'class'=>'custom-range'
-                    ],
-                    'data'=>(sizeof($meeting->getCandidates())>0 ? sizeof($meeting->getCandidates()): $meeting->getCount()),
-                    'mapped'=>false,
-                    'required'=>false
+                    ]
                     ))
             ->add('holdBack',CheckboxType::class,array(
                 'label'=>'Dostępna opcja wstrzymuje się',
@@ -85,7 +61,6 @@ class GeneralMeetingType extends AbstractType
             ))
             ->add('badVoteSettings',ChoiceType::class,array(
                 'label'=>'Błędne głosy',
-                'required'=>false,
                 'choices'=>array(
                     'Pozwól, nie ostrzegaj'=>1,
                     'Nie pozwól, blokuj'=>2,
@@ -102,7 +77,7 @@ class GeneralMeetingType extends AbstractType
                     return $pl->getUsersListsQuery($user);
                 },
                 'choice_label' => 'name'))
-            ->add('toChoose',RangeType::class,
+            /*->add('toChoose',RangeType::class,
                 array('label'=>'Liczba kandydatów do wybrania',
                     'required'=>false,
                     'attr' => [
@@ -111,7 +86,7 @@ class GeneralMeetingType extends AbstractType
                         'step'=>1,
                         'class'=>'custom-range'
                     ]
-                ))
+                ))*/
             ->add('submit',SubmitType::class,array('label'=>'Zapisz'))
         ;
     }

@@ -37,3 +37,34 @@ Głosowanie:
 - adresIP
 - startDate
 - endDate
+
+
+Walne zgromadzenie
+-nazwa
+-data
+-count - ilość głosowań
+-secret - tajne
+-holdback - opcja wstrzymuje się
+-weight - waga akcji/głosów
+-badVoteSettings
+-room
+-slug
+-status
+-hashId
+-totalVotes
+-totalActions
+-absenceVotes
+-absenceActions
+-activeVote(aktywne głosowanie lub null)
+-activeStatus (będzie zapisywać informacje o głosowaniu testowym)
+
+Głosowanie zgromadzenia
+-id zgromadzenia
+-treść
+-typ (1- uchwała, 2 -personalne, 3 - sondażowe)
+-toChoose(null jeśli 1 lub 3)
+-status(0-oczekujące, 1- w trakcie, 2 - zaglosowano)
+-kandydaci(jesli 2)
+-odpowiedzi(jesli 3)
+-voteStatus(arrayka z głosami)
+-votesSummary(arrayka(on,back,hold jesli 1, wyniki kandydatow jesli 2, odpowiedzi jesli 3 )

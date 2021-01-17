@@ -20,18 +20,14 @@
             {% for meeting in room.generalMeetings %}
             <div class="col-12 mb-2">
                 {{ meeting.name }}
-                <span class="border-info border p-1 d-inline-block">{% trans %}Data rozpoczęcia{% endtrans %}: {{ meeting.startDate|date('d/m/Y H:i') }}</span>
+                <span class="border-info border p-1 d-inline-block">{% trans %}Data rozpoczęcia{% endtrans %}: {{ meeting.date|date('d/m/Y H:i') }}</span>
                 <div class="btn-group-sm btn-group">
                     {% if manage %}
                         <a href="{{ path('app_manage_general_meeting_show',{slug:meeting.slug}) }}" class="btn btn-primary">{% trans %}Podgląd{% endtrans %}</a>
                         {% if meeting.status==0 %}
                             <a href="{{ path('app_manage_general_meeting_edit',{slug:meeting.slug}) }}" class="btn btn-secondary">{% trans %}Edycja{% endtrans %}</a>
                         {% endif %}
-                        {% if meeting.variant==1 %}
-                            <a href="{{ path('app_manage_general_meeting_resolutions_list',{slug:meeting.slug}) }}" class="btn btn-info">{% trans %}Lista uchwał{% endtrans %}</a>
-                        {% else %}
-                            <a href="{{ path('app_manage_general_meeting_candidates_list',{slug:meeting.slug}) }}" class="btn btn-info">{% trans %}Lista kandydatów{% endtrans %}</a>
-                        {% endif %}
+                        <a href="{{ path('app_manage_show_vottings',{slug:meeting.slug}) }}" class="btn btn-info">{% trans %}Lista głosowań{% endtrans %}</a>
                         <a href="{{ path('app_manage_general_meeting_cockpit',{slug:meeting.slug}) }}" class="btn btn-outline-info">{% trans %}Przejdź do zarządzania{% endtrans %}</a>
                         {{ include('polling/general_meeting_status.html.twig',{meeting:meeting}) }}
                         {% else %}
