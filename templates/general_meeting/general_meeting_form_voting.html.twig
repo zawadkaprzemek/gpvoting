@@ -20,6 +20,14 @@
             {{ form_widget(form.type) }}
         </div>
     </div>
+    <div class="row form-group weight d-none">
+        <div class="col-12 col-sm-3 col-form-label">
+            {{form_label(form.weight)}}
+        </div>
+        <div class="col-12 col-sm-9 d-flex">
+            {{ form_widget(form.weight) }}
+        </div>
+    </div>
     <div class="row form-group toChoose d-none">
         <div class="col-12 col-sm-3 col-form-label">
             {{form_label(form.tochoose)}}
@@ -126,6 +134,7 @@
                     $('.candidates input').prop('disabled',true);
                     $('.answers input').prop('disabled',true);
                     $('#meeting_voting_submit').prop('disabled',false);
+                    $('.weight').removeClass('d-none');
                 }else if(value==="2"){
                     $('.answers').addClass('d-none');
                     $('.candidates').removeClass('d-none');
@@ -133,6 +142,7 @@
                     $('.candidates input').prop('disabled',false);
                     $('.answers input').prop('disabled',true);
                     $('#meeting_voting_submit').prop('disabled',false);
+                    $('.weight').removeClass('d-none');
                 }else if(value==="3")
                 {
                     $('.answers').removeClass('d-none');
@@ -141,6 +151,7 @@
                     $('.candidates input').prop('disabled',true);
                     $('.answers input').prop('disabled',false);
                     $('#meeting_voting_submit').prop('disabled',false);
+                    $('.weight').addClass('d-none');
                 }else{
                     $('.answers').addClass('d-none');
                     $('.candidates').addClass('d-none');
@@ -148,6 +159,7 @@
                     $('.candidates input').prop('disabled',true);
                     $('.answers input').prop('disabled',true);
                     $('#meeting_voting_submit').prop('disabled',true);
+                    $('.weight').addClass('d-none');
                 }
             }
 

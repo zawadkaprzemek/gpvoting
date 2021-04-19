@@ -38,6 +38,14 @@ class MeetingVotingType extends AbstractType
                     'step'=>1
                 )
             ))
+            ->add('weight',ChoiceType::class,array(
+                'label'=>'Waga głosów',
+                'choices'=>array(
+                    'Waga głosów'=>1,
+                    'Waga akcji'=>2
+                ),
+                'placeholder'=>'Wybierz typ wagi'
+            ))
             ->add('multiChoose',CheckboxType::class,array('label'=>'Wielokrotny wybór','required'=>false))
             ->add('submit',SubmitType::class,array('label'=>'Zapisz'))
             ->add('candidates',CollectionType::class,[

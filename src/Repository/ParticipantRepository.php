@@ -5,6 +5,7 @@ namespace App\Repository;
 use App\Entity\Participant;
 use App\Entity\ParticipantList;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\Common\Collections\Criteria;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -63,14 +64,37 @@ class ParticipantRepository extends ServiceEntityRepository
     {
         return $this->createQueryBuilder('p')
             ->andWhere('p.list = :list')
-            ->andWhere('p.Aid = :aid')
+            ->andWhere('p.email = :email')
             ->andWhere('p.password = :pass')
             ->setParameter('list',$list)
-            ->setParameter('aid',$data['aid'])
+            ->setParameter('email',$data['email'])
             ->setParameter('pass',md5($data['password']))
             ->setMaxResults(1)
             ->getQuery()
             ->getOneOrNullResult()
+            ;
+    }
+
+    public function getParticipantByEmail(ParticipantList $list,string $email)
+    {
+        return $this->createQueryBuilder('p')
+            ->andWhere('p.list = :list')
+            ->andWhere('p.email = :email')
+            ->setParameter('list',$list)
+            ->setParameter('email',$email)
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getOneOrNullResult()
+            ;
+    }
+
+    /**
+     * @return Criteria
+     */
+    public static function createAcceptedParticipantsCriteria(): Criteria
+    {
+        return Criteria::create()
+            ->andWhere(Criteria::expr()->eq('accepted',true))
             ;
     }
 }

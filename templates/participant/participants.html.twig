@@ -4,7 +4,8 @@
 
 {% block body %}
 <div>
-    <h3>{% trans %}Moje listy uczestników{% endtrans %}</h3>
+    <h3>{% trans %}Lista{% endtrans %}: {{ list.name }}</h3>
+
     <div class="table-responsive">
         <table class="table">
             <thead>
@@ -13,8 +14,10 @@
                 <th>{% trans %}Imię{% endtrans %}</th>
                 <th>{% trans %}Nazwisko{% endtrans %}</th>
                 <th>{% trans %}Telefon{% endtrans %}</th>
+                <th>{% trans %}Email{% endtrans %}</th>
                 <th>{% trans %}Głosy{% endtrans %}</th>
                 <th>{% trans %}Akcje{% endtrans %}</th>
+                <th>{% trans %}Zaakceptowany{% endtrans %}</th>
                 <th></th>
             </tr>
             </thead>
@@ -25,8 +28,15 @@
                     <td>{{ participant.name }}</td>
                     <td>{{ participant.surname }}</td>
                     <td>{{ participant.phone }}</td>
+                    <td>{{ participant.email }}</td>
                     <td>{{ participant.votes }}</td>
                     <td>{{ participant.actions }}</td>
+                    <td class="text-center">
+                        {% if participant.accepted %}
+                            <i class="fas fa-check-square"></i>
+                        {% else %}
+                            <i class="fas fa-square"></i>
+                        {% endif %}
                     <td>
                         <div class="btn-group">
                         <a href="{{ path('app_manage_participant_edit',{id:participant.id}) }}" class="btn btn-sm btn-outline-primary">{% trans %}Edytuj{% endtrans %}</a>
@@ -34,8 +44,26 @@
                                     onsubmit="return confirm('{% trans %}Na pewno chcesz usunąć tego uczestnika?{% endtrans %}');">
                             <input type="hidden" name="_method" value="DELETE">
                             <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ participant.id) }}">
-                            <button class="btn btn-sm btn-outline-dark">
+                            <button class="btn btn-sm btn-outline-danger">
                                 {% trans %}Usuń{% endtrans %}
+                            </button>
+                        </form>
+                        <form method="post" action="{{ path('app_manage_participant_accept', {'id': participant.id}) }}"
+                              {% if participant.accepted %}
+                                  onsubmit="return confirm('{% trans %}Na pewno chcesz odrzucić tego uczestnika?{% endtrans %}');"
+                                {% else %}
+                                    onsubmit="return confirm('{% trans %}Na pewno chcesz zaakceptować tego uczestnika?{% endtrans %}');"
+                                    {% endif %}
+                        >
+                            <input type="hidden" name="_method" value="PATCH">
+                            <input type="hidden" name="_token" value="{{ csrf_token('patch' ~ participant.id) }}">
+                            <button class="btn btn-sm btn-outline-dark">
+                                {% if participant.accepted %}
+                                    {% trans %}Odrzuć{% endtrans %}
+                                {% else %}
+                                    {% trans %}Akceptuj{% endtrans %}
+                                    {% endif %}
+
                             </button>
                         </form>
                         </div>
@@ -43,11 +71,35 @@
                 </tr>
                 {% else %}
                 <tr>
-                    <td colspan="5">{% trans %}Lista jest pusta{% endtrans %}</td>
+                    <td colspan="9">
+                        <div class="alert alert-info text-center">{% trans %}Lista jest pusta{% endtrans %}</div>
+                    </td>
                 </tr>
             {% endfor %}
             </tbody>
         </table>
+    </div>
+    <div>
+        {% if participants|length >0 %}
+        <form method="post" action="{{ path('app_manage_participant_list_accept', {'id': list.id}) }}"
+                {% if list.accepted %}
+                    onsubmit="return confirm('{% trans %}Na pewno chcesz odrzucić wszystkich uczestników z tej listy?{% endtrans %}');"
+                {% else %}
+                    onsubmit="return confirm('{% trans %}Na pewno chcesz zaakceptować wszystkich uczestników z tej listy?{% endtrans %}');"
+                {% endif %}
+        >
+            <input type="hidden" name="_method" value="PATCH">
+            <input type="hidden" name="_token" value="{{ csrf_token('patch' ~ list.id) }}">
+            <button class="btn btn-sm btn-outline-dark">
+                {% if list.accepted %}
+                    {% trans %}Odrzuć wszystkich{% endtrans %}
+                {% else %}
+                    {% trans %}Akceptuj wszystkich{% endtrans %}
+                {% endif %}
+
+            </button>
+        </form>
+        {% endif %}
     </div>
 </div>
 {% endblock %}

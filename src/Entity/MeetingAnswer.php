@@ -32,6 +32,12 @@ class MeetingAnswer
      */
     private $meetingVoting;
 
+    public function __clone()
+    {
+        $this->id=null;
+        $this->meetingVoting=null;
+    }
+
     public function getId(): ?int
     {
         return $this->id;

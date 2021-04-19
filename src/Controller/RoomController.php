@@ -47,6 +47,7 @@ class RoomController extends AbstractController
         $form->handleRequest($request);
         if($form->isSubmitted()&&$form->isValid())
         {
+            $room->setCode(uniqid($event->getUser()->getUsername()));
             $em=$this->getDoctrine()->getManager();
             $em->persist($room);
             $em->flush();
@@ -150,7 +151,7 @@ class RoomController extends AbstractController
         {
             $code=$form->get('code')->getData();
             $name=$form->get('name')->getData();
-            if($code!==$room->getCode()->getName())
+            if($code!==$room->getCode())
             {
                 $form->get('code')->addError(new FormError('Nie poprawny kod'));
             }

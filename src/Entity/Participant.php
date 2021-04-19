@@ -9,8 +9,8 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 /**
  * @ORM\Entity(repositoryClass=ParticipantRepository::class)
  * @UniqueEntity(
- *     fields={"name", "surname","list"},
- *     errorPath="name",
+ *     fields={"email","list"},
+ *     errorPath="email",
  *     message="Jesteś już zapisany do tej listy"
  * )
  */
@@ -68,6 +68,16 @@ class Participant
      * @ORM\Column(type="string", length=255)
      */
     private $Aid;
+
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $email;
+
+    /**
+     * @ORM\Column(type="boolean")
+     */
+    private $accepted=false;
 
     public function getId(): ?int
     {
@@ -178,6 +188,30 @@ class Participant
     public function setAid(string $Aid): self
     {
         $this->Aid = $Aid;
+
+        return $this;
+    }
+
+    public function getEmail(): ?string
+    {
+        return $this->email;
+    }
+
+    public function setEmail(string $email): self
+    {
+        $this->email = $email;
+
+        return $this;
+    }
+
+    public function getAccepted(): ?bool
+    {
+        return $this->accepted;
+    }
+
+    public function setAccepted(bool $accepted): self
+    {
+        $this->accepted = $accepted;
 
         return $this;
     }

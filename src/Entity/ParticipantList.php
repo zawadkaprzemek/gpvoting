@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Repository\ParticipantListRepository;
+use App\Repository\ParticipantRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -52,6 +53,11 @@ class ParticipantList
      * @ORM\OneToMany(targetEntity=GeneralMeeting::class, mappedBy="participantList")
      */
     private $meeting;
+
+    /**
+     * @ORM\Column(type="integer")
+     */
+    private $count=0;
 
 
     public function __construct()
@@ -176,4 +182,42 @@ class ParticipantList
         return $this;
     }
 
+    /**
+     * @return bool
+     */
+    public function isAccepted(): bool
+    {
+        $accepted=true;
+        foreach($this->getParticipants() as $participant)
+        {
+            if(!$participant->getAccepted())
+            {
+                $accepted=false;
+                continue;
+            }
+        }
+        return $accepted;
+    }
+
+    /**
+     * @return Collection|Participant[]
+     */
+    public function getAcceptedParticipants(): Collection
+    {
+        $criteria = ParticipantRepository::createAcceptedParticipantsCriteria();
+
+        return $this->participants->matching($criteria);
+    }
+
+    public function getCount(): ?int
+    {
+        return $this->count;
+    }
+
+    public function setCount(int $count): self
+    {
+        $this->count = $count;
+
+        return $this;
+    }
 }

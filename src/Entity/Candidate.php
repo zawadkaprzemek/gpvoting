@@ -43,6 +43,14 @@ class Candidate
      */
     private $meetingVoting;
 
+    public function __clone()
+    {
+        $this->id=null;
+        $this->actions_count=[];
+        $this->votes_count=[];
+        $this->secondTurn=false;
+    }
+
     public function getId(): ?int
     {
         return $this->id;

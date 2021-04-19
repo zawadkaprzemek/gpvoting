@@ -78,8 +78,29 @@ class MeetingVoting
      */
     private $multiChoose;
 
+    /**
+     * @ORM\Column(type="array")
+     */
+    private $historicalResults = [];
+
+    /**
+     * @ORM\Column(type="integer")
+     */
+    private $weight;
+
     public function __construct()
     {
+        $this->candidates = new ArrayCollection();
+        $this->answers = new ArrayCollection();
+    }
+
+    public function __clone()
+    {
+        $this->id=null;
+        $this->status=0;
+        $this->votesSummary=[];
+        $this->voteStatus=[];
+        $this->historicalResults=[];
         $this->candidates = new ArrayCollection();
         $this->answers = new ArrayCollection();
     }
@@ -109,7 +130,7 @@ class MeetingVoting
     public function setMeeting(?GeneralMeeting $meeting): self
     {
         $this->meeting = $meeting;
-
+        $this->weight=$meeting->getWeight();
         return $this;
     }
 
@@ -274,6 +295,30 @@ class MeetingVoting
     public function setMultiChoose(bool $multiChoose): self
     {
         $this->multiChoose = $multiChoose;
+
+        return $this;
+    }
+
+    public function getHistoricalResults(): ?array
+    {
+        return $this->historicalResults;
+    }
+
+    public function setHistoricalResults(array $historicalResults): self
+    {
+        $this->historicalResults = $historicalResults;
+
+        return $this;
+    }
+
+    public function getWeight(): ?int
+    {
+        return $this->weight;
+    }
+
+    public function setWeight(int $weight): self
+    {
+        $this->weight = $weight;
 
         return $this;
     }

@@ -1,1 +1,8 @@
-<button class="btn btn-sm btn-dark btn-test-vote-start" data-href="{{ path('app_manage_general_meeting_test_vote_start', {'slug':meeting.slug}) }}">{% trans %}Rozpocznij testowe głosowanie{% endtrans %}</button>
+<button class="btn btn-sm btn-dark btn-test-vote-start"
+        data-href="{{ path('app_manage_general_meeting_test_vote_start', {'slug':meeting.slug}) }}">
+    {% if meeting.kworum %}
+        {% trans %}Rozpocznij sprawdzanie obecności{% endtrans %}
+    {% else %}
+    {% trans %}Rozpocznij testowe głosowanie{% endtrans %}
+    {% endif %}
+</button>

@@ -297,10 +297,16 @@ class GeneralMeetingController extends AbstractController
             return $this->redirectToRoute('app_manage');
         }
 
-        if($meeting->getStatus()!=0)
+        if($meeting->getStatus()==1)
         {
             $this->addFlash('warning',$this->translator->trans("Nie można edytować rozpoczętego zgromadzenia!"));
-            return $this->redirect($request->server->get('HTTP_REFERER'));
+            if(is_null($request->server->get('HTTP_REFERER')))
+            {
+                return $this->redirectToRoute('app_manage_general_meeting_cockpit',['slug'=>$meeting->getSlug()]);
+            }else{
+                return $this->redirect($request->server->get('HTTP_REFERER'));
+            }
+
         }
 
         $form=$this->createForm(GeneralMeetingType::class,$meeting);
@@ -310,8 +316,8 @@ class GeneralMeetingController extends AbstractController
             $em=$this->getDoctrine()->getManager();
             $em->persist($meeting);
             $em->flush();
-            $this->addFlash('succes',$this->translator->trans('Edycja Walnego zgromadzenia zakończona powodzeniem'));
-            return $this->redirectToRoute('app_manage_general_meeting_show',['slug'=>$meeting->getSlug()]);
+            $this->addFlash('success',$this->translator->trans('Edycja Walnego zgromadzenia zakończona powodzeniem'));
+            return $this->redirectToRoute('app_manage_general_meeting_cockpit',['slug'=>$meeting->getSlug()]);
         }
 
         return $this->render('general_meeting/general_meeting_form.html.twig',[
@@ -339,7 +345,7 @@ class GeneralMeetingController extends AbstractController
         }
 
         $meeting->setStatus(1);
-        $active=array('active'=>null,'votes'=>array(),'last'=>null);
+        $active=array('active'=>null,'votes'=>array(),'last'=>null,'kworum'=>null,'kworum_value'=>0);
         $meeting->setActiveStatus($active);
         $em=$this->getDoctrine()->getManager();
         $em->persist($meeting);
@@ -363,6 +369,11 @@ class GeneralMeetingController extends AbstractController
         $active=$meeting->getActiveStatus();
         $active['active']=0;
         $active["votes"]=array();
+        if($meeting->getKworum())
+        {
+            $active['kworum']=null;
+            $active['kworum_value']=0;
+        }
         $meeting->setActiveStatus($active)
             ->setTotalActions(0)
             ->setTotalVotes(0)
@@ -443,13 +454,13 @@ class GeneralMeetingController extends AbstractController
         }
         $em=$this->getDoctrine()->getManager();
         $active=$meeting->getActiveStatus();
+        $participants=$meeting->getParticipantList()->getAcceptedParticipants();
         if($active['active']==0)
         {
             $tot_a=0;
             $tot_v=0;
             $abs_a=0;
             $abs_v=0;
-            $participants=$meeting->getParticipantList()->getParticipants();
             foreach ($participants as $participant)
             {
                 if(array_key_exists($participant->getAid(),$active['votes']))
@@ -462,9 +473,16 @@ class GeneralMeetingController extends AbstractController
                 }
 
             }
+            if($meeting->getKworum())
+            {
+                $percent=round((sizeof($active['votes'])/sizeof($participants))*100,2);
+                $active['kworum']=$percent>=$meeting->getKworumValue();
+                $active['kworum_value']=$percent;
+            }
             $meeting
                 ->setTotalActions($tot_a)->setTotalVotes($tot_v)
                 ->setAbsenceActions($abs_a)->setAbsenceVotes($abs_v)
+                ->setActiveStatus($active)
             ;
         }else{
             $repository=$em->getRepository(MeetingVoting::class);
@@ -476,7 +494,7 @@ class GeneralMeetingController extends AbstractController
                     $results=array('votes'=>array(1=>0,0=>0,2=>0),'actions'=>array(1=>0,0=>0,2=>0));
                     foreach ($voting->getVoteStatus() as $key=>$vote)
                     {
-                        foreach ($meeting->getParticipantList()->getParticipants() as $participant)
+                        foreach ($participants as $participant)
                         {
                             if($participant->getAid()===$key)
                             {
@@ -513,7 +531,7 @@ class GeneralMeetingController extends AbstractController
                         {
                             if($valid)
                             {
-                                foreach ($meeting->getParticipantList()->getParticipants() as $participant)
+                                foreach ($participants as $participant)
                                 {
                                     if($aid===$participant->getAid())
                                     {
@@ -522,7 +540,7 @@ class GeneralMeetingController extends AbstractController
                                     }
                                 }
                             }else{
-                                foreach ($meeting->getParticipantList()->getParticipants() as $participant)
+                                foreach ($participants as $participant)
                                 {
                                     if($aid===$participant->getAid())
                                     {
@@ -562,31 +580,24 @@ class GeneralMeetingController extends AbstractController
                     $results=array();
                     for($i=0;$i<sizeof($voting->getAnswers());$i++)
                     {
-                        $results['votes'][$i]=0;
-                        $results['actions'][$i]=0;
+                        $results[$i]=0;
                     }
                     foreach ($voting->getVoteStatus() as $vote =>$votes)
                     {
-                        foreach ($meeting->getParticipantList()->getParticipants() as $participant)
+                        foreach ($participants as $participant)
                         {
                             if(in_array($participant->getAid(),$votes))
                             {
-                                $results['votes'][$vote-1]+=$participant->getVotes();
-                                $results['actions'][$vote-1]+=$participant->getActions();
+                                $results[$vote-1]++;
                             }
                         }
 
                     }
-                    foreach ($results['votes'] as $vote=>$val)
+                    foreach ($results as $vote=>$val)
                     {
-                        $results['votes'][$vote]=round(($val/$meeting->getTotalVotes())*100,2);
+                        $results[$vote]=round(($val/sizeof($active['voted']))*100,2);
                     }
-                    foreach ($results['actions'] as $vote=>$val)
-                    {
-                        $results['actions'][$vote]=round(($val/$meeting->getTotalActions())*100,2);
-                    }
-                    arsort($results['votes']);
-                    arsort($results['actions']);
+                    arsort($results);
                     $voting->setVotesSummary($results);
                     break;
                 default:
@@ -648,7 +659,7 @@ class GeneralMeetingController extends AbstractController
         }
         $em=$this->getDoctrine()->getManager();
         $meeting->setStatus(1);
-        $active=array('active'=>null,'votes'=>array(),'last'=>null);
+        $active=array('active'=>null,'votes'=>array(),'last'=>null,'kworum'=>null,'kworum_value'=>0);
         $meeting->setActiveStatus($active);
         foreach ($meeting->getMeetingVotings() as $voting)
         {
@@ -678,7 +689,7 @@ class GeneralMeetingController extends AbstractController
         $aStatus=$meeting->getActiveStatus();
         if(!is_null($meeting->getParticipantList()))
         {
-            $participants=$meeting->getParticipantList()->getParticipants();
+            $participants=$meeting->getParticipantList()->getAcceptedParticipants();
         }else{
             $participants=array();
         }
@@ -695,14 +706,14 @@ class GeneralMeetingController extends AbstractController
             $voting=null;
         }
 
-
         return $this->render('general_meeting/cockpit.html.twig',[
             'meeting'=>$meeting,
             'active'=>$aStatus,
             'hash'=>$meeting->getHashId(),
             'actions'=>$actions,
             'votes'=>$votes,
-            'voting'=>$voting
+            'voting'=>$voting,
+            'participants'=>$participants
         ]);
     }
 
@@ -733,9 +744,11 @@ class GeneralMeetingController extends AbstractController
             {
                 $form->get('password')->addError(new FormError($this->translator->trans("Wprowadzono nie aprawidłowe dane dostępowe")));
             }
+
             if($form->isValid())
             {
                 $session->set("user_gm_".$meeting->getSlug(), array(
+                        'id'=>$participant->getId(),
                         'name' => $participant->getName(),
                         'surname' => $participant->getSurname(),
                         'votes' => $participant->getVotes(),
@@ -759,18 +772,27 @@ class GeneralMeetingController extends AbstractController
      * @param GeneralMeeting $meeting
      * @param Request $request
      * @param MeetingVotingRepository $repository
+     * @param ParticipantRepository $participantRepository
      * @return RedirectResponse|Response
      */
-    public function generalMeetingVote(GeneralMeeting $meeting,Request $request,MeetingVotingRepository $repository)
+    public function generalMeetingVote(GeneralMeeting $meeting,Request $request,MeetingVotingRepository $repository,ParticipantRepository $participantRepository)
     {
         $session=$request->getSession();
         $participant=$session->get("user_gm_".$meeting->getSlug());
+        //$session->remove("user_gm_".$meeting->getSlug());
         if(is_null($participant))
         {
             return $this->redirectToRoute('app_general_meeting_join',['slug'=>$meeting->getSlug()]);
         }
+        $participant=$participantRepository->find($participant['id']);
+        if(!$participant->getAccepted())
+        {
+            return $this->render('general_meeting/permission_denied.html.twig', array(
+               'participant' => $participant,
+                'meeting'=>$meeting
+            ));
+        }
         $aStatus=$meeting->getActiveStatus();
-        $list=$meeting->getParticipantList()->getParticipants();
         if(isset($aStatus['active']) && !is_null($aStatus['active']))
         {
             $voting=$repository->getVotingBySort($meeting,$aStatus['active']);
@@ -789,7 +811,6 @@ class GeneralMeetingController extends AbstractController
             'hash'=>$meeting->getHashId(),
             'active'=>$aStatus,
             'participant'=>$participant,
-            'list'=>$list,
             'voting'=>$voting,
             'last'=>$last
         ]);
@@ -811,6 +832,13 @@ class GeneralMeetingController extends AbstractController
         $active=$meeting->getActiveStatus();
         $active['active']=$voting->getSort();
         $active['voted']=array();
+        $summary=$voting->getVotesSummary();
+        $history=$voting->getHistoricalResults();
+        if(!empty($summary))
+        {
+            array_unshift($history,$summary);
+            $voting->setHistoricalResults($history);
+        }
         $voting->setStatus(1)->setVoteStatus(array())->setVotesSummary(array());
 
         $meeting->setActiveStatus($active);
@@ -819,6 +847,48 @@ class GeneralMeetingController extends AbstractController
         $em->persist($voting);
         $em->flush();
         return new JsonResponse(array('status'=>'success'));
+    }
 
+    /**
+     * @Route("{_locale}/manage/general_meeting/{id}/duplicate", name="app_manage_general_meeting_duplicate", methods={"PATCH"})
+     * @param GeneralMeeting $meeting
+     * @return RedirectResponse
+     */
+    public function generalMeetingDuplicate(GeneralMeeting $meeting)
+    {
+        if($meeting->getRoom()->getEvent()->getUser()!==$this->getUser())
+        {
+            return $this->redirectToRoute('app_manage');
+        }
+
+        $em=$this->getDoctrine()->getManager();
+        $duplicate=clone $meeting;
+        $votings=$meeting->getMeetingVotings();
+        foreach ($votings as $voting)
+        {
+            $d_voting=clone $voting;
+            foreach ($voting->getCandidates() as $candidate)
+            {
+                $d_candidate=clone $candidate;
+                $d_candidate->setMeetingVoting($d_voting);
+                $em->persist($d_candidate);
+            }
+            foreach ($voting->getAnswers() as $answer)
+            {
+                $d_answer=clone $answer;
+                $d_answer->setMeetingVoting($d_voting);
+                $em->persist($d_answer);
+            }
+            $duplicate->removeMeetingVoting($voting);
+            $duplicate->addMeetingVoting($d_voting);
+            $em->persist($d_voting);
+        }
+        $em->persist($duplicate);
+        $em->flush();
+        $this->addFlash('success',$this->translator->trans('duplicate_success'));
+        return $this->redirectToRoute('app_manage_room',[
+            'slug_child'=>$meeting->getRoom()->getSlug(),
+            'slug_parent'=>$meeting->getRoom()->getEvent()->getSlug()
+        ]);
     }
 }

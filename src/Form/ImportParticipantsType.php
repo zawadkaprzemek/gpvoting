@@ -19,12 +19,12 @@ class ImportParticipantsType extends AbstractType
                     'label'=>'Wgraj plik',
                     'constraints' => [
                         new File([
-                            'maxSize' => '2048k',
-                            'mimeTypes' => [
+                            'maxSize' => '5M',
+                            /*'mimeTypes' => [
                                 'application/xhtml+xml',
                                 'application/vnd.ms-excel',
-                                'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-                            ],
+                                'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+                            ],*/
                             'mimeTypesMessage' => 'Proszę wgrać odpowiedni plik',
                         ])
                     ]

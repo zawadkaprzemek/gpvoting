@@ -13,15 +13,6 @@
             {{ form_widget(form.name) }}
         </div>
     </div>
-
-    <div class="row form-group">
-        <div class="col-12 col-sm-3 col-form-label">
-            {{form_label(form.code)}}
-        </div>
-        <div class="col-12 col-sm-9">
-            {{ form_widget(form.code) }}
-        </div>
-    </div>
     {{ form_row(form._token) }}
     {{ form_row(form.submit) }}
     {{ form_end(form) }}

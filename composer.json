@@ -7,6 +7,7 @@
         "ext-iconv": "*",
         "cboden/ratchet": "^0.4.3",
         "knplabs/knp-paginator-bundle": "^5.1",
+        "knplabs/knp-snappy-bundle": "^1.8",
         "sensio/framework-extra-bundle": "^5.1",
         "shuchkin/simplexlsx": "^0.8.18",
         "stof/doctrine-extensions-bundle": "^1.4",
@@ -86,7 +87,7 @@
     "extra": {
         "symfony": {
             "allow-contrib": false,
-            "require": "5.1.*"
+            "require": "5.2.*"
         }
     }
 }

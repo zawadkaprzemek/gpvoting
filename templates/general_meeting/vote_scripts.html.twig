@@ -7,6 +7,7 @@
 
 
     function addMessage(name, message,type,votes,actions,valid=true) {
+        console.log(name,message,type,votes,actions);
         let v_total = $('#votes_total').val();
         let a_total = $('#actions_total').val();
         if(type==="vote") {
@@ -449,8 +450,8 @@
             name: aid,
             message: votes,
             type:'vote_turn',
-            votes: '{% if participant is defined %}{{ participant.votes }}{% else %}0{% endif %}',
-            actions: '{% if participant is defined %}{{ participant.actions }}{% else %}0{% endif %}'
+            votes: '{% if participant is defined %}1{% else %}0{% endif %}',
+            actions: '{% if participant is defined %}1{% else %}0{% endif %}'
         };
         $.ajax({
             type: 'PATCH',
@@ -496,4 +497,9 @@
             }
         });
     }
+
+    $('.historical-btn').on('click touch',function(){
+        $(this).find('span').toggleClass('d-none');
+        $(this).parent().find('.previous_results').toggleClass('d-none');
+    })
 </script>

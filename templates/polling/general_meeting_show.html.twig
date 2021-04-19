@@ -12,7 +12,7 @@
             <p>{% trans %}Głosowanie tajne{% endtrans %}</p>
         {% endif %}
         <div class="btn-group btn-group-sm mb-2">
-            {% if meeting.status==0 %}
+            {% if meeting.status!=1 %}
                 <a href="{{ path('app_manage_general_meeting_edit',{slug:meeting.slug}) }}" class="btn btn-secondary">{% trans %}Edycja{% endtrans %}</a>
             {% endif %}
             <a href="{{ path('app_manage_general_meeting_cockpit',{slug:meeting.slug}) }}" class="btn btn-outline-info">{% trans %}Przejdź do zarządzania{% endtrans %}</a>

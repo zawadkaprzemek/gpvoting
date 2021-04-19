@@ -79,6 +79,40 @@
             {{ form_widget(form.participantList) }}
         </div>
     </div>
+    <div class="row form-group">
+        <div class="col-12 col-sm-3 col-form-label">
+            {{form_label(form.kworum)}}
+        </div>
+        <div class="col-12 col-sm-9">
+            <div class="custom-control custom-switch">
+                <input type="checkbox" {% if form.kworum.vars.checked %}checked{% endif%} name="{{ form.kworum.vars.full_name }}"
+                       class="custom-control-input" id="{{ form.kworum.vars.id }}" value="{{ form.kworum.vars.value }}">
+                <label class="custom-control-label" for="{{ form.kworum.vars.id }}">{{ form.kworum.vars.label }}</label>
+            </div>
+        </div>
+    </div>
+    <div class="row form-group kworum d-none">
+        <div class="col-12 col-sm-3 col-form-label">
+            {{form_label(form.kworumValue)}}
+        </div>
+        <div class="col-12 col-sm-9 d-flex">
+            {{ form_widget(form.kworumValue) }}
+            <span id="kworumValueSpan" class="font-weight-bold text-primary ml-2 mt-1 valueSpan">1%</span>
+        </div>
+    </div>
+    <div class="row form-group">
+        <div class="col-12 col-sm-3 col-form-label">
+            {{form_label(form.resultsForParticipants)}}
+        </div>
+        <div class="col-12 col-sm-9">
+            <div class="custom-control custom-switch">
+                <input type="checkbox" {% if form.resultsForParticipants.vars.checked %}checked{% endif%} name="{{ form.resultsForParticipants.vars.full_name }}"
+                       class="custom-control-input" id="{{ form.resultsForParticipants.vars.id }}" value="{{ form.resultsForParticipants.vars.value }}">
+                <label class="custom-control-label" for="{{ form.resultsForParticipants.vars.id }}">{{ form.resultsForParticipants.vars.label }}</label>
+            </div>
+        </div>
+    </div>
+
 
 
     {{ form_row(form._token) }}
@@ -90,9 +124,30 @@
     <script>
         $(document).ready(function () {
             $('#questionsCountSpan').html($('#general_meeting_count').val());
+            $('#kworumValueSpan').html($('#general_meeting_kworumValue').val()+'%');
+            if($('#general_meeting_kworum').prop('checked'))
+            {
+                $('.kworum').removeClass('d-none');
+            }else{
+                $('.kworum input').prop('disabled',true);
+            }
 
             $('#general_meeting_count').on('change',function () {
                 $('#questionsCountSpan').html($(this).val());
+            });
+            $('#general_meeting_kworumValue').on('change',function () {
+                $('#kworumValueSpan').html($(this).val()+'%');
+            });
+
+            $('#general_meeting_kworum').on('change',function (){
+               if($(this).prop('checked'))
+               {
+                   $('.kworum').removeClass('d-none');
+                   $('.kworum input').prop('disabled',false);
+               }else{
+                   $('.kworum').addClass('d-none');
+                   $('.kworum input').prop('disabled',true);
+               }
             });
         })
     </script>

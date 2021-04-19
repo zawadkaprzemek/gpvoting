@@ -77,6 +77,22 @@ class GeneralMeetingType extends AbstractType
                     return $pl->getUsersListsQuery($user);
                 },
                 'choice_label' => 'name'))
+            ->add('resultsForParticipants',CheckboxType::class,array(
+                'label'=>'Udostępnij wyniki dla uczestników',
+                'required'=>false
+            ))
+            ->add('kworum',CheckboxType::class,array(
+                'label'=>'Kworum','required'=>false
+            ))
+            ->add('kworumValue',RangeType::class,
+                array('label'=>'Procent obecnych uczestników niezbędny do kworum',
+                    'attr' => [
+                        'min' => 1,
+                        'max' =>100,
+                        'step'=>1,
+                        'class'=>'custom-range'
+                    ]
+                ))
             /*->add('toChoose',RangeType::class,
                 array('label'=>'Liczba kandydatów do wybrania',
                     'required'=>false,

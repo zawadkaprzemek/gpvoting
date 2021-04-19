@@ -11,9 +11,17 @@
     <script src="{{ asset('assets/js/Chart.min.js') }}"></script>
 {% endblock %}
 {% block body %}
+    <div class="row">
+        <div class="col-md-6">
+            <div class="alert alert-info">
+                <h4>{% trans %}Twoje dane{% endtrans %}:</h4>
+                <p class="mb-0">{% trans %}Nazwa użytkownika{% endtrans %}: <strong>{{ app.request.session.get('name') }}</strong></p>
+            </div>
+        </div>
+    </div>
     <div class="">
         {% if status ==2 %}
-            <h4 class="text-danger">{% trans %}Sesja została zakończona{% endtrans %}</h4>
+            <h4 class="text-danger">{% trans %}Sesja została zakończona{% endtrandfv xcfxs %}</h4>
             <p class="text-primary">{% trans %}Dziękujemy za udział w głosowaniu!{% endtrans %}</p>
             {% else %}
         <h4 class="text-success">

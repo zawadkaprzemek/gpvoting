@@ -3,6 +3,17 @@
 {% block title %}{% trans %}Dziękujemy za udział w głosowaniu{% endtrans %}{% endblock %}
 
 {% block body %}
+    <div class="row">
+        <div class="col-md-6">
+            <div class="alert alert-info">
+                <h4>{% trans %}Twoje dane{% endtrans %}:</h4>
+                <p class="mb-0">{% trans %}Nazwa użytkownika{% endtrans %}: <strong>{{ app.request.session.get('name') }}</strong></p>
+                {% if seconds is defined %}
+                    <p>{% trans %}Czas na oddawanie głosów{% endtrans %}: <span id="seconds_counter"></span></p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
     <div class="">
         <div class="alert alert-success">
             {% trans %}Dziękujemy za głosowanie! {% endtrans %}

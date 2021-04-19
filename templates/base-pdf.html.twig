@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <title>{% block title %}Welcome!{% endblock %}</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="icon" type="image/png" href="{{base_dir ~ asset('assets/images/logo.png') }}">
+    {% block metatags %}
+    {% endblock %}
+    {% block stylesheets %}
+        <link rel="stylesheet" href="{{base_dir ~ asset('assets/css/bootstrap.min.css') }}">
+        <link rel="stylesheet" href="{{base_dir ~ asset('assets/css/bootstrap-select.min.css') }}">
+        <link rel="stylesheet" href="{{base_dir ~  asset('assets/css/style.css') }}">
+    {% endblock %}
+    {% block js_top %}
+    {% endblock %}
+</head>
+<body>
+<div class="bg-light">
+    <div class="container">
+        <img src="{{ base_dir ~  asset('assets/images/gpvo-logo.png') }}" alt="GP Voting Online" style="max-width: 220px;" />
+    </div>
+</div>
+<div class="container">
+    <div class="row py-5">
+        <div class="col-12">
+            {% block body %}{% endblock %}
+        </div>
+    </div>
+</div>
+{% block javascripts %}
+    <script src="{{base_dir ~  asset('assets/js/bootstrap.bundle.min.js') }}"></script>
+{% endblock %}
+</body>
+</html>

@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Repository\GeneralMeetingRepository;
+use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -106,6 +107,8 @@ class GeneralMeeting
      * 'votes' => tabela z glosami obecnościowymi
      * 'last' => poprzednie głosowanie
      * 'voted' => oddali glos w obecnym glosowaniu
+     * 'kworum' => osiągnięte wymagane kworum
+     * 'kworum_value' => wynik ostatniego kworum
      */
     private $activeStatus = [];
 
@@ -119,8 +122,39 @@ class GeneralMeeting
      */
     private $participantList;
 
+    /**
+     * @ORM\Column(type="boolean")
+     */
+    private $resultsForParticipants;
+
+    /**
+     * @ORM\Column(type="boolean")
+     */
+    private $kworum=false;
+
+    /**
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    private $kworumValue;
+
     public function __construct()
     {
+        $this->meetingVotings = new ArrayCollection();
+    }
+
+    public function __clone()
+    {
+        $this->id=null;
+        $this->activeStatus=[];
+        $this->absenceActions=0;
+        $this->absenceVotes=0;
+        $this->totalVotes=0;
+        $this->totalActions=0;
+        $this->status=0;
+        $this->hashId=uniqid();
+        $this->slug=null;
+        $this->name.=" kopia";
+        $this->date=new DateTime("+ 1 day");
         $this->meetingVotings = new ArrayCollection();
     }
 
@@ -360,6 +394,42 @@ class GeneralMeeting
     public function setParticipantList(?ParticipantList $participantList): self
     {
         $this->participantList = $participantList;
+
+        return $this;
+    }
+
+    public function getResultsForParticipants(): ?bool
+    {
+        return $this->resultsForParticipants;
+    }
+
+    public function setResultsForParticipants(bool $resultsForParticipants): self
+    {
+        $this->resultsForParticipants = $resultsForParticipants;
+
+        return $this;
+    }
+
+    public function getKworum(): ?bool
+    {
+        return $this->kworum;
+    }
+
+    public function setKworum(bool $kworum): self
+    {
+        $this->kworum = $kworum;
+
+        return $this;
+    }
+
+    public function getKworumValue(): ?int
+    {
+        return $this->kworumValue;
+    }
+
+    public function setKworumValue(?int $kworumValue): self
+    {
+        $this->kworumValue = $kworumValue;
 
         return $this;
     }

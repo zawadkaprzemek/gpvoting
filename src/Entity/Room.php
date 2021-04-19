@@ -31,12 +31,6 @@ class Room
     private $event;
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\EventCode", inversedBy="rooms")
-     * @ORM\JoinColumn(nullable=false)
-     */
-    private $code;
-
-    /**
      * @Gedmo\Slug(fields={"name"})
      * @ORM\Column(length=128)
      */
@@ -56,6 +50,11 @@ class Room
      * @ORM\OneToMany(targetEntity=GeneralMeeting::class, mappedBy="room")
      */
     private $generalMeetings;
+
+    /**
+     * @ORM\Column(type="string", length=255, unique=true)
+     */
+    private $code;
     
 
     public function __construct()
@@ -89,18 +88,6 @@ class Room
     public function setEvent(?Event $event): self
     {
         $this->event = $event;
-
-        return $this;
-    }
-
-    public function getCode(): ?EventCode
-    {
-        return $this->code;
-    }
-
-    public function setCode(?EventCode $code): self
-    {
-        $this->code = $code;
 
         return $this;
     }
@@ -187,6 +174,18 @@ class Room
                 $generalMeeting->setRoom(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getCode(): ?string
+    {
+        return $this->code;
+    }
+
+    public function setCode(string $code): self
+    {
+        $this->code = $code;
 
         return $this;
     }

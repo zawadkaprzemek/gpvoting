@@ -7,7 +7,7 @@
         <h4>{{ room.name }}</h4>
         <img src="{{ asset(room.event.logoPath) }}" alt="" class="img-fluid mb-3 img-logo">
         {% if manage %}
-        <p>{% trans %}Kod dostępu{% endtrans %}: {{ room.code.name }}</p>
+            <p>{% trans %}Kod dostępu{% endtrans %}: <strong>{{ room.code }}</strong></p>
         {% endif %}
         <p>{% trans %}Głosowania{% endtrans %}</p>
         {% if manage %}
@@ -24,12 +24,13 @@
                 <div class="btn-group-sm btn-group">
                     {% if manage %}
                         <a href="{{ path('app_manage_general_meeting_show',{slug:meeting.slug}) }}" class="btn btn-primary">{% trans %}Podgląd{% endtrans %}</a>
-                        {% if meeting.status==0 %}
+                        {% if meeting.status!=1 %}
                             <a href="{{ path('app_manage_general_meeting_edit',{slug:meeting.slug}) }}" class="btn btn-secondary">{% trans %}Edycja{% endtrans %}</a>
                         {% endif %}
                         <a href="{{ path('app_manage_show_vottings',{slug:meeting.slug}) }}" class="btn btn-info">{% trans %}Lista głosowań{% endtrans %}</a>
                         <a href="{{ path('app_manage_general_meeting_cockpit',{slug:meeting.slug}) }}" class="btn btn-outline-info">{% trans %}Przejdź do zarządzania{% endtrans %}</a>
                         {{ include('polling/general_meeting_status.html.twig',{meeting:meeting}) }}
+                        {{ include('general_meeting/_duplicate_form.html.twig',{meeting:meeting}) }}
                         {% else %}
                         <a href="{{ path('app_general_meeting_join',{slug:meeting.slug}) }}" class="btn btn-primary">{% trans %}Dołącz do zgromadzenia{% endtrans %}</a>
                     {% endif %}

@@ -30,11 +30,6 @@ class EventCode
     private $event;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\Room", mappedBy="code")
-     */
-    private $rooms;
-
-    /**
      * @ORM\OneToMany(targetEntity="App\Entity\Polling", mappedBy="code")
      */
     private $pollings;
@@ -70,24 +65,6 @@ class EventCode
     public function setEvent(?Event $event): self
     {
         $this->event = $event;
-
-        return $this;
-    }
-
-    /**
-     * @return Collection|Room[]
-     */
-    public function getRooms(): Collection
-    {
-        return $this->rooms;
-    }
-
-    public function addRoom(Room $room): self
-    {
-        if (!$this->rooms->contains($room)) {
-            $this->rooms[] = $room;
-            $room->setCode($this);
-        }
 
         return $this;
     }

@@ -4,6 +4,7 @@ namespace App\Form;
 
 use App\Entity\Participant;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
@@ -21,6 +22,7 @@ class ParticipantType extends AbstractType
             ->add('surname',TextType::class,array('label'=>'Nazwisko'))
             ->add('password',PasswordType::class,array('label'=>'Hasło'))
             ->add('phone',TelType::class,array('label'=>'Numer telefonu'))
+            ->add('email',EmailType::class,array('label'=>'Adres email'))
             ->add('votes',NumberType::class,array(
                 'label'=>"Głosy",
                 'html5'=>true,

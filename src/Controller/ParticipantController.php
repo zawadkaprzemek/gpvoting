@@ -11,10 +11,15 @@ use App\Form\ParticipantType;
 use App\Repository\ParticipantListRepository;
 use App\Repository\ParticipantRepository;
 use SimpleXLSX;
+use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Component\Mime\Address;
+use Symfony\Component\Mime\Email;
+use Symfony\Component\Mime\Message;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
@@ -24,10 +29,15 @@ class ParticipantController extends AbstractController
      * @var TranslatorInterface
      */
     private $translator;
+    /**
+     * @var MailerInterface
+     */
+    private $mailer;
 
-    public function __construct(TranslatorInterface $translator)
+    public function __construct(TranslatorInterface $translator,MailerInterface $mailer)
     {
         $this->translator = $translator;
+        $this->mailer = $mailer;
     }
 
     /**
@@ -158,39 +168,60 @@ class ParticipantController extends AbstractController
         {
             return $this->redirectToRoute('app_manage');
         }
-
         $form=$this->createForm(ImportParticipantsType::class);
         $form->handleRequest($request);
+        $stats=array('new'=>array(),'exists'=>array());
         if($form->isSubmitted()&&$form->isValid())
         {
-            $number=count($repository->getParticipantsFromList($list));
-            $file=$form->getData()['file'];
-            $xlsx=SimpleXLSX::parse($file);
+            $number=$list->getCount();
             $em=$this->getDoctrine()->getManager();
-            foreach ($xlsx->rows() as $row)
+            $file=$form->getData()['file'];
+            try{
+                $xlsx=SimpleXLSX::parse($file);
+                foreach ($xlsx->rows() as $row)
+                {
+                    $participant=$repository->getParticipantByEmail($list,$row[3]);
+                    if(is_null($participant))
+                    {
+                        $participant=new Participant();
+                        $participant
+                            ->setName($row[0])
+                            ->setSurname($row[1])
+                            ->setPhone($row[2])
+                            ->setEmail(trim($row[3]))
+                            ->setVotes($row[4])
+                            ->setActions($row[5])
+                            ->setList($list)
+                            ->setAid("A".++$number)
+                            ->setAccepted(true)
+                        ;
+                        $participant->setPlainPass($this->generateRandomString(12))->setPassword(md5($participant->getPlainPass()));
+                        $em->persist($participant);
+                        $stats['new'][]=$participant;
+                    }else{
+                        $stats['exists'][]=$participant;
+                    }
+                }
+                $list->setCount($number);
+                $em->persist($list);
+                $em->flush();
+                foreach ($stats['new'] as $participant)
+                {
+                    $this->sendEmailWithPassword($participant->getEmail(),$participant->getPlainPass());
+                }
+                $this->addFlash('success',$this->translator->trans('participants_import_success',
+                    ['%new%'=>sizeof($stats['new']),'%exists%'=>sizeof($stats['exists'])]));
+                return $this->redirectToRoute('app_manage_participant_list_show',['id'=>$list->getId()]);
+            }catch(\Throwable $ex)
             {
-                $participant=new Participant();
-                $participant
-                    ->setName($row[0])
-                    ->setSurname($row[1])
-                    ->setPlainPass($row[2])
-                    ->setPassword(md5($row[2]))
-                    ->setPhone($row[3])
-                    ->setVotes($row[4])
-                    ->setActions($row[5])
-                    ->setList($list)
-                    ->setAid("A".++$number)
-                ;
-                $em->persist($participant);
+                $error = $ex->getMessage();
             }
-            $em->flush();
-            $this->addFlash('success',$this->translator->trans('Import uczestników zakończony sukcesem'));
-            return $this->redirectToRoute('app_manage_participant_list_show',['id'=>$list->getId()]);
         }
 
         return $this->render('participant/import.html.twig',[
             'form'=>$form->createView(),
-            'list'=>$list
+            'list'=>$list,
+            'error'=>($error ?? null)
         ]);
     }
 
@@ -209,13 +240,15 @@ class ParticipantController extends AbstractController
         $form->handleRequest($request);
         if($form->isSubmitted()&&$form->isValid())
         {
-            $number=count($repository->getParticipantsFromList($list));
+            $number=$list->getCount();
             $em=$this->getDoctrine()->getManager();
             $participant->setPlainPass($participant->getPassword())
                 ->setPassword(md5($participant->getPlainPass()))
                 ->setAid("A".++$number);
             ;
             $em->persist($participant);
+            $list->setCount($number);
+            $em->persist($list);
             $em->flush();
             $session=$request->getSession();
             $session->set("assign_".$list->getHashId(),$participant->getAid());
@@ -322,5 +355,72 @@ class ParticipantController extends AbstractController
         $em->flush();
         $this->addFlash('success',$this->translator->trans("Usunięto uczestnika"));
         return $this->redirectToRoute("app_manage_participant_list_show_participants",['id'=>$participant->getList()->getId()]);
+    }
+
+    /**
+     * @Route("/{_locale}/manage/participant/{id}/accept", name="app_manage_participant_accept", methods={"PATCH"})
+     * @param Participant $participant
+     * @return RedirectResponse
+     */
+    public function acceptParticipant(Participant $participant)
+    {
+        if($participant->getList()->getUser()!==$this->getUser())
+        {
+            return $this->redirectToRoute('app_manage');
+        }
+
+        $participant->setAccepted(!$participant->getAccepted());
+        $em=$this->getDoctrine()->getManager();
+        $em->persist($participant);
+        $em->flush();
+        $this->addFlash('success',($participant->getAccepted()? $this->translator->trans("Zaakceptowano uczestnika"): $this->translator->trans("Odrzucono uczestnika")));
+        return $this->redirectToRoute("app_manage_participant_list_show_participants",['id'=>$participant->getList()->getId()]);
+    }
+
+    /**
+     * @Route("/{_locale}/manage/participant_list/{id}/accept", name="app_manage_participant_list_accept", methods={"PATCH"})
+     * @param Request $request
+     * @param ParticipantList $list
+     * @return RedirectResponse
+     */
+    public function acceptParticipantList(Request $request, ParticipantList $list)
+    {
+        if($list->getUser()!==$this->getUser())
+        {
+            return $this->redirectToRoute('app_manage');
+        }
+        $em=$this->getDoctrine()->getManager();
+        $newStatus=!$list->isAccepted();
+        foreach($list->getParticipants() as $participant)
+        {
+            $participant->setAccepted($newStatus);
+            $em->persist($participant);
+        }
+        $em->flush();
+        $this->addFlash('success',($newStatus ? $this->translator->trans('Zaakceptowano listę uczestników') : $this->translator->trans('Odrzucono akceptację listy uczestników')));
+        return $this->redirect($request->headers->get('referer'));
+    }
+
+    private function generateRandomString($length = 10) {
+        $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_-!';
+        $charactersLength = strlen($characters);
+        $randomString = '';
+        for ($i = 0; $i < $length; $i++) {
+            $randomString .= $characters[rand(0, $charactersLength - 1)];
+        }
+        return $randomString;
+    }
+
+    private function sendEmailWithPassword($email, $password)
+    {
+        $mail = (new Email())
+            ->from('kontakt@gpvoting.pl')
+            ->priority(Email::PRIORITY_HIGH)
+            ->subject('Hasło dostępu uczestnika')
+            ->addTo($email)
+            ->html($this->renderView(
+                'email/participant_password_email.html.twig',['password'=>$password]
+            ));
+        $this->mailer->send($mail);
     }
 }

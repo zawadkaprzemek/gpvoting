@@ -8,6 +8,17 @@
 
 {% block body %}
 
+    <div class="row">
+        <div class="col-md-6">
+            <div class="alert alert-info">
+                <h4>{% trans %}Twoje dane{% endtrans %}:</h4>
+                <p class="mb-0">{% trans %}Nazwa użytkownika{% endtrans %}: <strong>{{ app.request.session.get('name') }}</strong></p>
+                {% if seconds is defined %}
+                    <p>{% trans %}Czas na oddawanie głosów{% endtrans %}: <span id="seconds_counter"></span></p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
     {{ form_start(form) }}
 
     <h3>{{ question.questionContent }}</h3>
@@ -29,5 +40,39 @@
 {% endblock %}
 {% block javascripts %}
     {{ parent() }}
+    {% if seconds is defined %}
+    <script>
+        // Set the date we're counting down to
+        let t = new Date();
+        t.setSeconds(t.getSeconds() + {{ seconds }});
+        t = t.getTime();
+        // Update the count down every 1 second
+        let x = setInterval(function() {
 
+            // Get today's date and time
+            let now = new Date().getTime();
+
+            // Find the distance between now and the count down date
+            let distance = t - now;
+
+            // Time calculations for days, hours, minutes and seconds
+            let minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            let seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+            let html='';
+            if(minutes>0)
+            {
+                html+=minutes+' {% trans %}minuta{% endtrans %}';
+            }
+            html+=' '+seconds+ ' {% trans %}sekund{% endtrans %}';
+            document.getElementById("seconds_counter").innerHTML = html;
+
+            // If the count down is finished, write some text
+            if (distance < 0) {
+                clearInterval(x);
+                document.getElementById("seconds_counter").innerHTML = "0";
+            }
+        }, 1000);
+    </script>
+    {% endif %}
 {% endblock %}

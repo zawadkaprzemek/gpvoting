@@ -1,0 +1,6 @@
+<form method="post" action="{{ path('app_manage_general_meeting_duplicate', {'id':meeting.id}) }}"
+      onsubmit="return confirm('{% trans %}Na pewno chcesz skopiować to głosowanie?{% endtrans %}');">
+    <input type="hidden" name="_method" value="PATCH">
+    <input type="hidden" name="_token" value="{{ csrf_token('patch' ~ meeting.id) }}">
+    <button class="btn btn-sm btn-outline-dark rounded-left-0">{% trans %}Duplikuj{% endtrans %}</button>
+</form>
