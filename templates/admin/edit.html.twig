@@ -1,0 +1,53 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{% trans %}Edytuj profil użytkownika{% endtrans %} {{ user.username }}{% endblock %}
+
+{% block body %}
+
+<div>
+    {{ form_start(form)}}
+
+    <div class="form-group row">
+        <div class="col-12 pt-1 col-sm-3 col-form-label">
+            {{ form_label(form.username) }}
+        </div>
+        <div class="col-12 col-sm-9">
+            {{ form_widget(form.username) }}
+        </div>
+    </div>
+    <div class="form-group row">
+        <div class="col-12 pt-1 col-sm-3 col-form-label">
+            {{ form_label(form.name) }}
+        </div>
+        <div class="col-12 col-sm-9">
+            {{ form_widget(form.name) }}
+        </div>
+    </div>
+    <div class="form-group row">
+        <div class="col-12 pt-1 col-sm-3 col-form-label">
+            {{ form_label(form.surname) }}
+        </div>
+        <div class="col-12 col-sm-9">
+            {{ form_widget(form.surname) }}
+        </div>
+    </div>
+    <div class="form-group row">
+        <div class="col-12 pt-1 col-sm-3 col-form-label">
+            {{ form_label(form.email) }}
+        </div>
+        <div class="col-12 col-sm-9">
+            {{ form_widget(form.email) }}
+        </div>
+    </div>
+    <div class="form-group row">
+        <div class="col-12 pt-1 col-sm-3 col-form-label">
+            {{ form_label(form.participantListSize) }}
+        </div>
+        <div class="col-12 col-sm-9">
+            {{ form_widget(form.participantListSize) }}
+        </div>
+    </div>
+    {{ form_widget(form.submit) }}
+    {{ form_end(form) }}
+</div>
+{% endblock %}

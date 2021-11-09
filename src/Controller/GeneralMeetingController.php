@@ -13,7 +13,9 @@ use App\Form\GeneralMeetingType;
 use App\Form\MeetingVotingType;
 use App\Repository\MeetingVotingRepository;
 use App\Repository\ParticipantRepository;
+use App\Service\ExcelCourseGenerator;
 use Doctrine\Common\Collections\ArrayCollection;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormError;
@@ -21,6 +23,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
@@ -389,6 +392,7 @@ class GeneralMeetingController extends AbstractController
      * @Route("/{_locale}/general_meeting/{slug}/vote_save", name="app_ajax_general_meeting_save",methods={"PATCH"})
      * @param GeneralMeeting $meeting
      * @param Request $request
+     * @param MeetingVotingRepository $repository
      * @return JsonResponse
      */
     public function generalMeetingVoteSave(GeneralMeeting $meeting,Request $request,MeetingVotingRepository $repository)
@@ -475,7 +479,41 @@ class GeneralMeetingController extends AbstractController
             }
             if($meeting->getKworum())
             {
-                $percent=round((sizeof($active['votes'])/sizeof($participants))*100,2);
+                switch($meeting->getKworumType())
+                {
+                    case '1to1':
+                        $percent=round((sizeof($active['votes'])/sizeof($participants))*100,2);
+                        break;
+                    case 'actions':
+                        $total=0;
+                        $actions=0;
+                        foreach ($participants as $participant)
+                        {
+                            if(array_key_exists($participant->getAid(),$active['votes']))
+                            {
+                                $actions+=$participant->getActions();
+                            }
+                            $total+=$participant->getActions();
+                        }
+                        $percent=round(($actions/$total)*100,2);
+                        break;
+
+                    case 'votes':
+                        $total=0;
+                        $votes=0;
+                        foreach ($participants as $participant)
+                        {
+                            if(array_key_exists($participant->getAid(),$active['votes']))
+                            {
+                                $votes+=$participant->getVotes();
+                            }
+                            $total+=$participant->getVotes();
+                        }
+                        $percent=round(($votes/$total)*100,2);
+                        break;
+                }
+
+
                 $active['kworum']=$percent>=$meeting->getKworumValue();
                 $active['kworum_value']=$percent;
             }
@@ -521,10 +559,9 @@ class GeneralMeetingController extends AbstractController
                     for($i=0;$i<sizeof($voting->getCandidates());$i++)
                     {
                         $results['valid']['votes'][$i]=0;
-                        $results['invalid']['votes'][$i]=0;
                         $results['valid']['actions'][$i]=0;
-                        $results['invalid']['actions'][$i]=0;
                     }
+                    $results['invalid']=[];
                     foreach ($voting->getVoteStatus() as $vote =>$status)
                     {
                         foreach ($status as $aid => $valid)
@@ -544,22 +581,18 @@ class GeneralMeetingController extends AbstractController
                                 {
                                     if($aid===$participant->getAid())
                                     {
-                                        $results['invalid']['votes'][$vote-1]+=$participant->getVotes();
-                                        $results['invalid']['actions'][$vote-1]+=$participant->getActions();
+                                        $results['invalid'][]=$aid;
                                     }
                                 }
                             }
 
                         }
                     }
+                    $results['invalid']=count(array_unique($results['invalid']));
+
                     foreach ($results['valid']['votes'] as $vote=>$val)
                     {
                         $results['valid']['votes'][$vote]=round(($val/$meeting->getTotalVotes())*100,2);
-                    }
-
-                    foreach ($results['invalid']['votes'] as $vote=>$val)
-                    {
-                        $results['invalid']['votes'][$vote]=round(($val/$meeting->getTotalVotes())*100,2);
                     }
 
                     foreach ($results['valid']['actions'] as $vote=>$val)
@@ -567,10 +600,6 @@ class GeneralMeetingController extends AbstractController
                         $results['valid']['actions'][$vote]=round(($val/$meeting->getTotalActions())*100,2);
                     }
 
-                    foreach ($results['invalid']['actions'] as $vote=>$val)
-                    {
-                        $results['invalid']['actions'][$vote]=round(($val/$meeting->getTotalActions())*100,2);
-                    }
 
                     arsort($results['valid']['votes']);
                     arsort($results['valid']['actions']);
@@ -891,4 +920,48 @@ class GeneralMeetingController extends AbstractController
             'slug_parent'=>$meeting->getRoom()->getEvent()->getSlug()
         ]);
     }
+
+
+    /**
+     * @Route("/{_locale}/manage/general_meeting/{slug}/course/{sort}", name="app_manage_general_meeting_course_voting")
+     * @param GeneralMeeting $meeting
+     * @param MeetingVoting $voting
+     * @return Response
+     */
+    public function courseVoting(GeneralMeeting $meeting,MeetingVoting $voting): Response
+    {
+        return $this->render('general_meeting/course_voting.html.twig',[
+           'meeting'=>$meeting,
+           'voting'=>$voting
+        ]);
+    }
+
+    /**
+     * @Route("/{_locale}/manage/general_meeting/{slug}/download_course", name="app_manage_general_meeting_course_meeting")
+     * @param GeneralMeeting $meeting
+     */
+    public function courseMeeting(GeneralMeeting $meeting,Request $request,ExcelCourseGenerator $generator)
+    {
+        if($meeting->getSecret())
+        {
+            return $this->redirect($request->server->get('HTTP_REFERER'));
+        }
+
+        $filename=str_replace(' ','_',strtolower($meeting->getName())).'_przebieg_glosowania.xlsx';
+        $streamedResponse = new StreamedResponse();
+        $streamedResponse->setCallback(function () use ($generator, $meeting) {
+            $excel=$generator->createExcel($meeting);
+
+            $writer =  new Xlsx($excel);
+            $writer->save('php://output');
+        });
+
+        $streamedResponse->setStatusCode(Response::HTTP_OK);
+        $streamedResponse->headers->set('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        $streamedResponse->headers->set('Content-Disposition', 'attachment; filename="'.$filename.'"');
+
+        return $streamedResponse->send();
+    }
+
+
 }

@@ -1,0 +1,32 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{% trans %}Profil użytkownika{% endtrans %} {{ user.username }}{% endblock %}
+
+{% block body %}
+
+<div>
+    <p>{% trans %}Login{% endtrans %}: {{ user.username }}!</p>
+    <p>{% trans %}Email{% endtrans %}: {{ user.email }}</p>
+    <p>{% trans %}Imię{% endtrans %}: {{ user.name }}</p>
+    <p>{% trans %}Nazwisko{% endtrans %}: {{ user.surname }}</p>
+    <p>{% trans %}Data rejestacji{% endtrans %}: {{ user.createdAt|date('Y-m-d H:i') }}</p>
+    <p>{% trans %}Ostatnie logowanie{% endtrans %}: {{ user.lastVisit|date('Y-m-d H:i') }}</p>
+    <p>{% trans %}Limit wielkości listy uczestników{% endtrans %}: {{ user.participantListSize }}</p>
+    <p>{% trans %}Ilość wydarzeń{% endtrans %}: {{ user.events|length }}</p>
+    <p>{% trans %}Ilość list uczestników{% endtrans %}: {{ user.participantLists|length }}</p>
+    <a href="{{ path('app_admin_profile_edit',{id:user.id}) }}" class="btn btn-sm btn-primary">{% trans %}Edytuj dane użytkownika{% endtrans %}</a>
+
+        <div class="mt-2">
+        <h5 class="my-3">{% trans %}Podkonta:{% endtrans %}</h5>
+            <div class="my-2">
+                <ul class="list-group">
+        {% for subaccount in app.user.subaccounts %}
+            <li class="list-group-item">{{ subaccount.username }}</li>
+            {% else %}
+            <p class="alert alert-info">{% trans %}Użytkownik nie posiada żadnych podkont{% endtrans %}</p>
+        {% endfor %}
+                </ul>
+            </div>
+        </div>
+</div>
+{% endblock %}

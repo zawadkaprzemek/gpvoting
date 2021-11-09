@@ -14,7 +14,17 @@
                 {{ form_widget(form.file) }}
             </div>
         </div>
-    {{ form_widget(form.submit) }}
+    {% if list.open is not same as true or (list.participants|length)>=list.user.participantListSize %}
+        {% set closed=true %}
+    {% else %}
+        {% set closed=false %}
+    {% endif %}
+    {{ form_widget(form.submit,{attr:{"disabled":closed} }) }}
+    {% if closed %}
+        <div class="alert alert-danger my-2">
+            {% trans %}list_full_cannot_import{% endtrans %}
+        </div>
+    {% endif %}
     {{ form_end(form) }}
     {% if error is not null %}
         <p class="alert alert-danger mt-3 font-weight-bold">{% trans %}Niewłaściwa kolejność kolumn w przesłanym pliku{% endtrans %}</p>

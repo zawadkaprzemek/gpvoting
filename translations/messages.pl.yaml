@@ -1,2 +1,8 @@
 participants_import_success: Import uczestników zakończony sukcesem, %new% nowych uczestników, %exists% istniejących uczestników
 duplicate_success: Tworzenie duplikatu Walnego zgromadzenia zakończone sukcesem
+list_full_cannot_open: Lista jest pełna, nie można jej otworzyć do zapisów!
+list_full_cannot_import: Lista jest pełna, nie można importować nowych uczestników!
+import_error.too_many_participants: Błąd importu. Za duża ilość uczestników! Maksymalna ilość nowych uczestników do importu %max%
+vote_on: Głos za
+vote_against: Głos przeciw
+vote_hold_on: Głos wstrzymany

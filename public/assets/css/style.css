@@ -19,7 +19,7 @@ input:checked+label.list-group-item{
 
 .vote-box{
     border:1px solid black;
-    width: 30px;
+    width: 50px;
     padding: 5px;
     height: 30px;
     font-size:14px;
@@ -56,4 +56,10 @@ input:checked+label.list-group-item{
 
 .votes-span{
     padding:5px;
+}
+
+.course-box{
+    width:49px;
+    height:49px;
+    border-right: 1px solid white;
 }

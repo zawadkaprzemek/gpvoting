@@ -65,27 +65,29 @@
                             {% endif %}
                         {% elseif last.type==2 %}
                             {% if last.votesSummary['valid'] is defined %}
+                                {% set lp=0 %}
                                 {% if last.weight==1 %}
                                     {% for key,vote in last.votesSummary['valid']['votes'] %}
                                         <p class="mb-2">
                                             {{ last.candidates[key].name }} -
-                                            <span class="bg-success votes-span" title="{% trans %}Głosy ważne{% endtrans %}">{{ vote|number_format(2) ~ '%'}}</span>
-                                            <span class="bg-danger votes-span" title="{% trans %}Głosy nie ważne{% endtrans %}">{{ last.votesSummary['invalid']['votes'][key]|number_format(2) ~ '%'}}</span>
+                                            <span class="{% if lp < last.toChoose and vote>0 %}bg-success {% endif %}votes-span">{{ vote|number_format(2) ~ '%'}}</span>
                                         </p>
+                                        {% set lp=lp+1 %}
                                     {% endfor %}
                                 {% else %}
                                     {% for key,vote in last.votesSummary['valid']['actions'] %}
                                         <p class="mb-2">
                                             {{ last.candidates[key].name }} -
-                                            <span class="bg-success votes-span" title="{% trans %}Głosy ważne{% endtrans %}">{{ vote|number_format(2) ~ '%'}}</span>
-                                            <span class="bg-danger votes-span" title="{% trans %}Głosy nie ważne{% endtrans %}">{{ last.votesSummary['invalid']['actions'][key]|number_format(2) ~ '%'}}</span>
+                                            <span class="{% if lp < last.toChoose and vote>0 %}bg-success {% endif %}votes-span">{{ vote|number_format(2) ~ '%'}}</span>
                                         </p>
                                     {% endfor %}
+                                    {% set lp=lp+1 %}
                                 {% endif %}
+                                    <p class="small">{% trans %}Ilość głosów nie ważnych{% endtrans %}: {{ last.votesSummary['invalid'] }} </p>
                             {% endif %}
                             {% else %}
                                     {% for key,vote in last.votesSummary %}
-                                        <p class="mb-0">{{ last.answers[key].content ~' - '~ vote ~ '%' }}</p>
+                                        <p class="mb-0 {% if last.answers[key].valid %}text-success font-weight-bold{% endif %}">{{ last.answers[key].content ~' - '~ vote ~ '%' }}</p>
                                     {% endfor %}
                         {% endif %}
                     </div>
@@ -262,27 +264,29 @@
                                             {% endif %}
                                         {% elseif voting.type==2 %}
                                             {% if voting.votesSummary['valid'] is defined %}
+                                                {% set lp=0 %}
                                                 {% if voting.weight==1 %}
                                                     {% for key,vote in voting.votesSummary['valid']['votes'] %}
                                                         <p class="mb-2">
                                                             {{ voting.candidates[key].name }} -
-                                                            <span class="bg-success votes-span" title="{% trans %}Głosy ważne{% endtrans %}">{{ vote|number_format(2) ~ '%'}}</span>
-                                                            <span class="bg-danger votes-span" title="{% trans %}Głosy nie ważne{% endtrans %}">{{ voting.votesSummary['invalid']['votes'][key]|number_format(2) ~ '%'}}</span>
+                                                            <span class="{% if lp < voting.toChoose and vote>0 %}bg-success {% endif %}votes-span" title="{% trans %}Głosy ważne{% endtrans %}">{{ vote|number_format(2) ~ '%'}}</span>
                                                         </p>
+                                                        {% set lp=lp+1 %}
                                                     {% endfor %}
                                                 {% else %}
                                                     {% for key,vote in voting.votesSummary['valid']['actions'] %}
                                                         <p class="mb-2">
                                                             {{ voting.candidates[key].name }} -
-                                                            <span class="bg-success votes-span" title="{% trans %}Głosy ważne{% endtrans %}">{{ vote|number_format(2) ~ '%'}}</span>
-                                                            <span class="bg-danger votes-span" title="{% trans %}Głosy nie ważne{% endtrans %}">{{ voting.votesSummary['invalid']['actions'][key]|number_format(2) ~ '%'}}</span>
+                                                            <span class="{% if lp < voting.toChoose and vote>0 %}bg-success {% endif %}votes-span" title="{% trans %}Głosy ważne{% endtrans %}">{{ vote|number_format(2) ~ '%'}}</span>
                                                         </p>
+                                                        {% set lp=lp+1 %}
                                                     {% endfor %}
                                                 {% endif %}
                                             {% endif %}
+                                                <p class="small">{% trans %}Ilość głosów nie ważnych{% endtrans %}: {{ voting.votesSummary['invalid'] }} </p>
                                         {% else %}
                                                 {% for key,vote in voting.votesSummary %}
-                                                    <p class="mb-0">{{ voting.answers[key].content ~' - '~ vote ~ '%' }}</p>
+                                                    <p class="mb-0 {% if voting.answers[key].valid %}text-success font-weight-bold{% endif %}">{{ voting.answers[key].content ~' - '~ vote ~ '%' }}</p>
                                                 {% endfor %}
                                         {% endif %}
                                     {% endif %}

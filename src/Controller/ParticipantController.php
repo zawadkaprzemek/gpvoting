@@ -178,6 +178,13 @@ class ParticipantController extends AbstractController
             $file=$form->getData()['file'];
             try{
                 $xlsx=SimpleXLSX::parse($file);
+                if((sizeof($list->getParticipants())+sizeof($xlsx->rows()))>$list->getUser()->getParticipantListSize())
+                {
+                    $this->addFlash('danger',$this->translator->trans("import_error.too_many_participants",
+                        ['%max%'=>$list->getUser()->getParticipantListSize()-sizeof($list->getParticipants())]));
+
+                    return $this->redirectToRoute("app_manage_participant_list_import",['id'=>$list->getId()]);
+                }
                 foreach ($xlsx->rows() as $row)
                 {
                     $participant=$repository->getParticipantByEmail($list,$row[3]);
@@ -229,11 +236,19 @@ class ParticipantController extends AbstractController
      * @Route("/{_locale}/assign_to_list/{hashId}/", name="app_participant_list_assign")
      * @param ParticipantList $list
      * @param Request $request
-     * @param ParticipantRepository $repository
      * @return Response
      */
-    public function signToList(ParticipantList $list,Request $request,ParticipantRepository $repository)
+    public function signToList(ParticipantList $list,Request $request)
     {
+        $em=$this->getDoctrine()->getManager();
+        if(sizeof($list->getParticipants())>=$list->getUser()->getParticipantListSize())
+        {
+            $list->setOpen(false);
+            $em->persist($list);
+            $em->flush();
+            return $this->redirectToRoute("app_participant_list_assign",['hashId'=>$list->getHashId()]);
+        }
+
         $participant=new Participant();
         $participant->setList($list);
         $form=$this->createForm(ParticipantType::class,$participant);
@@ -241,7 +256,7 @@ class ParticipantController extends AbstractController
         if($form->isSubmitted()&&$form->isValid())
         {
             $number=$list->getCount();
-            $em=$this->getDoctrine()->getManager();
+
             $participant->setPlainPass($participant->getPassword())
                 ->setPassword(md5($participant->getPlainPass()))
                 ->setAid("A".++$number);
@@ -326,12 +341,23 @@ class ParticipantController extends AbstractController
             return $this->redirectToRoute('app_manage');
         }
         $list->setOpen(!$list->getOpen());
+        if($list->getOpen())
+        {
+            if(sizeof($list->getParticipants())>=$list->getUser()->getParticipantListSize())
+            {
+                $this->addFlash('danger',$this->translator->trans("list_full_cannot_open"));
+                return $this->redirectToRoute('app_manage_participant_list_show',['id'=>$list->getId()]);
+            }
+
+        }
+
         $em=$this->getDoctrine()->getManager();
         $em->persist($list);
         $em->flush();
         if($list->getOpen())
         {
             $this->addFlash('success',$this->translator->trans('Otwarto listę'));
+
         }else{
             $this->addFlash('success',$this->translator->trans('Zamknięto listę'));
         }

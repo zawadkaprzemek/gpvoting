@@ -21,22 +21,26 @@
     {% endif %}
 {% elseif voting.type==2 %}
     {% if votesSummary['valid'] is defined %}
+        {% set lp=0 %}
         {% if voting.weight==1 %}
             {% for key,vote in votesSummary['valid']['votes'] %}
                 <p class="mb-2">
                     {{ voting.candidates[key].name }} -
-                    <span class="bg-success votes-span" title="{% trans %}Głosy ważne{% endtrans %}">{{ vote|number_format(2) ~ '%'}}</span>
-                    <span class="bg-danger votes-span" title="{% trans %}Głosy nie ważne{% endtrans %}">{{ votesSummary['invalid']['votes'][key]|number_format(2) ~ '%'}}</span>
+                    <span class="{% if lp < voting.toChoose and vote>0 %}bg-success {% endif %}votes-span">{{ vote|number_format(2) ~ '%'}}</span>
                 </p>
+                {% set lp=lp+1 %}
             {% endfor %}
         {% else %}
             {% for key,vote in votesSummary['valid']['actions'] %}
                 <p class="mb-2">
                     {{ voting.candidates[key].name }} -
-                    <span class="bg-success votes-span" title="{% trans %}Głosy ważne{% endtrans %}">{{ vote|number_format(2) ~ '%'}}</span>
-                    <span class="bg-danger votes-span" title="{% trans %}Głosy nie ważne{% endtrans %}">{{ votesSummary['invalid']['actions'][key]|number_format(2) ~ '%'}}</span>
+                    <span class="{% if lp < voting.toChoose and vote>0 %}bg-success {% endif %}votes-span">{{ vote|number_format(2) ~ '%'}}</span>
                 </p>
+                {% set lp=lp+1 %}
             {% endfor %}
+        {% endif %}
+        {% if votesSummary['invalid'] is not iterable %}
+            <p class="small">{% trans %}Ilość głosów nie ważnych{% endtrans %}: {{ votesSummary['invalid'] }} </p>
         {% endif %}
     {% endif %}
 {% else %}

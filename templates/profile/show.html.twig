@@ -11,6 +11,7 @@
     <p>{% trans %}Imię{% endtrans %}: {{ app.user.name }}</p>
     <p>{% trans %}Nazwisko{% endtrans %}: {{ app.user.surname }}</p>
     <p>{% trans %}Data rejestacji{% endtrans %}: {{ app.user.createdAt|date('Y-m-d H:i') }}</p>
+    <p>{% trans %}Limit wielkości listy uczestników{% endtrans %}: {{ app.user.participantListSize }}</p>
     <a href="{{ path('app_profile_edit') }}" class="btn btn-sm btn-primary">{% trans %}Edytuj moje dane{% endtrans %}</a>
 
     {% if is_granted("ROLE_ORGANIZATOR") %}

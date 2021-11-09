@@ -137,6 +137,12 @@ class GeneralMeeting
      */
     private $kworumValue;
 
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     * 1to1|actions|votes
+     */
+    private $kworumType;
+
     public function __construct()
     {
         $this->meetingVotings = new ArrayCollection();
@@ -430,6 +436,18 @@ class GeneralMeeting
     public function setKworumValue(?int $kworumValue): self
     {
         $this->kworumValue = $kworumValue;
+
+        return $this;
+    }
+
+    public function getKworumType(): ?string
+    {
+        return $this->kworumType;
+    }
+
+    public function setKworumType(?string $kworumType): self
+    {
+        $this->kworumType = $kworumType;
 
         return $this;
     }

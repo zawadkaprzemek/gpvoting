@@ -35,7 +35,7 @@ class HomeController extends AbstractController
     {
         return $this->render('event/index.html.twig', [
             'pagination' => $paginator->paginate(
-                $repository->findAllOpen(),$request->query->getInt('page', 1),20),
+                $repository->findAllOpen(),$request->query->getInt('page', 1),20,[]),
             'manage'=>false
         ]);
     }

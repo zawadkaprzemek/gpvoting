@@ -98,6 +98,12 @@ class User implements UserInterface
      */
     private $participantLists;
 
+    /**
+     * @ORM\Column(type="integer")
+     * Maksymalna ilość uczestników na liście
+     */
+    private $participantListSize=10;
+
     public function __construct()
     {
         $this->subaccounts = new ArrayCollection();
@@ -375,6 +381,18 @@ class User implements UserInterface
                 $participantList->setUser(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getParticipantListSize(): ?int
+    {
+        return $this->participantListSize;
+    }
+
+    public function setParticipantListSize(int $participantListSize): self
+    {
+        $this->participantListSize = $participantListSize;
 
         return $this;
     }

@@ -15,6 +15,7 @@
                             {% if app.user %}
                                 {% if is_granted("ROLE_ADMIN") %}
                                     <a class="dropdown-item" href="{{ path('app_admin_create_account') }}">{% trans %}Stwórz konto użytkownika{% endtrans %}</a>
+                                    <a class="dropdown-item" href="{{ path('admin_users_list') }}">{% trans %}Lista użytkowników{% endtrans %}</a>
                                 {% endif %}
                                 <a class="dropdown-item" href="{{ path('app_profile')}}">{% trans %}Mój profil{% endtrans %}</a>
                                 <a class="dropdown-item" href="{{ path('app_profile_edit')}}">{% trans %}Edytuj profil{% endtrans %}</a>

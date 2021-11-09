@@ -100,6 +100,16 @@
             <span id="kworumValueSpan" class="font-weight-bold text-primary ml-2 mt-1 valueSpan">1%</span>
         </div>
     </div>
+
+    <div class="row form-group kworum d-none">
+        <div class="col-12 col-sm-3 col-form-label">
+            {{form_label(form.kworumType)}}
+        </div>
+        <div class="col-12 col-sm-9 d-flex">
+            {{ form_widget(form.kworumType) }}
+        </div>
+    </div>
+
     <div class="row form-group">
         <div class="col-12 col-sm-3 col-form-label">
             {{form_label(form.resultsForParticipants)}}
@@ -130,6 +140,7 @@
                 $('.kworum').removeClass('d-none');
             }else{
                 $('.kworum input').prop('disabled',true);
+                $('.kworum select').prop('disabled',true);
             }
 
             $('#general_meeting_count').on('change',function () {
@@ -144,9 +155,11 @@
                {
                    $('.kworum').removeClass('d-none');
                    $('.kworum input').prop('disabled',false);
+                   $('.kworum select').prop('disabled',false);
                }else{
                    $('.kworum').addClass('d-none');
                    $('.kworum input').prop('disabled',true);
+                   $('.kworum select').prop('disabled',true);
                }
             });
         })

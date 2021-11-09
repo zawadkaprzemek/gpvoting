@@ -150,7 +150,7 @@ class RoomController extends AbstractController
         if($form->isSubmitted())
         {
             $code=$form->get('code')->getData();
-            $name=$form->get('name')->getData();
+            //$name=$form->get('name')->getData();
             if($code!==$room->getCode())
             {
                 $form->get('code')->addError(new FormError('Nie poprawny kod'));
@@ -158,7 +158,7 @@ class RoomController extends AbstractController
             if($form->isValid())
             {
                 $session->set('room_'.$room->getId().'_code',$code);
-                $session->set('name',$name);
+                //$session->set('name',$name);
                 return $this->redirectToRoute('app_room_show',[
                     'slug_parent'=>$room->getEvent()->getSlug(),
                     'slug_child'=>$room->getSlug()

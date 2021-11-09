@@ -61,7 +61,7 @@
                         </div>
                         {% if meeting.status == 1%}
                         <div class="col py-2 border-right text-center">
-                            {% if meeting.kworum !=true or (meeting.kworum and active.kworum)  %}
+                            {#{% if meeting.kworum !=true or (meeting.kworum and active.kworum)  %}#}
                             {% if active.active is defined and active.active is null %}
                                 <div class="btn-group btn-group-sm">
                                     <button class="btn-primary btn btn-gm-activate-vote" data-href="{{ path('app_general_meeting_activate_vote',{slug:meeting.slug,sort:voting.sort}) }}" type="button">
@@ -72,9 +72,12 @@
                                         {% endif %}
                                     </button>
                                     <a class="btn-outline-secondary btn" href="{{ path('app_manage_general_meeting_edit_voting',{slug:meeting.slug,sort:voting.sort}) }}">{% trans %}Edycja{% endtrans %}</a>
+                                    {% if meeting.secret == false %}
+                                        <a class="btn-secondary btn" href="{{ path('app_manage_general_meeting_course_voting',{slug:meeting.slug,sort:voting.sort}) }}">{% trans %}Przebieg{% endtrans %}</a>
+                                    {% endif %}
                                 </div>
                             {% endif %}
-                            {% endif %}
+                            {#{% endif %}#}
                         </div>
                         {% endif %}
                     </div>
@@ -99,6 +102,7 @@
                     {% endif %}
                     {% elseif meeting.status==2 %}
                     <a class="btn btn-outline-dark" href="{{ path('general_meeting_results_pdf',{slug:meeting.slug,valid:1})}}">{% trans %}Pobierz wyniki głosowań{% endtrans %}</a>
+                    <a class="btn btn-outline-success" href="{{ path('app_manage_general_meeting_course_meeting',{slug:meeting.slug})}}">{% trans %}Pobierz przebieg głosowań{% endtrans %}</a>
                 {% endif %}
             </div>
         </div>
@@ -113,15 +117,15 @@
                         {% if voting.type==2 %}
                             <p class="my-3">{% trans %}Kandydaci{% endtrans %}:</p>
                             <ul class="list-group list-group-flush">
-                                {% for candidate in voting.candidates %}
-                                    <li class="list-group-item">{{ candidate.name }}</li>
+                                {% for k,candidate in voting.candidates %}
+                                    <li class="list-group-item">{{ k+1 }}. {{ candidate.name }}</li>
                                 {% endfor %}
                             </ul>
                         {% elseif voting.type==3 %}
                             <p class="my-3">{% trans %}Dostępne odpowiedzi{% endtrans %}:</p>
                             <ul class="list-group list-group-flush">
-                                {% for answer in voting.answers %}
-                                    <li class="list-group-item">{{ answer.content }}</li>
+                                {% for k,answer in voting.answers %}
+                                    <li class="list-group-item">{{ k+1 }}. {{ answer.content }}</li>
                                 {% endfor %}
                             </ul>
                         {% endif %}
@@ -150,19 +154,32 @@
                 {% endfor %}
             {% endif %}
             <div class="votes my-3">
+
                 <div class="vote-row">
-                    <div class="vote-box"></div>
-                    {% for item in participants %}
+                    <div class="vote-box {% if meeting.secret and active.active >0 %}d-none{% endif %}"></div>
+                    {% if active.active==0 or voting is null %}
                         <div class="vote-box">
-                            {{ item.aid }}
+                            T
                         </div>
-                    {% endfor %}
+                    {% else %}
+                        {% set count=1 %}
+                        {% if voting.type==2 %}
+                            {% set count=voting.candidates|length %}
+                        {% elseif voting.type==3 %}
+                            {% set count=voting.answers|length %}
+                        {% endif %}
+                        {% if meeting.secret ==false  %}
+                        {% for i in 1..count %}
+                            <div class="vote-box">{{ i }}</div>
+                        {% endfor %}
+                        {% endif %}
+                    {% endif %}
                 </div>
                 {% if active.active is null or active.active==0 %}
-                {% for i in 0..0 %}
+                {% for i,item in participants %}
                     <div class="vote-row" id="vote_{{ i }}">
-                        <div class="vote-box">T</div>
-                        {% for item in participants %}
+                        <div class="vote-box">{{ item.aid }}</div>
+                        {% for i in 0..0 %}
                             <div class="vote-box {%if active.votes[item.aid] is defined %}{{active.votes[item.aid]|gm_vote_color}}{% endif %}" id="vote_{{ item.aid }}_{{ i }}">
                             </div>
                         {% endfor %}
@@ -304,10 +321,10 @@
                             {% elseif voting.type==3 %}
                                 {% set count = voting.answers|length %}
                         {% endif %}
-                        {% for i in 1..count %}
+                        {% for i,item in participants %}
                             <div class="vote-row" id="vote_{{ i }}">
-                                <div class="vote-box">{{ i }}</div>
-                                {% for item in participants %}
+                                <div class="vote-box">{{ item.aid }}</div>
+                                {% for i in 1..count %}
                                     {% if voting.type==1 %}
                                         <div class="vote-box {%if voting.voteStatus[item.aid] is defined %}{{voting.voteStatus[item.aid]|gm_vote_color}}{% endif %}" id="vote_{{ item.aid }}_{{ i }}"></div>
                                     {% elseif voting.type==2 %}

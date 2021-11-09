@@ -93,6 +93,16 @@ class GeneralMeetingType extends AbstractType
                         'class'=>'custom-range'
                     ]
                 ))
+            ->add('kworumType',ChoiceType::class,
+                array('label'=>'Typ kworum',
+                    'choices'=>array(
+                        '1 do 1'=>'1to1',
+                        'Waga akcji'=>'actions',
+                        'Waga głosów'=>'votes'
+                    ),
+                    'placeholder'=>'Wybierz typ kworum'
+                ))
+
             /*->add('toChoose',RangeType::class,
                 array('label'=>'Liczba kandydatów do wybrania',
                     'required'=>false,

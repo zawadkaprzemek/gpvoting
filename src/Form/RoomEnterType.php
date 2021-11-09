@@ -13,7 +13,6 @@ class RoomEnterType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('name',TextType::class,array('label'=>'Podaj swoje imię'))
             ->add('code',TextType::class,array(
                 'label'=>'Kod',
                 'required'=>true,

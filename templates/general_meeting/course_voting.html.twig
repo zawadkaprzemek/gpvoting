@@ -1,0 +1,116 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{% trans %}Walne zgromadzenie{% endtrans %}: {{ meeting.name }}{% endblock %}
+
+{% block body %}
+
+    <div class="row">
+        <div class="col-12">
+            <h3>{{ meeting.name }}</h3>
+            <p>{% trans %}Przebieg głosowania{% endtrans %}</p>
+        </div>
+
+        <div class="col-12">
+            {% set answers=0 %}
+            {% set options=null %}
+            {% if voting.candidates|length >0 %}
+                {% set answers=voting.candidates|length %}
+            {% elseif voting.answers|length>0 %}
+                {% set answers=voting.answers|length %}
+            {% else %}
+                {% if meeting.holdBack %}
+                    {% set answers=3 %}
+                {% else %}
+                    {% set answers=2 %}
+                {% endif %}
+            {% endif %}
+            <div class="table-responsive">
+                <table class="w-100">
+                    <tbody>
+                    <tr>
+                        <td style="vertical-align: top;">
+                            <table class="table">
+                                <thead>
+                                <tr>
+                                <th>{% trans %}Głosowanie{% endtrans %}</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr>
+                                    <td>{{ voting.content }}</td>
+                                </tr>
+                                <tr>
+                                    <td>&nbsp;</td>
+                                </tr>
+                                {% if voting.candidates|length >0 %}
+                                    {% for k,candidate in voting.candidates %}
+                                        <tr>
+                                            <td>{{ (k+1)~'. '~candidate.name }}</td>
+                                        </tr>
+                                    {% endfor %}
+                                {% elseif voting.answers|length>0 %}
+                                    {% for k,answer in voting.answers %}
+                                        <tr>
+                                            <td>{{ (k+1)~'. '~answer.content }}</td>
+                                        </tr>
+                                    {% endfor %}
+                                {% else %}
+                                    <tr><td> 1. {% trans %}vote_on{% endtrans %}</td></tr>
+                                    <tr><td> 2. {% trans %}vote_against{% endtrans %}</td></tr>
+                                    {% if meeting.holdBack %}
+                                        <tr><td> 3. {% trans %}vote_hold_on{% endtrans %}</td></tr>
+                                    {% endif %}
+                                {% endif %}
+                                </tbody>
+                            </table>
+                        </td>
+
+                        <td style="vertical-align: top;">
+                            <table class="table">
+                                <thead>
+                                <tr>
+                                <th>{% trans %}Nr{% endtrans %}</th>
+                                <th>{% trans %}Imię i nazwisko{% endtrans %}</th>
+
+                                {% for i in 1..answers%}
+                                    <th>{{ i }}</th>
+                                {% endfor %}
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% for participant in meeting.participantList.participants %}
+                                    <tr>
+                                        <td>{{ participant.aid }}</td>
+                                        <td>{{ participant.name~' '~participant.surname }}</td>
+                                        {% if voting.type in [2,3] %}
+                                            {% for i in 1..answers %}
+                                        {% if voting.voteStatus[i] is defined %}
+                                            {% if voting.type==2 %}
+                                            <td class="course-box {% if voting.voteStatus[i][participant.aid] is defined %}bg-dark{% else %}bg-light{% endif %}">&nbsp;</td>
+                                                {% elseif voting.type==3 %}
+                                                    <td class="course-box {% if participant.aid in voting.voteStatus[i] %}bg-dark{% else %}bg-light{% endif %}">&nbsp;</td>
+                                                {% else %}
+                                            {% endif %}
+                                        {% else %}
+                                            <td class="course-box bg-light"></td>
+                                        {% endif %}
+                                            {% endfor %}
+                                        {% else %}
+                                            {{ voting.voteStatus[participant.aid]|course_votes(meeting.holdBack)|raw }}
+                                        {% endif %}
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+  {{ include('general_meeting/vote_scripts.html.twig',{meeting:meeting}) }}
+{% endblock %}
