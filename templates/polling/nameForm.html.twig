@@ -1,0 +1,25 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{% trans %}name.form.title{% endtrans %}{% endblock %}
+
+{% block body %}
+
+    <h4>{% trans %}name.form.header{% endtrans %}</h4>
+    {{ form_start(form) }}
+    <div class="row form-group">
+        <div class="col-12 col-sm-3 col-form-label">
+            {{ 'name.form'|info_icon }}
+            {{ 'name.form'|help_icon }}
+            {{form_label(form.name)}}
+        </div>
+        <div class="col-12 col-sm-9">
+            {{ form_widget(form.name) }}
+        </div>
+    </div>
+    {{ form_row(form._token) }}
+    {{ form_row(form.submit) }}
+    {{ form_end(form) }}
+{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+{% endblock %}

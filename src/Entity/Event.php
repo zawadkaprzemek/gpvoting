@@ -47,7 +47,7 @@ class Event
     private $rooms;
 
     /**
-     * @Gedmo\Slug(fields={"organizer", "name"})
+     * @Gedmo\Slug(fields={"shortOrganizatorName", "name"})
      * @ORM\Column(length=128, unique=true)
      */
     private $slug;
@@ -70,6 +70,11 @@ class Event
      * @ORM\JoinColumn(nullable=false)
      */
     private $user;
+
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $shortOrganizatorName;
 
     public function __construct()
     {
@@ -222,6 +227,18 @@ class Event
     public function setUser(?User $user): self
     {
         $this->user = $user;
+
+        return $this;
+    }
+
+    public function getShortOrganizatorName(): ?string
+    {
+        return $this->shortOrganizatorName;
+    }
+
+    public function setShortOrganizatorName(string $shortOrganizatorName): self
+    {
+        $this->shortOrganizatorName = $shortOrganizatorName;
 
         return $this;
     }

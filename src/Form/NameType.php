@@ -13,10 +13,10 @@ class NameType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('name',TextType::class,array('label'=>'Twoje imię','attr'=>array(
+            ->add('name',TextType::class,array('label'=>'name.form.label','attr'=>array(
                 'minlength'=>5
             )))
-            ->add('submit',SubmitType::class,array('label'=>'Wyślij'))
+            ->add('submit',SubmitType::class,array('label'=>'submit'))
         ;
     }
 

@@ -1,0 +1,15 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}admin.page{% endblock %}
+
+{% block body %}
+
+    <h3>{% trans %}admin.options{% endtrans %}</h3>
+
+    <div class="col-md-12 mt-2">
+        <ul class="list-group">
+            <li class="list-group-item"><a class="btn btn-link" href="{{ path('admin_users_list') }}">{% trans %}admin.users.list{% endtrans %}</a></li>
+            <li class="list-group-item"><a class="btn btn-link" href="{{ path('admin_packs_list') }}">{% trans %}admin.packs.list{% endtrans %}</a></li>
+        </ul>
+    </div>
+{% endblock %}

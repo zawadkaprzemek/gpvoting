@@ -9,6 +9,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class ChangePasswordFormType extends AbstractType
 {
@@ -20,21 +21,21 @@ class ChangePasswordFormType extends AbstractType
                 'first_options' => [
                     'constraints' => [
                         new NotBlank([
-                            'message' => 'Prosze wprowadzić hasło',
+                            'message' => 'register.password.blank',
                         ]),
                         new Length([
                             'min' => 6,
-                            'minMessage' => 'Hasło musi się składać conajmniej z  {{ limit }} znaków',
+                            'minMessage' => 'register.form.password.minMessage',
                             // max length allowed by Symfony for security reasons
                             'max' => 4096,
                         ]),
                     ],
-                    'label' => 'Nowe hasło',
+                    'label' => 'reset.reset_form.password_new',
                 ],
                 'second_options' => [
-                    'label' => 'Powtórz hasło',
+                    'label' => 'reset.reset_form.repeat_password',
                 ],
-                'invalid_message' => 'Hasła muszą się zgadzać',
+                'invalid_message' => 'reset.reset_form.passwords_do_not_match',
                 // Instead of being set onto the object directly,
                 // this is read and encoded in the controller
                 'mapped' => false,

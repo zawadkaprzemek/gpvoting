@@ -2,7 +2,9 @@
 
 namespace App\Form;
 
+use App\Entity\Pack;
 use App\Entity\User;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
@@ -28,6 +30,11 @@ class ProfileEditAdminType extends AbstractType
                     'step'=>1
                 ]
             ))
+            ->add('pack',EntityType::class,array(
+                'label'=>'user.pack',
+                'class'=>Pack::class,
+                'choice_label'=>'name'
+                ))
             ->add('submit',SubmitType::class,array('label'=>'Zapisz'))
         ;
     }

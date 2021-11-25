@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Event;
 use App\Entity\EventCode;
+use App\Entity\User;
 use App\Form\AddCodesType;
 use App\Form\EventType;
 use App\Repository\RoomRepository;
@@ -38,7 +39,14 @@ class EventController extends AbstractController
     {
         $this->denyAccessUnlessGranted("ROLE_USER");
         $event=new Event();
+        /** @var User $user */
         $user=$this->getUser();
+        $pack=$user->getPack();
+        if($pack===null || sizeof($user->getEvents())>=$pack->getEventsCount())
+        {
+            $this->addFlash('danger',$this->translator->trans('event.error.limit_used_up'));
+            return $this->redirectToRoute('home');
+        }
         $event->setUser($user)->setOrganizer($user->getUsername());
         $form=$this->createForm(EventType::class,$event);
         $form->handleRequest($request);
@@ -62,12 +70,12 @@ class EventController extends AbstractController
             }
             $em->persist($event);
             $em->flush();
-            $this->addFlash('success', 'Dodano nowy event');
+            $this->addFlash('success', $this->translator->trans('event.add.success'));
             return $this->redirectToRoute('app_manage_event_show',['slug'=>$event->getSlug()]);
         }
         return $this->render('event/form.html.twig',[
            'form'=>$form->createView(),
-            'title'=>$this->translator->trans("Stwórz nowy event")
+            'title'=>$this->translator->trans("event.add.new")
         ]);
     }
 
@@ -113,12 +121,12 @@ class EventController extends AbstractController
             $em=$this->getDoctrine()->getManager();
             $em->persist($event);
             $em->flush();
-            $this->addFlash('success', 'Zmiany zostały zapisane');
+            $this->addFlash('success', 'changes.saved');
             return $this->redirectToRoute('app_manage_event_show',['slug'=>$event->getSlug()]);
         }
         return $this->render('event/form.html.twig',[
             'form'=>$form->createView(),
-            'title'=>$this->translator->trans("Edytuj event")
+            'title'=>$this->translator->trans("event.edit.text")
         ]);
     }
 
@@ -130,6 +138,10 @@ class EventController extends AbstractController
      */
     public function show(Event $event,RoomRepository $repository)
     {
+        if($event->getStatus()===0)
+        {
+            return $this->redirectToRoute('home');
+        }
         $rooms=$repository->getEventRooms($event);
         return $this->render('event/show.html.twig',[
             'event'=>$event,
@@ -199,7 +211,7 @@ class EventController extends AbstractController
         $event->setStatus($newStatus);
         $em->persist($event);
         $em->flush();
-        $this->addFlash('success',($newStatus==1 ? "Aktywowano wydarzenie" : "Ukryto wydarzenie"));
+        $this->addFlash('success', $this->translator->trans($newStatus==1 ?'event.activated' : 'event.hidden'));
         return $this->redirectToRoute('app_manage');
     }
 

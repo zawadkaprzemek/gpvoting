@@ -104,6 +104,10 @@ class RoomController extends AbstractController
      */
     public function showRoom(Event $event,Room $room)
     {
+        if(!$room->getVisible())
+        {
+            return $this->redirectToRoute('home');
+        }
         $pollings=[];
         $now=new \DateTime();
         foreach ($room->getPollings() as $polling)
@@ -136,6 +140,10 @@ class RoomController extends AbstractController
      */
     public function enter(Room $room,Request $request)
     {
+        if(!$room->getVisible())
+        {
+            return $this->redirectToRoute('home');
+        }
         $session=$request->getSession();
         $enter=$session->get('room_'.$room->getId().'_code');
         if(!is_null($enter))

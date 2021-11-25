@@ -1,0 +1,36 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block body %}
+
+    {{ form_start(form) }}
+    <div class="row form-group">
+        <div class="col-12 col-sm-4 col-form-label">
+            {{ 'packs.name'|info_icon }}
+            {{ 'packs.name'|help_icon }}
+            {{form_label(form.name)}}
+        </div>
+        <div class="col-12 col-sm-8">
+            {{ form_widget(form.name) }}
+        </div>
+    </div>
+
+    <div class="row form-group">
+        <div class="col-12 col-sm-4 col-form-label">
+            {{ 'packs.eventsCount'|info_icon }}
+            {{ 'packs.eventsCount'|help_icon }}
+            {{form_label(form.eventsCount)}}
+        </div>
+        <div class="col-12 col-sm-8">
+            {{ form_widget(form.eventsCount) }}
+        </div>
+    </div>
+
+
+    {{ form_row(form.submit) }}
+    {{ form_end(form) }}
+{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+{% endblock %}

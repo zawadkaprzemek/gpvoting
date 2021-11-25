@@ -12,8 +12,8 @@ use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
@@ -68,11 +68,12 @@ class ProfileController extends AbstractController
     /**
      * @Route("/change_password", name="app_profile_change_password")
      * @param Request $request
-     * @param UserPasswordEncoderInterface $passwordEncoder
+     * @param UserPasswordHasherInterface $passwordEncoder
      * @return RedirectResponse|Response
      */
-    public function changePassword(Request $request,UserPasswordEncoderInterface $passwordEncoder)
+    public function changePassword(Request $request,UserPasswordHasherInterface $passwordEncoder)
     {
+        /** @var User $user */
         $user=$this->getUser();
         $form=$this->createForm(PasswordChangeType::class,$user);
         $form->handleRequest($request);
@@ -83,7 +84,7 @@ class ProfileController extends AbstractController
             }
             if($form->isValid())
             {
-                $newpassword=$passwordEncoder->encodePassword($user, $form->get('plainPassword')->getData());
+                $newpassword=$passwordEncoder->hashPassword($user, $form->get('plainPassword')->getData());
                 $user->setPassword($newpassword);
                 $entityManager = $this->getDoctrine()->getManager();
                 $entityManager->persist($user);
@@ -102,10 +103,10 @@ class ProfileController extends AbstractController
     /**
      * @Route("/create_subaccount", name="app_profile_create_subacccount")
      * @param Request $request
-     * @param UserPasswordEncoderInterface $passwordEncoder
+     * @param UserPasswordHasherInterface $passwordEncoder
      * @return Response
      */
-    public function createSubAccount(Request $request, UserPasswordEncoderInterface $passwordEncoder): Response
+    public function createSubAccount(Request $request, UserPasswordHasherInterface $passwordEncoder): Response
     {
         $this->denyAccessUnlessGranted("ROLE_ORGANIZATOR");
         $user = new User();
@@ -116,13 +117,13 @@ class ProfileController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             // encode the plain password
             $user->setPassword(
-                $passwordEncoder->encodePassword(
+                $passwordEncoder->hashPassword(
                     $user,
                     $form->get('plainPassword')->getData()
                 )
             )
                 ->setRoles(['ROLE_USER', 'ROLE_SUBACCOUNT']);
-            $user->setParent($this->getUser());
+            $user->setParent($user);
             $user->setIsVerified(true);
             $entityManager = $this->getDoctrine()->getManager();
             $user->setLastIP($request->getClientIp());

@@ -7,8 +7,8 @@ use App\Entity\EventCode;
 use App\Entity\Polling;
 use App\Entity\Room;
 use App\Entity\SessionSettings;
+use App\Entity\User;
 use App\Form\EventCodeType;
-use App\Form\ManagePassType;
 use App\Form\SessionSettingsType;
 use App\Repository\EventRepository;
 use App\Repository\PollingRepository;
@@ -16,7 +16,6 @@ use App\Repository\SessionSettingsRepository;
 use App\Repository\SessionUsersRepository;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -30,9 +29,10 @@ class ManageController extends AbstractController
      * @param EventRepository $repository
      * @return Response
      */
-    public function index(Request $request, EventRepository $repository)
+    public function index(Request $request, EventRepository $repository): Response
     {
         $this->denyAccessUnlessGranted("ROLE_USER");
+        /** @var User $user */
         $user=$this->getUser();
         $events=$repository->getUserEvents($user);
         return $this->render('manage/index.html.twig', [
@@ -45,7 +45,7 @@ class ManageController extends AbstractController
      * @param Event $event
      * @return Response
      */
-    public function show(Event $event)
+    public function show(Event $event): Response
     {
         $user=$this->getUser();
         if($event->getUser()!==$user)
@@ -66,24 +66,16 @@ class ManageController extends AbstractController
      * @ParamConverter("room", options={"mapping": {"slug_child": "slug"}})
      * @param Event $event
      * @param Room $room
-     * @param SessionSettingsRepository $repository
      * @return Response
      */
-    public function manageRoom(Event $event,Room $room,SessionSettingsRepository $repository)
+    public function manageRoom(Event $event,Room $room)
     {
         $user=$this->getUser();
         if($event->getUser()!==$user)
         {
             return $this->redirectToRoute('home');
         }
-        $pollingsArray=$room->getPollings();
-        $pollings=array();
-        foreach ($pollingsArray as $polling)
-        {
-            $settings=$repository->getSessionSettings($polling);
-            $polling->settings=$settings;
-            $pollings[]=$polling;
-        }
+        $pollings=$room->getPollings();
         return $this->render('room/index.html.twig',[
            'pollings'=>$pollings,
            'manage'=>true,
@@ -96,19 +88,22 @@ class ManageController extends AbstractController
      * @param Polling $polling
      * @return Response
      */
-    public function managePolling(Polling $polling)
+    public function managePolling(Polling $polling): Response
     {
+        $em=$this->getDoctrine()->getManager();
         $user=$this->getUser();
         if($polling->getRoom()->getEvent()->getUser()!==$user)
         {
             return $this->redirectToRoute('home');
         }
         $questions=$polling->getQuestions();
-
+        $settings=$em->getRepository(SessionSettings::class)->getSessionSettings($polling);
+        $polling->setSettings($settings);
         return $this->render('polling/index.html.twig',[
             'polling'=>$polling,
             'questions'=>$questions,
-            'manage'=>true
+            'manage'=>true,
+            'now'=>new \DateTime()
         ]);
     }
 
@@ -186,9 +181,9 @@ class ManageController extends AbstractController
             $em->persist($settings);
             $em->flush();
             $this->addFlash('success','Zapisano ustawienia sesji');
-            return $this->redirectToRoute('app_manage_room',[
-                'slug_child'=>$polling->getRoom()->getSlug(),
-                'slug_parent'=>$polling->getRoom()->getEvent()->getSlug()
+            return $this->redirectToRoute('app_manage_polling_show',[
+                //'slug_child'=>$polling->getRoom()->getSlug(),
+                'slug'=>$polling->getSlug()
             ]);
         }
 
@@ -204,7 +199,7 @@ class ManageController extends AbstractController
      * @param SessionUsersRepository $repository
      * @return Response
      */
-    public function sessionUsers(Polling $polling,SessionUsersRepository $repository)
+    public function sessionUsers(Polling $polling,SessionUsersRepository $repository): Response
     {
         $user=$this->getUser();
         if($polling->getRoom()->getEvent()->getUser()!==$user)
@@ -222,9 +217,10 @@ class ManageController extends AbstractController
      * @Route("/{_locale}/manage/polling/{slug}/begin_session",name="app_manage_begin_session")
      * @param Polling $polling
      * @param SessionSettingsRepository $repository
+     * @param Request $request
      * @return RedirectResponse
      */
-    public function beginSession(Polling $polling,SessionSettingsRepository $repository)
+    public function beginSession(Polling $polling,SessionSettingsRepository $repository,Request $request): RedirectResponse
     {
         $user=$this->getUser();
         if($polling->getRoom()->getEvent()->getUser()!==$user)
@@ -253,11 +249,8 @@ class ManageController extends AbstractController
         $em=$this->getDoctrine()->getManager();
         $em->persist($settings);
         $em->flush();
-        $this->addFlash('success','Rozpoczęto sesję');
-        return $this->redirectToRoute('app_manage_room',[
-           'slug_parent'=>$polling->getRoom()->getEvent()->getSlug(),
-           'slug_child'=>$polling->getRoom()->getSlug()
-        ]);
+        $this->addFlash('success','session.begin.success');
+        return $this->redirect($request->headers->get('referer'));
     }
 
     /**
@@ -267,7 +260,7 @@ class ManageController extends AbstractController
      * @param SessionSettingsRepository $repository
      * @return RedirectResponse
      */
-    public function endSession(Polling $polling,Request $request,SessionSettingsRepository $repository)
+    public function endSession(Polling $polling,Request $request,SessionSettingsRepository $repository): RedirectResponse
     {
         $user=$this->getUser();
         if($polling->getRoom()->getEvent()->getUser()!==$user)
@@ -284,10 +277,7 @@ class ManageController extends AbstractController
             $entityManager->persist($settings);
             $entityManager->flush();
         }
-        return $this->redirectToRoute('app_manage_room',[
-            'slug_parent'=>$polling->getRoom()->getEvent()->getSlug(),
-            'slug_child'=>$polling->getRoom()->getSlug()
-        ]);
+        return $this->redirect($request->headers->get('referer'));
     }
 
     /**
@@ -316,7 +306,7 @@ class ManageController extends AbstractController
         foreach ($pollingsArray as $polling)
         {
             $settings=$settingsRepository->getSessionSettings($polling);
-            $polling->settings=$settings;
+            $polling->setSettings($settings);
             $pollings[]=$polling;
         }
 

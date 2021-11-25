@@ -5,7 +5,7 @@
 {% block body %}
 
 <div>
-    <p>{% trans %}Login{% endtrans %}: {{ user.username }}!</p>
+    <p>{% trans %}Login{% endtrans %}: {{ user.username }}</p>
     <p>{% trans %}Email{% endtrans %}: {{ user.email }}</p>
     <p>{% trans %}Imię{% endtrans %}: {{ user.name }}</p>
     <p>{% trans %}Nazwisko{% endtrans %}: {{ user.surname }}</p>
@@ -14,6 +14,7 @@
     <p>{% trans %}Limit wielkości listy uczestników{% endtrans %}: {{ user.participantListSize }}</p>
     <p>{% trans %}Ilość wydarzeń{% endtrans %}: {{ user.events|length }}</p>
     <p>{% trans %}Ilość list uczestników{% endtrans %}: {{ user.participantLists|length }}</p>
+    <p>{% trans %}pack.name{% endtrans %}: {{ user.pack is null ? '-' : user.pack.name }}</p>
     <a href="{{ path('app_admin_profile_edit',{id:user.id}) }}" class="btn btn-sm btn-primary">{% trans %}Edytuj dane użytkownika{% endtrans %}</a>
 
         <div class="mt-2">

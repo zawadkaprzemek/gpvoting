@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}{% trans %}Zaloguj się{% endtrans %}!{% endblock %}
+{% block title %}{% trans %}login.to.site{% endtrans %}{% endblock %}
 
 {% block body %}
 <form method="post">
@@ -10,14 +10,14 @@
 
     {% if app.user %}
         <div class="mb-3">
-            You are logged in as {{ app.user.username }}, <a href="{{ path('app_logout') }}">Logout</a>
+            {% trans %}logged.as{% endtrans %} {{ app.user.userIdentifier }}, <a href="{{ path('app_logout') }}">{% trans %}logout{% endtrans %}</a>
         </div>
     {% endif %}
 
-    <h1 class="h3 mb-3 font-weight-normal">{% trans %}Prosze się zalogować{% endtrans %}</h1>
-    <label for="inputUsername">{% trans %}Login{% endtrans %}</label>
+    <h1 class="h3 mb-3 font-weight-normal">{% trans %}please.login{% endtrans %}</h1>
+    <label for="inputUsername">{% trans %}login.text{% endtrans %}</label>
     <input type="text" value="{{ last_username }}" name="username" id="inputUsername" class="form-control" required autofocus>
-    <label for="inputPassword">{% trans %}Hasło{% endtrans %}</label>
+    <label for="inputPassword">{% trans %}password{% endtrans %}</label>
     <input type="password" name="password" id="inputPassword" class="form-control" required>
 
     <input type="hidden" name="_csrf_token"
@@ -26,14 +26,14 @@
 
         <div class="checkbox mb-3">
             <label>
-                <input type="checkbox" name="_remember_me"> {% trans %}Zapamiętaj mnie{% endtrans %}
+                <input type="checkbox" name="_remember_me"> {% trans %}remember_me{% endtrans %}
             </label>
         </div>
     <p>
-        <a href="{{ path('app_forgot_password_request') }}">{% trans %}Nie pamiętam hasła{% endtrans %}</a>
+        <a href="{{ path('app_forgot_password_request') }}">{% trans %}lost_password{% endtrans %}</a>
     </p>
     <button class="btn btn-lg btn-primary" type="submit">
-        {% trans %}Zaloguj{% endtrans %}
+        {% trans %}log.in{% endtrans %}
     </button>
 </form>
 {% endblock %}

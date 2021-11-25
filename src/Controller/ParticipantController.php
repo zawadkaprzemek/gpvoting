@@ -8,6 +8,7 @@ use App\Entity\User;
 use App\Form\ImportParticipantsType;
 use App\Form\ParticipantListType;
 use App\Form\ParticipantType;
+use App\Message\EmailMessage;
 use App\Repository\ParticipantListRepository;
 use App\Repository\ParticipantRepository;
 use SimpleXLSX;
@@ -17,6 +18,7 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Mime\Address;
 use Symfony\Component\Mime\Email;
 use Symfony\Component\Mime\Message;
@@ -33,11 +35,13 @@ class ParticipantController extends AbstractController
      * @var MailerInterface
      */
     private $mailer;
+    private MessageBusInterface $messageBus;
 
-    public function __construct(TranslatorInterface $translator,MailerInterface $mailer)
+    public function __construct(TranslatorInterface $translator,MailerInterface $mailer,MessageBusInterface $messageBus)
     {
         $this->translator = $translator;
         $this->mailer = $mailer;
+        $this->messageBus = $messageBus;
     }
 
     /**
@@ -214,7 +218,10 @@ class ParticipantController extends AbstractController
                 $em->flush();
                 foreach ($stats['new'] as $participant)
                 {
-                    $this->sendEmailWithPassword($participant->getEmail(),$participant->getPlainPass());
+                    $this->messageBus->dispatch(
+                        new EmailMessage($participant,'participant_credentials_mail')
+                    );
+                    //$this->sendEmailWithPassword($participant->getEmail(),$participant->getPlainPass());
                 }
                 $this->addFlash('success',$this->translator->trans('participants_import_success',
                     ['%new%'=>sizeof($stats['new']),'%exists%'=>sizeof($stats['exists'])]));

@@ -9,6 +9,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Timestampable\Traits\TimestampableEntity;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
@@ -16,7 +17,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
  * @UniqueEntity(fields={"username"}, message="Podana nazwa użytkownika jest jest zajęta")
  * @UniqueEntity(fields={"email"}, message="Podany adres email jest zajęty")
  */
-class User implements UserInterface
+class User implements UserInterface,PasswordAuthenticatedUserInterface
 {
     use TimestampableEntity;
     /**
@@ -104,6 +105,11 @@ class User implements UserInterface
      */
     private $participantListSize=10;
 
+    /**
+     * @ORM\ManyToOne(targetEntity=Pack::class, inversedBy="users")
+     */
+    private $pack;
+
     public function __construct()
     {
         $this->subaccounts = new ArrayCollection();
@@ -131,6 +137,11 @@ class User implements UserInterface
         $this->username = $username;
 
         return $this;
+    }
+
+    public function getUserIdentifier(): string
+    {
+        return $this->username;
     }
 
     /**
@@ -393,6 +404,18 @@ class User implements UserInterface
     public function setParticipantListSize(int $participantListSize): self
     {
         $this->participantListSize = $participantListSize;
+
+        return $this;
+    }
+
+    public function getPack(): ?Pack
+    {
+        return $this->pack;
+    }
+
+    public function setPack(?Pack $pack): self
+    {
+        $this->pack = $pack;
 
         return $this;
     }

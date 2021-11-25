@@ -1,8 +1,8 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}{% trans %}Wysłano maila z resetem hasła{% endtrans %}{% endblock %}
+{% block title %}{% trans %}reset.request_send.title{% endtrans %}{% endblock %}
 
 {% block body %}
-    <p>{% trans with { '%hours%':tokenLifetime|date('g')} %}Wiadomość zawierająca link do zmiany hasła została wysłana. Ten link wygaśnie w ciągu %hours% godzin.{% endtrans %}</p>
-    <p>{% trans %}Jeśli nie otrzymałeś wiadomości sprawdź swój folder spam lub{% endtrans%} <a href="{{ path('app_forgot_password_request') }}">{% trans %}spróbuj ponownie{% endtrans %}</a>.</p>
+    <p>{% trans with { '%hours%':tokenLifetime|date('g')} %}reset.request_send.text1{% endtrans %}</p>
+    <p>{% trans %}reset.request_send.text2{% endtrans%} <a href="{{ path('app_forgot_password_request') }}">{% trans %}reset.request_send.link{% endtrans %}</a>.</p>
 {% endblock %}

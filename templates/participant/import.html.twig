@@ -19,12 +19,13 @@
     {% else %}
         {% set closed=false %}
     {% endif %}
-    {{ form_widget(form.submit,{attr:{"disabled":closed} }) }}
-    {% if closed %}
+    {#{{ form_widget(form.submit,{attr:{"disabled":closed} }) }}#}
+    {{ form_widget(form.submit) }}
+    {#{% if closed %}
         <div class="alert alert-danger my-2">
             {% trans %}list_full_cannot_import{% endtrans %}
         </div>
-    {% endif %}
+    {% endif %}#}
     {{ form_end(form) }}
     {% if error is not null %}
         <p class="alert alert-danger mt-3 font-weight-bold">{% trans %}Niewłaściwa kolejność kolumn w przesłanym pliku{% endtrans %}</p>

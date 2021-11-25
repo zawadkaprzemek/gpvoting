@@ -15,32 +15,34 @@ use PhpOffice\PhpSpreadsheet\Style\Border;
 use PhpOffice\PhpSpreadsheet\Style\Fill;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
-use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class ExcelCourseGenerator
 {
     /**
-     * @var ContainerInterface
-     */
-    private $container;
-    /**
      * @var TranslatorInterface
      */
-    private $translator;
+    private TranslatorInterface $translator;
+    private ParameterBagInterface $parameterBag;
 
     /**
      * ExcelCourseGenerator constructor.
-     * @param ContainerInterface $container
+     * @param ParameterBagInterface $parameterBag
      * @param TranslatorInterface $translator
      */
-    public function __construct(ContainerInterface $container,TranslatorInterface $translator)
+    public function __construct(ParameterBagInterface $parameterBag,TranslatorInterface $translator)
     {
-        $this->container = $container;
         $this->translator = $translator;
+        $this->parameterBag = $parameterBag;
     }
 
-    public function createExcel(GeneralMeeting $meeting)
+    private function getParameter(string $name)
+    {
+        return $this->parameterBag->get($name);
+    }
+
+    public function createExcel(GeneralMeeting $meeting): Spreadsheet
     {
         $excell=new Spreadsheet();
         $excell->getDefaultStyle()->getFont()->setName('Arial');
@@ -76,6 +78,7 @@ class ExcelCourseGenerator
             $sheet=$this->printParticipantsVotes($sheet,$voting,$meeting->getParticipantList()->getAcceptedParticipants(),$meeting->getHoldBack());
 
         }
+        $excell->setActiveSheetIndex(0);
 
         return $excell;
     }
@@ -84,7 +87,7 @@ class ExcelCourseGenerator
     {
         $writer= new Xlsx($excell);
         $writer->setOffice2003Compatibility(true);
-        $file=$this->container->getParameter('excell_xlsx_path').'course_raport.xlsx';
+        $file=$this->getParameter('excell_xlsx_path').'course_raport.xlsx';
         $writer->save($file);
     }
 
@@ -126,16 +129,16 @@ class ExcelCourseGenerator
         }else{
             $sheet
                 ->setCellValue('A3',1)
-                ->setCellValue('B3',$this->translator->trans('vote_on'))
+                ->setCellValue('B3',$this->translator->trans('vote.on'))
                 ->setCellValue('A4',2)
-                ->setCellValue('B4',$this->translator->trans('vote_against'))
+                ->setCellValue('B4',$this->translator->trans('vote.against'))
                 ;
             $size=2;
             if($holdBack)
             {
                 $sheet
                     ->setCellValue('A5',3)
-                    ->setCellValue('B5',$this->translator->trans('vote_hold_on'))
+                    ->setCellValue('B5',$this->translator->trans('vote.hold_on'))
                     ;
                 $size=3;
             }
@@ -243,21 +246,25 @@ class ExcelCourseGenerator
                     }
                 }
             }else{
-                switch ($status[$participant->getAid()])
+                if(array_key_exists($participant->getAid(),$status))
                 {
-                    case 1:
-                        $letter='F';
-                        break;
-                    case 0:
-                        $letter='G';
-                        break;
-                    case 2:
-                        $letter='H';
-                        break;
-                    default:
-                        break;
+                    switch ($status[$participant->getAid()])
+                    {
+                        case 1:
+                            $letter='F';
+                            break;
+                        case 0:
+                            $letter='G';
+                            break;
+                        case 2:
+                            $letter='H';
+                            break;
+                        default:
+                            break;
+                    }
+                    $sheet=$this->colorCell($sheet,$letter.$number);
                 }
-                $sheet=$this->colorCell($sheet,$letter.$number);
+
             }
             $number++;
         }
@@ -278,19 +285,34 @@ class ExcelCourseGenerator
         ];
         $sheet->getStyle('D2:E'.(sizeof($participants)+1))->applyFromArray($styleArray);
 
-
         return $sheet;
     }
 
     private function colorCell(Worksheet $sheet,string $cell): Worksheet
     {
+        $styleArray = [
+            'font' => [
+                'bold' => false,
+            ],
+            'alignment' => [
+                'horizontal' => Alignment::VERTICAL_CENTER,
+                'vertical' => Alignment::VERTICAL_CENTER,
+            ],
+            'fill' => array(
+                'type' => Fill::FILL_SOLID,
+                'color' => array('rgb' => 'FF0000')
+            ),
+            'borders' => [
+                'allBorders' => [
+                    'borderStyle' => Border::BORDER_THIN,
+                ],
+            ],
+        ];
         $sheet
             ->getStyle($cell)
-            ->getFill()
-            ->setFillType(Fill::FILL_SOLID)
-            ->getStartColor()
-            ->setARGB('000000')
+            ->applyFromArray($styleArray)
         ;
+        $sheet->setCellValue($cell,'X');
         return $sheet;
     }
 

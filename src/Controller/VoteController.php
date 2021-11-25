@@ -6,6 +6,7 @@ use App\Entity\Polling;
 use App\Entity\Question;
 use App\Entity\SessionUsers;
 use App\Entity\Vote;
+use App\Form\NameType;
 use App\Form\VoteType;
 use App\Repository\QuestionRepository;
 use App\Repository\SessionSettingsRepository;
@@ -219,10 +220,30 @@ class VoteController extends AbstractController
      */
     public function voteSession(Polling $polling,Request $request,
                                 SessionSettingsRepository $repository,SessionUsersRepository $sessionUsersRepository,
-                                QuestionRepository $questionRepository)
+                                QuestionRepository $questionRepository): Response
     {
+        if(!$polling->getRoom()->getVisible())
+        {
+            return $this->redirectToRoute('home');
+        }
         $session=$request->getSession();
         $name=$session->get('name');
+
+        if($name===null)
+        {
+            $nameForm=$this->createForm(NameType::class);
+            $nameForm->handleRequest($request);
+            if($nameForm->isSubmitted()&&$nameForm->isValid())
+            {
+                $data=$nameForm->getData();
+                $session->set('name',$data['name']);
+                $name=$session->get('name');
+            }else{
+                return $this->render('polling/nameForm.html.twig',[
+                   'form'=>$nameForm->createView()
+                ]);
+            }
+        }
         $ip=$request->getClientIp();
         $em=$this->getDoctrine()->getManager();
         $settings=$repository->getSessionSettings($polling);

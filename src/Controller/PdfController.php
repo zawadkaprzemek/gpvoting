@@ -20,7 +20,7 @@ class PdfController extends AbstractController
      * @param int $valid
      * @return PdfResponse
      */
-    public function generalMeetingResultsPdf(Pdf $knpSnappyPdf,GeneralMeeting $meeting,Request $request,int $valid)
+    public function generalMeetingResultsPdf(Pdf $knpSnappyPdf,GeneralMeeting $meeting,Request $request,int $valid): PdfResponse
     {
         $html = $this->renderView('pdf/general_meeting_results.html.twig', array(
             'meeting'  => $meeting,

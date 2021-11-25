@@ -2,19 +2,20 @@
 
 namespace App\DataFixtures;
 
+use App\Entity\Pack;
 use App\Entity\User;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
-use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 class AppFixtures extends Fixture
 {
     /**
-     * @var UserPasswordEncoderInterface
+     * @var UserPasswordHasherInterface
      */
     private $encoder;
 
-    public function __construct(UserPasswordEncoderInterface $encoder)
+    public function __construct(UserPasswordHasherInterface $encoder)
     {
         $this->encoder = $encoder;
     }
@@ -24,6 +25,10 @@ class AppFixtures extends Fixture
      */
     public function load(ObjectManager $manager)
     {
+        $pack=new Pack();
+        $pack->setName("Pakiet jednorazowy")->setEventsCount(1);
+        $manager->persist($pack);
+
         $user=new User();
         $user
             ->setRoles(["ROLE_ADMIN"])
@@ -32,7 +37,8 @@ class AppFixtures extends Fixture
             ->setUsername("GPTeam")
             ->setEmail("gpvoting@gpteam.pl")
             ->setIsVerified(true)
-            ->setPassword($this->encoder->encodePassword($user,"GPTeam1234"))
+            ->setPassword($this->encoder->hashPassword($user,"GPTeam1234"))
+            ->setPack($pack)
         ;
         $manager->persist($user);
 

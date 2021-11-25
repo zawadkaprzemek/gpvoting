@@ -1,12 +1,12 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}{% trans %}Zresetuj swoje hasło{% endtrans %}{% endblock %}
+{% block title %}{% trans %}reset.reset_form.title{% endtrans %}{% endblock %}
 
 {% block body %}
-    <h1>{% trans %}Zresetuj swoje hasło{% endtrans %}</h1>
+    <h1>{% trans %}reset.reset_form.header{% endtrans %}</h1>
 
     {{ form_start(resetForm) }}
         {{ form_row(resetForm.plainPassword) }}
-        <button class="btn btn-primary">{% trans %}Resetuj hasło{% endtrans %}</button>
+        <button class="btn btn-primary">{% trans %}save{% endtrans %}</button>
     {{ form_end(resetForm) }}
 {% endblock %}

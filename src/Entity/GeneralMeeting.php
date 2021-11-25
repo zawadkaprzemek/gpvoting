@@ -134,14 +134,33 @@ class GeneralMeeting
 
     /**
      * @ORM\Column(type="integer", nullable=true)
+     * Wymagany wartość kworum
      */
-    private $kworumValue;
+    private $kworumRequiredValue;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      * 1to1|actions|votes
      */
     private $kworumType;
+
+    /**
+     * @ORM\Column(type="integer", nullable=true)
+     * Aktualne głosowanie
+     */
+    private $active_voting;
+
+    /**
+     * @ORM\Column(type="integer", nullable=true)
+     * Poprzednie głosowanie
+     */
+    private $last_voting;
+
+    /**
+     * @ORM\Column(type="float", nullable=true)
+     * Wynik kworum
+     */
+    private ?float $kworumValue;
 
     public function __construct()
     {
@@ -157,6 +176,9 @@ class GeneralMeeting
         $this->totalVotes=0;
         $this->totalActions=0;
         $this->status=0;
+        $this->active_voting=null;
+        $this->last_voting=null;
+        $this->kworumValue=null;
         $this->hashId=uniqid();
         $this->slug=null;
         $this->name.=" kopia";
@@ -428,14 +450,14 @@ class GeneralMeeting
         return $this;
     }
 
-    public function getKworumValue(): ?int
+    public function getKworumRequiredValue(): ?int
     {
-        return $this->kworumValue;
+        return $this->kworumRequiredValue;
     }
 
-    public function setKworumValue(?int $kworumValue): self
+    public function setKworumRequiredValue(?int $kworumValue): self
     {
-        $this->kworumValue = $kworumValue;
+        $this->kworumRequiredValue = $kworumValue;
 
         return $this;
     }
@@ -450,6 +472,54 @@ class GeneralMeeting
         $this->kworumType = $kworumType;
 
         return $this;
+    }
+
+    public function getActiveVoting(): ?int
+    {
+        return $this->active_voting;
+    }
+
+    public function setActiveVoting(?int $active_voting): self
+    {
+        $this->active_voting = $active_voting;
+
+        return $this;
+    }
+
+    public function getLastVoting(): ?int
+    {
+        return $this->last_voting;
+    }
+
+    public function setLastVoting(?int $last_voting): self
+    {
+        $this->last_voting = $last_voting;
+
+        return $this;
+    }
+
+    public function getKworumValue(): ?float
+    {
+        return $this->kworumValue;
+    }
+
+    public function setKworumValue(?float $kworumValue): self
+    {
+        $this->kworumValue = $kworumValue;
+
+        return $this;
+    }
+
+    public function getActiveStatusArray(): array
+    {
+        $array=$this->activeStatus;
+        $array['active']=$this->active_voting;
+        $array['last']=$this->last_voting;
+        if(!isset($array['kworum']))
+        {
+            $array['kworum']=null;
+        }
+        return $array;
     }
 
     

@@ -1,13 +1,19 @@
 <form method="post" action="{{ path('app_event_open', {'slug': event.slug}) }}"
       {% if event.status==1 %}
-      onsubmit="return confirm('{% trans %}Na pewno chcesz ukryć to wydarzenie?{% endtrans %}');"
+      onsubmit="return confirm('{% trans %}event.hide.confirm{% endtrans %}');"
       {% elseif event.status==0 %}
-          onsubmit="return confirm('{% trans %}Na pewno chcesz aktywować to wydarzenie?{% endtrans %}');"
+          onsubmit="return confirm('{% trans %}event.open.confirm{% endtrans %}');"
       {% endif %}
 >
     <input type="hidden" name="_method" value="PATCH">
     <input type="hidden" name="_token" value="{{ csrf_token('patch' ~ event.id) }}">
     <button class="btn btn-sm btn-outline-success rounded-0">
-        {% if event.status==1 %}{% trans %}Ukryj{% endtrans %}{% elseif event.status==0 %}{% trans %}Aktywuj{% endtrans %}{% endif %}
+        {% if event.status==1 %}
+            {{ 'event.hide'|info_icon }}
+            {% trans %}hide{% endtrans %}
+        {% elseif event.status==0 %}
+            {{ 'event.open'|info_icon }}
+            {% trans %}activate{% endtrans %}
+        {% endif %}
     </button>
 </form>

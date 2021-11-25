@@ -84,7 +84,7 @@ class GeneralMeetingType extends AbstractType
             ->add('kworum',CheckboxType::class,array(
                 'label'=>'Kworum','required'=>false
             ))
-            ->add('kworumValue',RangeType::class,
+            ->add('kworumRequiredValue',RangeType::class,
                 array('label'=>'Procent obecnych uczestników niezbędny do kworum',
                     'attr' => [
                         'min' => 1,

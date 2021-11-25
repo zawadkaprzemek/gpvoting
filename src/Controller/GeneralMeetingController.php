@@ -370,12 +370,12 @@ class GeneralMeetingController extends AbstractController
             return new JsonResponse(array('status'=>'error'));
         }
         $active=$meeting->getActiveStatus();
-        $active['active']=0;
+        $meeting->setActiveVoting(0);
         $active["votes"]=array();
         if($meeting->getKworum())
         {
             $active['kworum']=null;
-            $active['kworum_value']=0;
+            $meeting->setKworumValue(0);
         }
         $meeting->setActiveStatus($active)
             ->setTotalActions(0)
@@ -395,12 +395,12 @@ class GeneralMeetingController extends AbstractController
      * @param MeetingVotingRepository $repository
      * @return JsonResponse
      */
-    public function generalMeetingVoteSave(GeneralMeeting $meeting,Request $request,MeetingVotingRepository $repository)
+    public function generalMeetingVoteSave(GeneralMeeting $meeting,Request $request,MeetingVotingRepository $repository): JsonResponse
     {
         $data=json_decode($request->getContent());
         $active=$meeting->getActiveStatus();
         $em=$this->getDoctrine()->getManager();
-        if($active['active']==0)
+        if($meeting->getActiveVoting()==0)
         {
             $active['votes'][$data->user]=$data->vote;
             $meeting->setActiveStatus($active);
@@ -408,7 +408,7 @@ class GeneralMeetingController extends AbstractController
             /**
              * @var $voting MeetingVoting
              */
-            $voting=$repository->getVotingBySort($meeting,$active['active']);
+            $voting=$repository->getVotingBySort($meeting,$meeting->getActiveVoting());
             $votes=$voting->getVoteStatus();
 
             switch ($voting->getType())
@@ -459,7 +459,7 @@ class GeneralMeetingController extends AbstractController
         $em=$this->getDoctrine()->getManager();
         $active=$meeting->getActiveStatus();
         $participants=$meeting->getParticipantList()->getAcceptedParticipants();
-        if($active['active']==0)
+        if($meeting->getActiveVoting()==0)
         {
             $tot_a=0;
             $tot_v=0;
@@ -514,18 +514,20 @@ class GeneralMeetingController extends AbstractController
                 }
 
 
-                $active['kworum']=$percent>=$meeting->getKworumValue();
-                $active['kworum_value']=$percent;
+                $active['kworum']=$percent>=$meeting->getKworumRequiredValue();
+                //$active['kworum_value']=$percent;
+                $meeting->setKworumValue($percent);
             }
             $meeting
                 ->setTotalActions($tot_a)->setTotalVotes($tot_v)
                 ->setAbsenceActions($abs_a)->setAbsenceVotes($abs_v)
                 ->setActiveStatus($active)
+                ->setActiveVoting(null)
             ;
         }else{
             $repository=$em->getRepository(MeetingVoting::class);
             /** @var MeetingVoting $voting */
-            $voting=$repository->getVotingBySort($meeting,$active['active']);
+            $voting=$repository->getVotingBySort($meeting,$meeting->getActiveVoting());
             switch ($voting->getType())
             {
                 case 1:
@@ -544,11 +546,21 @@ class GeneralMeetingController extends AbstractController
                     }
                     foreach ($results['votes'] as $vote=>$val)
                     {
-                        $results['votes'][$vote]=round(($val/$meeting->getTotalVotes())*100,2);
+                        if($meeting->getTotalVotes()>0)
+                        {
+                            $results['votes'][$vote]=round(($val/$meeting->getTotalVotes())*100,2);
+                        }else{
+                            $results['votes'][$vote]=0;
+                        }
+
                     }
                     foreach ($results['actions'] as $vote=>$val)
                     {
-                        $results['actions'][$vote]=round(($val/$meeting->getTotalActions())*100,2);
+                        if($meeting->getTotalActions()>0) {
+                            $results['actions'][$vote] = round(($val / $meeting->getTotalActions()) * 100, 2);
+                        }else{
+                            $results['actions'][$vote] =0;
+                        }
                     }
                     $results['votes']['accepted']=($results['votes'][1]>$results['votes'][0]&&$results['votes'][1]>$results['votes'][2]);
                     $results['actions']['accepted']=($results['actions'][1]>$results['actions'][0]&&$results['actions'][1]>$results['actions'][2]);
@@ -592,14 +604,25 @@ class GeneralMeetingController extends AbstractController
 
                     foreach ($results['valid']['votes'] as $vote=>$val)
                     {
-                        $results['valid']['votes'][$vote]=round(($val/$meeting->getTotalVotes())*100,2);
+                        if($meeting->getTotalVotes()>0)
+                        {
+                            $results['valid']['votes'][$vote]=round(($val/$meeting->getTotalVotes())*100,2);
+                        }else{
+                            $results['valid']['votes'][$vote]=0;
+                        }
+
                     }
 
                     foreach ($results['valid']['actions'] as $vote=>$val)
                     {
-                        $results['valid']['actions'][$vote]=round(($val/$meeting->getTotalActions())*100,2);
-                    }
+                        if($meeting->getTotalActions()>0)
+                        {
+                            $results['valid']['actions'][$vote]=round(($val/$meeting->getTotalActions())*100,2);
+                        }else{
+                            $results['valid']['actions'][$vote]=0;
+                        }
 
+                    }
 
                     arsort($results['valid']['votes']);
                     arsort($results['valid']['actions']);
@@ -624,7 +647,13 @@ class GeneralMeetingController extends AbstractController
                     }
                     foreach ($results as $vote=>$val)
                     {
-                        $results[$vote]=round(($val/sizeof($active['voted']))*100,2);
+                        if(sizeof($active['voted'])>0)
+                        {
+                            $results[$vote]=round(($val/sizeof($active['voted']))*100,2);
+                        }else{
+                            $results[$vote]=0;
+                        }
+
                     }
                     arsort($results);
                     $voting->setVotesSummary($results);
@@ -636,9 +665,10 @@ class GeneralMeetingController extends AbstractController
             $em->persist($voting);
         }
 
-
-        $active['last']=$active['active'];
-        $active['active']=null;
+        $meeting->setLastVoting($meeting->getActiveVoting());
+        $meeting->setActiveVoting(null);
+        /*$active['last']=$active['active'];
+        $active['active']=null;*/
         $meeting->setActiveStatus($active);
 
         $em->persist($meeting);
@@ -688,8 +718,13 @@ class GeneralMeetingController extends AbstractController
         }
         $em=$this->getDoctrine()->getManager();
         $meeting->setStatus(1);
-        $active=array('active'=>null,'votes'=>array(),'last'=>null,'kworum'=>null,'kworum_value'=>0);
-        $meeting->setActiveStatus($active);
+        $active=array('votes'=>array(),'kworum'=>null);
+        $meeting
+            ->setActiveStatus($active)
+            ->setActiveVoting(null)
+            ->setLastVoting(null)
+            ->setKworumValue(null)
+            ;
         foreach ($meeting->getMeetingVotings() as $voting)
         {
             $voting->setStatus(0)->setVotesSummary(array())->setVoteStatus(array());
@@ -715,7 +750,7 @@ class GeneralMeetingController extends AbstractController
         {
             return $this->redirectToRoute('app_manage');
         }
-        $aStatus=$meeting->getActiveStatus();
+        $aStatus=$meeting->getActiveStatusArray();
         if(!is_null($meeting->getParticipantList()))
         {
             $participants=$meeting->getParticipantList()->getAcceptedParticipants();
@@ -756,6 +791,10 @@ class GeneralMeetingController extends AbstractController
      */
     public function generalMeetingJoin(GeneralMeeting $meeting,Request $request,ParticipantRepository $repository)
     {
+        if(!$meeting->getRoom()->getVisible())
+        {
+            return $this->redirectToRoute('home');
+        }
         $session=$request->getSession();
 
         $uData=$session->get("user_gm_".$meeting->getSlug());
@@ -771,7 +810,7 @@ class GeneralMeetingController extends AbstractController
             $participant=$repository->checkCredentials($meeting->getParticipantList(),$data);
             if(is_null($participant))
             {
-                $form->get('password')->addError(new FormError($this->translator->trans("Wprowadzono nie aprawidłowe dane dostępowe")));
+                $form->get('password')->addError(new FormError($this->translator->trans("form.error.wrong_credentials")));
             }
 
             if($form->isValid())
@@ -821,7 +860,7 @@ class GeneralMeetingController extends AbstractController
                 'meeting'=>$meeting
             ));
         }
-        $aStatus=$meeting->getActiveStatus();
+        $aStatus=$meeting->getActiveStatusArray();
         if(isset($aStatus['active']) && !is_null($aStatus['active']))
         {
             $voting=$repository->getVotingBySort($meeting,$aStatus['active']);
@@ -859,7 +898,7 @@ class GeneralMeetingController extends AbstractController
         }
         $em=$this->getDoctrine()->getManager();
         $active=$meeting->getActiveStatus();
-        $active['active']=$voting->getSort();
+        $meeting->setActiveVoting($voting->getSort());
         $active['voted']=array();
         $summary=$voting->getVotesSummary();
         $history=$voting->getHistoricalResults();
@@ -939,6 +978,9 @@ class GeneralMeetingController extends AbstractController
     /**
      * @Route("/{_locale}/manage/general_meeting/{slug}/download_course", name="app_manage_general_meeting_course_meeting")
      * @param GeneralMeeting $meeting
+     * @param Request $request
+     * @param ExcelCourseGenerator $generator
+     * @return RedirectResponse|StreamedResponse
      */
     public function courseMeeting(GeneralMeeting $meeting,Request $request,ExcelCourseGenerator $generator)
     {
@@ -951,11 +993,9 @@ class GeneralMeetingController extends AbstractController
         $streamedResponse = new StreamedResponse();
         $streamedResponse->setCallback(function () use ($generator, $meeting) {
             $excel=$generator->createExcel($meeting);
-
             $writer =  new Xlsx($excel);
             $writer->save('php://output');
         });
-
         $streamedResponse->setStatusCode(Response::HTTP_OK);
         $streamedResponse->headers->set('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
         $streamedResponse->headers->set('Content-Disposition', 'attachment; filename="'.$filename.'"');

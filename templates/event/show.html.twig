@@ -1,23 +1,35 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}{% trans %}Event{% endtrans %}: {{ event.name }}{% endblock %}
+{% block title %}{% trans %}event.text{% endtrans %}: {{ event.name }}{% endblock %}
 
 {% block body %}
 
     <div class="">
         <h3>{{ event.name }}</h3>
-        <h4>{% trans %}Organizator{% endtrans %}: {{ event.organizer }}</h4>
+        <h4>{% trans %}event.organizer{% endtrans %}: {{ event.organizer }}</h4>
+        {% if manage %}
+        <h4>{% trans %}event.shortOrganizatorName.label{% endtrans %}: {{ event.shortOrganizatorName }}</h4>
+        {% endif %}
         <img src="{{ asset(event.logoPath) }}" class="img-fluid img-logo mb-3" alt="">
     </div>
     {% if manage %}
         <div class="btn-group btn-group-sm">
-            <a class="btn btn-outline-primary" href="{{ path('app_event_edit',{_locale:app.request.locale,slug:event.slug}) }}">{% trans %}Edytuj{% endtrans %}</a>
-            <a class="btn btn-outline-primary" href="{{ path('app_event_codes_menage',{slug:event.slug}) }}">{% trans %}Zarządzaj kodami{% endtrans %}</a>
+            <a class="btn btn-outline-primary" href="{{ path('app_event_edit',{_locale:app.request.locale,slug:event.slug}) }}">
+                {{ 'event.edit'|info_icon }}
+                {% trans %}edit{% endtrans %}
+            </a>
+            <a class="btn btn-outline-primary" href="{{ path('app_event_codes_menage',{slug:event.slug}) }}">
+                {{ 'codes.manage'|info_icon }}
+                {% trans %}codes.manage.text{% endtrans %}
+            </a>
         </div>
     {% endif %}
-    <p class="mt-2">{% trans %}Pokoje{% endtrans %}:</p>
+    <p class="mt-2">{% trans %}room.many{% endtrans %}:</p>
     {% if manage %}
-        <a href="{{ path('app_manage_add_room',{_locale:app.request.locale,slug:event.slug}) }}" class="btn btn-sm btn-outline-primary">{% trans %}Dodaj pokój{% endtrans %}</a>
+        <a href="{{ path('app_manage_add_room',{_locale:app.request.locale,slug:event.slug}) }}" class="btn btn-sm btn-outline-primary">
+            {{ 'room.create'|info_icon }}
+            {% trans %}room.add.new{% endtrans %}
+        </a>
     {% endif %}
     <div class="row mt-2">
         {% for room in rooms %}
@@ -25,14 +37,14 @@
                 {{ room.name }} :
                 <div class="btn-group btn-group-sm">
                     {% if manage %}
-                    <a href="{{ path('app_manage_room',{slug_parent:room.event.slug,slug_child:room.slug}) }}" class="btn btn-primary">{% trans %}Podgląd{% endtrans %}</a>
-                    <a href="{{ path('app_manage_edit_room',{slug_parent:room.event.slug,slug_child:room.slug}) }}" class="btn btn-secondary">{% trans %}Edycja{% endtrans %}</a>
+                    <a href="{{ path('app_manage_room',{slug_parent:room.event.slug,slug_child:room.slug}) }}" class="btn btn-primary">{% trans %}preview{% endtrans %}</a>
+                    <a href="{{ path('app_manage_edit_room',{slug_parent:room.event.slug,slug_child:room.slug}) }}" class="btn btn-secondary">{% trans %}edit{% endtrans %}</a>
                     {{include('room/_visible_form.html.twig',{room:room})}}
                         {% if (room.pollings|length)==0 %}
                             {{ include('room/_delete_form.html.twig',{room:room}) }}
                             {% endif %}
                     {% else %}
-                        <a href="{{ path('app_room_enter',{slug_parent:room.event.slug,slug_child:room.slug}) }}" class="btn btn-primary">{% trans %}Wejdź do pokoju{% endtrans %}</a>
+                        <a href="{{ path('app_room_enter',{slug_parent:room.event.slug,slug_child:room.slug}) }}" class="btn btn-primary">{% trans %}room.enter{% endtrans %}</a>
                     {% endif %}
                 </div>
             </div>

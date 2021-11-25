@@ -6,11 +6,25 @@
 
     {{ form_start(form) }}
     <div class="row form-group">
-        <div class="col-12 col-sm-3 col-form-label">
+        <div class="col-12 col-sm-4 col-form-label">
+            {{ 'event.name'|info_icon }}
+            {{ 'event.name'|help_icon }}
             {{form_label(form.name)}}
         </div>
-        <div class="col-12 col-sm-9">
+        <div class="col-12 col-sm-8">
             {{ form_widget(form.name) }}
+        </div>
+    </div>
+
+
+    <div class="row form-group">
+        <div class="col-12 col-sm-4 col-form-label">
+            {{ 'event.shortOrganizatorName'|info_icon }}
+            {{ 'event.shortOrganizatorName'|help_icon }}
+            {{form_label(form.shortOrganizatorName)}}
+        </div>
+        <div class="col-12 col-sm-8">
+            {{ form_widget(form.shortOrganizatorName) }}
         </div>
     </div>
 
@@ -18,10 +32,12 @@
         {{ form_widget(form.changeLogo) }}
     {% endif %}
     <div class="row form-group logo-row {% if form.vars.value.id is not null%}d-none{% endif %}">
-        <div class="col-12 col-sm-3 col-form-label">
+        <div class="col-12 col-sm-4 col-form-label">
+            {{ 'event.logo'|info_icon }}
+            {{ 'event.logo'|help_icon }}
             {{form_label(form.logoFile)}}
         </div>
-        <div class="col-12 col-sm-9">
+        <div class="col-12 col-sm-8">
             {{ form_widget(form.logoFile) }}
         </div>
     </div>

@@ -1,0 +1,34 @@
+#Pojedyńcze wyrazy
+close: Zamknij
+
+#Rejestracja
+register.form:
+  terms:
+    label: Akceptuję regulamin serwisu
+    error: Musisz zaakceptować regulamin serwisu
+  username:
+    label: Nazwa użytkownika
+    not_unique: Podana nazwa użytkownika jest już zajęta
+
+  email:
+    not_unique: Podany adres email jest zajęty
+
+  password:
+    blank: Prosze wprowadzić hasło
+    minMessage: Hasło musi się składać conajmniej z  %limit% znaków
+
+#Resetowanie hasła:
+reset:
+
+  reset_form:
+    title: Ustaw nowe hasło
+    header: Ustaw swoje nowe Hasło
+    password_new: Nowe hasło
+    repeat_password: Powtórz hasło
+    passwords_do_not_match: Hasła muszą się zgadzać
+
+
+#formularze
+form:
+  error:
+    wrong_credentials: Wprowadzono nie aprawidłowe dane dostępowe

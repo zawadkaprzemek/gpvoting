@@ -1,21 +1,21 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Zresetuj hasło{% endblock %}
+{% block title %}reset.title{% endblock %}
 
 {% block body %}
     {% for flashError in app.flashes('reset_password_error') %}
         <div class="alert alert-danger" role="alert">{{ flashError }}</div>
     {% endfor %}
-    <h1>{% trans %}Zresetuj swoje hasło{% endtrans %}</h1>
+    <h1>{% trans %}reset.header{% endtrans %}</h1>
 
     {{ form_start(requestForm) }}
         {{ form_row(requestForm.email) }}
         <div>
             <small>
-                {% trans %}Wprowadź swój adres email, a dostaniesz od nas link do zmiany swojego hasła{% endtrans %}
+                {% trans %}reset.email.small_text{% endtrans %}
             </small>
         </div>
 
-        <button class="btn btn-primary">{% trans %}Wyślij{% endtrans %}</button>
+        <button class="btn btn-primary">{% trans %}send{% endtrans %}</button>
     {{ form_end(requestForm) }}
 {% endblock %}

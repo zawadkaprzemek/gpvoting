@@ -21,10 +21,11 @@ class EventType extends AbstractType
         $event=$options['data'] ?? null;
         $isEdit= $event && $event->getId();
         $builder
-            ->add('name',TextType::class,array('label'=>'Nazwa eventu'))
+            ->add('name',TextType::class,array('label'=>'event.name.label'))
+            ->add('shortOrganizatorName',TextType::class,array('label'=>'event.shortOrganizatorName.label'))
             ->add('logoFile',FileType::class,
                 array(
-                    'label'=>'Logo eventu/organizatora',
+                    'label'=>'event.logo.label',
                     'mapped'=>false,
                     'required'=>!$isEdit,
                     'constraints' => [
@@ -38,12 +39,12 @@ class EventType extends AbstractType
                     ]
                 )
             )
-            ->add('submit',SubmitType::class,array('label'=>'Zapisz'))
+            ->add('submit',SubmitType::class,array('label'=>'save'))
         ;
         if($isEdit)
         {
             $builder
-                ->add('changeLogo',CheckboxType::class,array('label'=>'Zmień logo','required'=>false,'mapped'=>false));
+                ->add('changeLogo',CheckboxType::class,array('label'=>'event.changeLogo.label','required'=>false,'mapped'=>false));
         }
     }
 

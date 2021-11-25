@@ -1,8 +1,251 @@
+#Header
+logged.as: Zalogowany jako
+guest: Gość
+login: Logowanie
+registration: Rejestracja
+logout: Wyloguj
+profile:
+  my: Mój profil
+  edit: Edytuj profil
+  change_password: Zmień hasło
+  settings: Ustawienia
+
+
+admin:
+  create_user: Stwórz konto użytkownika
+  users_list: Lista użytkowników
+
+
+#Głosowanie
+voting: Głosowanie
+polling:
+  single: Głosowanie
+  many: Głosowania
+
+vote:
+  on: Głos za
+  against: Głos przeciw
+  hold_on: Głos wstrzymany
+
+
+#Analiza
+analysis:
+  text: Analiza
+
+#Pojedyńcze wyrazy i zdania
+instruction: Instrukcja
+edit: Edycja
+preview: Podgląd
+show: Pokaż
+hide: Ukryj
+unhide: Odkryj
+close: Zamknij
+activate: Aktywuj
+delete: Usuń
+irreversible_operation: Operacja ta jest nieodwracalna!
+submit: Wyślij
+save: Zapisz
+login.to.site: Zaloguj się!
+password: Hasło
+login.text: Login
+please.login: Proszę się zalogować
+please.register: Zarejestruj się
+remember_me: Zapamiętaj mnie
+log.in: Zaloguj
+lost_password: Nie pamiętam hasła
+firstName: Imię
+lastName: Nazwisko
+name: Nazwa
+email.address: Adres email
+captcha: Kod z obrazka
+enter: Wejdź
+send: Wyślij
+minute: minuta
+minutes: minuty
+seconds: sekund
+second: sekunda
+greatings: Pozrawiamy
+gpvoting_team: Zespół GPVoting
+#Zarządzanie
+
+manage:
+  text: Zarządzanie
+
+#Wydarzenia
+event:
+  text: Wydarzenie
+  many: Wydarzenia
+  list: Lista wydarzeń
+  incomings: Zbliżające się wydarzenia
+  empty_list: Brak nadchodzących wydarzeń
+  activated: Aktywowano wydarzenie
+  hidden: Ukryto wydarzenie
+
+
+  manage_events: Zarządzaj wydarzeniami
+  add:
+    success: Wydarzenie dodane
+    new: Dodaj nowe wydarzenie
+
+  create:
+    new: Stwórz nowe wydarzenie
+    info: Tworzenie nowego wydarzenia
+
+  finished: Wydarzenie zakończone
+  preview:
+    info: Podgląd wydarzenia
+  edit:
+    text: Edytuj wydarzenie
+    info: Edycja wydarzenia
+  delete:
+    info: Usunięcie wydarzenia
+    confirm: Na pewno chcesz usunąć to wydarzenie?
+  hide:
+    info: Ukrycie wydarzenia dla użytkowników
+    confirm: Na pewno chcesz ukryć to wydarzenie?
+  open:
+    info: Wydarzenie będzie widoczne dla użytkowników
+    confirm: Na pewno chcesz aktywować to wydarzenie?
+  close:
+    info: Zamknięcie wydarzenie, operacja nieodwracalna
+    confirm: Na pewno chcesz zamknąć to wydarzenie?
+
+  organizer: Organizator
+
+  name:
+      info: Nazwa wydarzenia w gpvo
+      help: Dowolny ciąg znaków
+      label: Nazwa wydarzenia
+
+  logo:
+      text: Logo
+      info: Logo wyświetlane
+      help: Rozmiar do 1MB, Wysokość i szerokość 200-400px
+      label: Logo wydarzenia/organizatora
+
+  shortOrganizatorName:
+      label: Krótka nazwa organizatora
+
+  changeLogo:
+      label: Zmień logo
+
+  error:
+    limit_used_up: Twój pakiet nie pozwala na dodawanie większej ilości wydarzeń!
+
+#Kody dostępu
+codes:
+  manage:
+    info: Zarządzanie kodami dostępu
+    text: Zarządzaj kodami
+
+#Pokoje
+room:
+  text: Pokój
+  many: Pokoje
+
+  enter: Wejdź do pokoju
+
+  add:
+    new: Dodaj pokój
+
+  create:
+    new: Stwórz nowy pokój
+    info: Tworzenie nowego pokoju
+
+  preview:
+    info: Podgląd pokoju
+  edit:
+    info: Edycja pokoju
+  delete:
+    info: Usunięcie pokoju
+    confirm: Na pewno chcesz usunąć ten pokój?
+  hide:
+    info: Ukrycie pokoju dla użytkowników
+    confirm: Na pewno chcesz ukryć ten pokój?
+  unhide:
+    info: Pokój będzie widoczny dla użytkowników
+    confirm: Na pewno chcesz odkryć ten pokój?
+  close:
+    info: Zamknięcie wydarzenie, operacja nieodwracalna
+    confirm: Na pewno chcesz zamknąć to wydarzenie?
+#Lista uczestników
+participants:
+  list:
+    my: Moje listy uczestników
+    info: Twoje listy uczestników
+    email_with_password: Hasło dostępu uczestnika
+
 participants_import_success: Import uczestników zakończony sukcesem, %new% nowych uczestników, %exists% istniejących uczestników
-duplicate_success: Tworzenie duplikatu Walnego zgromadzenia zakończone sukcesem
 list_full_cannot_open: Lista jest pełna, nie można jej otworzyć do zapisów!
 list_full_cannot_import: Lista jest pełna, nie można importować nowych uczestników!
 import_error.too_many_participants: Błąd importu. Za duża ilość uczestników! Maksymalna ilość nowych uczestników do importu %max%
-vote_on: Głos za
-vote_against: Głos przeciw
-vote_hold_on: Głos wstrzymany
+
+#formularze
+form:
+  error:
+    wrong_credentials: Wprowadzono nie aprawidłowe dane dostępowe
+
+#Resetowanie hasła:
+reset:
+  title: Zresetuj hasło
+  header: Zresetuj swoje hasło
+  email:
+    small_text: Wprowadź swój adres email, a dostaniesz od nas link do zmiany swojego hasła
+
+  request_send:
+    title: Wysłano maila z resetem hasła
+    text1: Wiadomość zawierająca link do zmiany hasła została wysłana. Ten link wygaśnie w ciągu %hours% godzin.
+    text2: Jeśli nie otrzymałeś wiadomości sprawdź swój folder spam lub
+    link: spróbuj ponownie
+
+  reset_form:
+    title: Ustaw nowe hasło
+    header: Ustaw swoje nowe Hasło
+    password_new: Nowe hasło
+    repeat_password: Powtórz hasło
+    passwords_do_not_match: Hasła muszą się zgadzać
+
+#Walne zgromadzenia
+duplicate_success: Tworzenie duplikatu Walnego zgromadzenia zakończone sukcesem
+
+#Głosowania sesyjne
+session:
+  begin:
+    success: Głosowanie sesyjne rozpoczęte
+
+  manage: Zarządzanie sesją
+  status: Status sesji
+  waiting: Oczekuje na rozpoczęcie
+  running: Rozpoczęta
+  ended: Zakończona
+  time_to_end_vote: Czas do zakończenia głosowania
+  active_question: Aktywne pytanie
+
+  settings:
+    text: Ustawienia sesji
+    help: Ustawienia sesji
+    info: Ustawienia sesji
+
+#Pozostałe
+name.form:
+  label: Twoje imię
+  info: Identyfikator za pomocą którego będziesz rozróżniany od pozostałych uczestników głosowania
+  help: Identyfikator za pomocą którego będziesz rozróżniany od pozostałych uczestników głosowania
+  title: Wprowadź swoję imie
+  header: Podaj swoje imię aby wiąć udział w tym głosowaniu
+
+register.form:
+  terms:
+    label: Akceptuję regulamin serwisu
+    error: Musisz zaakceptować regulamin serwisu
+
+  username:
+    label: Nazwa użytkownika
+
+
+#emails
+email:
+  participant_password:
+    header: Witaj! Na Twój adres email zostało stworzone konto uczestnika w GPVoting Online!
+    text1: Przesyłamy Ci automatycznie wygenerowane hasło, którego możesz użyć do zalogowania aby móc wziąć udział w Walnym zgromadzeniu
+    text2: Link do Walnego zgromadzenia oraz jego termin, zostanie przesłany przez organizatora

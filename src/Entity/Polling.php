@@ -90,6 +90,11 @@ class Polling
      */
     private $sessionUsers;
 
+    /**
+     * @var SessionSettings|null;
+     */
+    private $settings;
+
     public function __construct()
     {
         $this->questions = new ArrayCollection();
@@ -301,5 +306,21 @@ class Polling
         }
 
         return $this;
+    }
+
+    /**
+     * @return SessionSettings|null
+     */
+    public function getSettings(): ?SessionSettings
+    {
+        return $this->settings;
+    }
+
+    /**
+     * @param SessionSettings|null $settings
+     */
+    public function setSettings(?SessionSettings $settings): void
+    {
+        $this->settings = $settings;
     }
 }

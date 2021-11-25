@@ -19,12 +19,12 @@
                 <p>{% trans %}Głosowanie tajne{% endtrans %}</p>
             {% endif %}
             {% if meeting.kworum %}
-                <p class="mb-0">{% trans %}Procent obecnych uczestników niezbędny do osiągnięcia kworum{% endtrans %}: {{ meeting.kworumValue}}% </p>
+                <p class="mb-0">{% trans %}Procent obecnych uczestników niezbędny do osiągnięcia kworum{% endtrans %}: {{ meeting.kworumRequiredValue}}% </p>
                 {% if active.kworum is defined and active.kworum is not null %}
                     {% if active.kworum %}
-                        <p class="text-success font-weight-bold mb-0">{% trans %}Udało się osiągnąć kworum {% endtrans %} - {{ active.kworum_value }}%</p>
+                        <p class="text-success font-weight-bold mb-0">{% trans %}Udało się osiągnąć kworum {% endtrans %} - {{ meeting.kworumValue }}%</p>
                         {% else %}
-                        <p class="text-danger font-weight-bold mb-0">{% trans %}Nie udało się osiągnąć kworum {% endtrans %} - {{ active.kworum_value }}%</p>
+                        <p class="text-danger font-weight-bold mb-0">{% trans %}Nie udało się osiągnąć kworum {% endtrans %} - {{  meeting.kworumValue }}%</p>
                     {% endif %}
                 {% endif %}
             {% endif %}
@@ -102,7 +102,9 @@
                     {% endif %}
                     {% elseif meeting.status==2 %}
                     <a class="btn btn-outline-dark" href="{{ path('general_meeting_results_pdf',{slug:meeting.slug,valid:1})}}">{% trans %}Pobierz wyniki głosowań{% endtrans %}</a>
+                        {% if meeting.secret == false %}
                     <a class="btn btn-outline-success" href="{{ path('app_manage_general_meeting_course_meeting',{slug:meeting.slug})}}">{% trans %}Pobierz przebieg głosowań{% endtrans %}</a>
+                            {% endif %}
                 {% endif %}
             </div>
         </div>

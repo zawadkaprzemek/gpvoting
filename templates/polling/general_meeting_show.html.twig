@@ -17,6 +17,7 @@
             {% endif %}
             <a href="{{ path('app_manage_general_meeting_cockpit',{slug:meeting.slug}) }}" class="btn btn-outline-info">{% trans %}Przejdź do zarządzania{% endtrans %}</a>
             {{ include('polling/general_meeting_status.html.twig',{meeting:meeting}) }}
+            {{ include('general_meeting/_duplicate_form.html.twig',{meeting:meeting}) }}
         </div>
 
         <h3>{% trans %}Lista głosowań{% endtrans %}</h3>

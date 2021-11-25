@@ -273,8 +273,12 @@ class PollingController extends AbstractController
      * @param Request $request
      * @return Response
      */
-    function enterPolling(Polling $polling,Request $request)
+    function enterPolling(Polling $polling,Request $request): Response
     {
+        if(!$polling->getRoom()->getVisible())
+        {
+            return $this->redirectToRoute('home');
+        }
         $session=$request->getSession();
         $enter=$session->get('polling_'.$polling->getId().'_code');
         if(!is_null($enter)||$polling->getSession())

@@ -3,6 +3,7 @@
 namespace App\Form;
 
 use App\Entity\User;
+use Gregwar\CaptchaBundle\Type\CaptchaType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
@@ -14,19 +15,20 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\IsTrue;
 use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class RegistrationFormType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('username',TextType::class,array('label'=>'Nazwa użytkownika'))
+            ->add('username',TextType::class,array('label'=>'register.form.username.label'))
             ->add('agreeTerms', CheckboxType::class, [
                 'mapped' => false,
-                'label'=>'Akceptuję regulamin serwisu',
+                'label'=>'register.form.terms.label',
                 'constraints' => [
                     new IsTrue([
-                        'message' => 'Musisz zaakceptować regulamin serwisu',
+                        'message' => 'register.form.terms.error',
                     ]),
                 ],
             ])
@@ -34,23 +36,24 @@ class RegistrationFormType extends AbstractType
                 // instead of being set onto the object directly,
                 // this is read and encoded in the controller
                 'mapped' => false,
-                'label'=>'Hasło',
+                'label'=>'password',
                 'constraints' => [
                     new NotBlank([
-                        'message' => 'Prosze wprowadzić hasło',
+                        'message' => 'register.form.password.blank',
                     ]),
                     new Length([
                         'min' => 6,
-                        'minMessage' => 'Hasło musi się składać conajmniej z  {{ limit }} znaków',
+                        'minMessage' => 'register.form.password.minMessage',
                         // max length allowed by Symfony for security reasons
                         'max' => 4096,
                     ]),
                 ],
             ])
-            ->add('name',TextType::class,array('label'=>'Imię'))
-            ->add('surname',TextType::class,array('label'=>'Nazwisko'))
-            ->add('email',EmailType::class,array('label'=>'Email'))
-            ->add('submit',SubmitType::class,array('label'=>'Rejestracja'))
+            ->add('name',TextType::class,array('label'=>'firstName',))
+            ->add('surname',TextType::class,array('label'=>'lastName'))
+            ->add('email',EmailType::class,array('label'=>'email.address'))
+            ->add('captcha',CaptchaType::class,array('label'=>'captcha'))
+            ->add('submit',SubmitType::class,array('label'=>'registration'))
         ;
     }
 

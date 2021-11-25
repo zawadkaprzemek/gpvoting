@@ -19,6 +19,8 @@ services:
         resource: '../src/'
         exclude:
             - '../src/DependencyInjection/'
+            - '../src/MessageHandler/'
+            - '../src/Message/'
             - '../src/Entity/'
             - '../src/Kernel.php'
             - '../src/Tests/'
@@ -32,6 +34,14 @@ services:
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
 
+    App\MessageHandler\:
+        resource: '../src/MessageHandler'
+        tags: [ 'messenger.message_handler' ]
+
     App\EventListener\LoginListener:
         tags:
             - { name: 'kernel.event_listener', event: 'security.interactive_login' }
+
+    App\EventListener\ExceptionListener:
+        tags:
+            - { name: 'kernel.event_listener', event: 'kernel.exception' }
