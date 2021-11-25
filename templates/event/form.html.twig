@@ -39,8 +39,12 @@
         </div>
         <div class="col-12 col-sm-8">
             {{ form_widget(form.logoFile) }}
+            <div id="filePreview" class="text-right">
+                <img id="previewLogo" alt="" class="img-preview" src=""/>
+            </div>
         </div>
     </div>
+
 
     {{ form_row(form.submit) }}
     {{ form_end(form) }}
@@ -64,6 +68,13 @@
                     $('#event_logoFile').prop('required',false);
                 }
             });
+            $('#event_logoFile').on('change',function(e){
+                let reader = new FileReader();
+                reader.onload = function (){
+                    $('#previewLogo').prop('src',reader.result);
+                }
+                reader.readAsDataURL(e.target.files[0]);
+            })
         })
     </script>
 {% endblock %}

@@ -18,7 +18,7 @@
         <script src="{{ asset('assets/js/popper.min.js') }}"></script>
     {% endblock %}
 </head>
-<body>
+<body class="lang_{{ app.request.locale }}">
 {{ include('home/header.html.twig') }}
 <div class="container">
     <div class="row">

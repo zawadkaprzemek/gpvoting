@@ -2,6 +2,18 @@
     max-width: 100px;
 }
 
+.img-preview{
+    margin-top:20px;
+    max-width: 200px;
+    max-height: 200px;
+}
+.lang_pl .custom-file-label::after{
+    content: "Przeglądaj..."
+}
+
+.lang_en .custom-file-label::after{
+    content: "Browse..."
+}
 .valueSpan{
     width: 30px;
     text-align: right;

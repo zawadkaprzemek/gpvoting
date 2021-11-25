@@ -1,20 +1,20 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Lista użytkowników{% endblock %}
+{% block title %}users.title{% endblock %}
 
 {% block body %}
 
-    <h3>{% trans %}Użytkownicy{% endtrans %}</h3>
+    <h3>{% trans %}users.list{% endtrans %}</h3>
 
     <div class="table-responsive">
         <table id="usersTable" class="table table-striped">
             <thead>
             <tr>
-                <th>{% trans %}Login{% endtrans %}</th>
-                <th>{% trans %}Imię i nazwisko{% endtrans %}</th>
-                <th>{% trans %}Email{% endtrans %}</th>
-                <th>{% trans %}Data rejestracji{% endtrans %}</th>
-                <th>{% trans %}Ostatnie logowanie{% endtrans %}</th>
+                <th>{% trans %}login{% endtrans %}</th>
+                <th>{% trans %}name_surname{% endtrans %}</th>
+                <th>{% trans %}email{% endtrans %}</th>
+                <th>{% trans %}register_date{% endtrans %}</th>
+                <th>{% trans %}last_login{% endtrans %}</th>
                 <th></th>
             </tr>
             </thead>
@@ -29,7 +29,7 @@
 
                     <td>
                         <div class="btn-group btn-group-sm">
-                            <a href="{{ path('app_admin_user_show',{id: user.id}) }}" class="btn btn-sm btn-outline-primary mb-2">{% trans %}Zobacz{% endtrans %}</a>
+                            <a href="{{ path('app_admin_user_show',{id: user.id}) }}" class="btn btn-sm btn-outline-primary mb-2">{% trans %}show{% endtrans %}</a>
                             {#<a href="{{ path('app_admin_user_edit',{id:user.id}) }}" class="btn btn-sm btn-outline-secondary mb-2">{% trans %}Edytuj{% endtrans %}</a>#}
                         </div>
                     </td>
