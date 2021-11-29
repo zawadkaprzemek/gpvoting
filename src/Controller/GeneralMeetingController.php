@@ -32,7 +32,7 @@ class GeneralMeetingController extends AbstractController
     /**
      * @var TranslatorInterface
      */
-    private $translator;
+    private TranslatorInterface $translator;
 
     public function __construct(TranslatorInterface $translator)
     {
@@ -48,7 +48,7 @@ class GeneralMeetingController extends AbstractController
      * @param Request $request
      * @return Response
      */
-    public function createGeneralMeeting(Event $event,Room $room,Request $request)
+    public function createGeneralMeeting(Event $event,Room $room,Request $request): Response
     {
         $meeting=new GeneralMeeting();
         $meeting->setRoom($room);
@@ -61,12 +61,12 @@ class GeneralMeetingController extends AbstractController
             $meeting->setHashId(uniqid());
             $em->persist($meeting);
             $em->flush();
-            $this->addFlash('success',$this->translator->trans('Dodano nowe Walne zgromadzenie'));
+            $this->addFlash('success',$this->translator->trans('general_meeting.new.success'));
             return $this->redirectToRoute('app_manage_general_meeting_add_voting',['slug'=>$meeting->getSlug()]);
         }
 
         return $this->render('general_meeting/general_meeting_form.html.twig',[
-            'title'=>$this->translator->trans('Utwórz walne zgromadzenie'),
+            'title'=>$this->translator->trans('general_meeting.new.title'),
             'form'=>$form->createView()
         ]);
     }
@@ -115,7 +115,7 @@ class GeneralMeetingController extends AbstractController
             }
             $em->persist($voting);
             $em->flush();
-            $this->addFlash('success',$this->translator->trans('Dodano nowe głosowanie'));
+            $this->addFlash('success',$this->translator->trans('general_meeting.voting.add.success'));
             if($form->get('add_next')->getData())
             {
                 return $this->redirectToRoute('app_manage_general_meeting_add_voting',['slug'=>$meeting->getSlug()]);
@@ -124,7 +124,7 @@ class GeneralMeetingController extends AbstractController
             }
         }
         return $this->render('general_meeting/general_meeting_form_voting.html.twig',[
-            'title'=>$this->translator->trans('Dodaj głosowania'),
+            'title'=>$this->translator->trans('general_meeting.voting.add.title'),
             'form'=>$form->createView()
         ]);
     }
@@ -191,7 +191,7 @@ class GeneralMeetingController extends AbstractController
             }
             $em->persist($voting);
             $em->flush();
-            $this->addFlash('success',$this->translator->trans('Edycja głosowania zakończona sukcesem'));
+            $this->addFlash('success',$this->translator->trans('general_meeting.voting.edit.success'));
             if($voting->getMeeting()->getStatus()==1)
             {
                 return $this->redirectToRoute('app_manage_general_meeting_cockpit',['slug' =>$voting->getMeeting()->getSlug()]);
@@ -200,7 +200,7 @@ class GeneralMeetingController extends AbstractController
             }
         }
         return $this->render('general_meeting/general_meeting_form_voting.html.twig',[
-            'title'=>$this->translator->trans('Edytuj głosowanie'),
+            'title'=>$this->translator->trans('general_meeting.voting.edit.title'),
             'form'=>$form->createView()
         ]);
     }
@@ -302,7 +302,7 @@ class GeneralMeetingController extends AbstractController
 
         if($meeting->getStatus()==1)
         {
-            $this->addFlash('warning',$this->translator->trans("Nie można edytować rozpoczętego zgromadzenia!"));
+            $this->addFlash('warning',$this->translator->trans("general_meeting.edit.cannot_edit"));
             if(is_null($request->server->get('HTTP_REFERER')))
             {
                 return $this->redirectToRoute('app_manage_general_meeting_cockpit',['slug'=>$meeting->getSlug()]);
@@ -319,13 +319,13 @@ class GeneralMeetingController extends AbstractController
             $em=$this->getDoctrine()->getManager();
             $em->persist($meeting);
             $em->flush();
-            $this->addFlash('success',$this->translator->trans('Edycja Walnego zgromadzenia zakończona powodzeniem'));
+            $this->addFlash('success',$this->translator->trans('general_meeting.edit.success'));
             return $this->redirectToRoute('app_manage_general_meeting_cockpit',['slug'=>$meeting->getSlug()]);
         }
 
         return $this->render('general_meeting/general_meeting_form.html.twig',[
             'form'=>$form->createView(),
-            'title'=>$this->translator->trans('Edytuj Walne zgromadzenie'),
+            'title'=>$this->translator->trans('general_meeting.edit.title'),
             'meeting'=>$meeting
         ]);
     }
@@ -450,7 +450,7 @@ class GeneralMeetingController extends AbstractController
      * @param GeneralMeeting $meeting
      * @return JsonResponse
      */
-    public function generalMeetingEndVote(GeneralMeeting $meeting)
+    public function generalMeetingEndVote(GeneralMeeting $meeting): JsonResponse
     {
         if($meeting->getRoom()->getEvent()->getUser()!==$this->getUser())
         {
@@ -682,7 +682,7 @@ class GeneralMeetingController extends AbstractController
      * @param Request $request
      * @return JsonResponse
      */
-    public function endGeneralMeeting(GeneralMeeting $meeting,Request $request)
+    public function endGeneralMeeting(GeneralMeeting $meeting,Request $request): JsonResponse
     {
         if($meeting->getRoom()->getEvent()->getUser()!==$this->getUser())
         {
@@ -744,7 +744,7 @@ class GeneralMeetingController extends AbstractController
      * @param MeetingVotingRepository $repository
      * @return RedirectResponse|Response
      */
-    public function generalMeetingCockpit(GeneralMeeting $meeting,MeetingVotingRepository $repository)
+    public function generalMeetingCockpit(GeneralMeeting $meeting,MeetingVotingRepository $repository):Response
     {
         if($meeting->getRoom()->getEvent()->getUser()!==$this->getUser())
         {
@@ -789,7 +789,7 @@ class GeneralMeetingController extends AbstractController
      * @param ParticipantRepository $repository
      * @return RedirectResponse|Response
      */
-    public function generalMeetingJoin(GeneralMeeting $meeting,Request $request,ParticipantRepository $repository)
+    public function generalMeetingJoin(GeneralMeeting $meeting,Request $request,ParticipantRepository $repository):Response
     {
         if(!$meeting->getRoom()->getVisible())
         {
@@ -843,7 +843,7 @@ class GeneralMeetingController extends AbstractController
      * @param ParticipantRepository $participantRepository
      * @return RedirectResponse|Response
      */
-    public function generalMeetingVote(GeneralMeeting $meeting,Request $request,MeetingVotingRepository $repository,ParticipantRepository $participantRepository)
+    public function generalMeetingVote(GeneralMeeting $meeting,Request $request,MeetingVotingRepository $repository,ParticipantRepository $participantRepository):Response
     {
         $session=$request->getSession();
         $participant=$session->get("user_gm_".$meeting->getSlug());
@@ -922,7 +922,7 @@ class GeneralMeetingController extends AbstractController
      * @param GeneralMeeting $meeting
      * @return RedirectResponse
      */
-    public function generalMeetingDuplicate(GeneralMeeting $meeting)
+    public function generalMeetingDuplicate(GeneralMeeting $meeting): RedirectResponse
     {
         if($meeting->getRoom()->getEvent()->getUser()!==$this->getUser())
         {

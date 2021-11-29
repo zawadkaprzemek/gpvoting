@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Polling;
 use App\Entity\Room;
 use App\Form\EnterType;
 use App\Form\NameType;
@@ -63,14 +64,8 @@ class HomeController extends AbstractController
     public function enterFromFront(Request $request,RoomRepository $roomRepository,PollingRepository $pollingRepository)
     {
         $requestData=$request->request->all();
-        /*if($requestData['event_code']!==null)
-        {
-            $code=$requestData['event_code'];
-        }else{
-            if()
-        }*/
+
         $code=$requestData['event_code'] ?? ($requestData['enter']['event_code'] ?? null);
-        //$code="ruben6036c773c3161";
         $session=$request->getSession();
         if(is_null($code))
         {
@@ -86,7 +81,6 @@ class HomeController extends AbstractController
         //dd($rooms,$pollings);
         $findR=sizeof($rooms);
         $findP=sizeof($pollings);
-        dd($findR,$findP);
         $find=$findR+$findP;
         $form=$this->createForm(NameType::class,null);
         $form->handleRequest($request);
@@ -95,7 +89,7 @@ class HomeController extends AbstractController
             $name=$form->get('name')->getData();
             if(mb_strlen($name)<5)
             {
-                $form->get('name')->addError(new FormError('Imię powinno mieć conajmniej 5 znaków'));
+                $form->get('name')->addError(new FormError($this->translator->trans('form.error.name_short',['%limit%'=>5])));
             }
             if($form->isValid())
             {
@@ -121,9 +115,13 @@ class HomeController extends AbstractController
             }
             foreach ($pollings as $polling)
             {
+                /** @var Polling $polling */
                 $session->set('polling_'.$polling->getId().'_code',$code);
+                /** @var Room $room */
+                $room=$polling->getRoom();
+                $session->set('room_'.$room->getId().'_code',$room->getCode());
             }
-            $this->addFlash('success','Gratulacje, wprowadziłeś poprawny kod dostępu');
+            $this->addFlash('success',$this->translator->trans('codes.valid_code_enter'));
             if($find>1)
             {
                 return $this->render('home/enter.html.twig',[

@@ -72,7 +72,7 @@ class AdminController extends AbstractController
      * @param Request $request
      * @return RedirectResponse|Response
      */
-    public function createPackAction(Request $request)
+    public function createPackAction(Request $request):Response
     {
         $pack=new Pack();
         $form=$this->createForm(PackType::class,$pack);
@@ -89,7 +89,7 @@ class AdminController extends AbstractController
 
         return $this->render('admin/packs_form.html.twig', array(
            'form' => $form->createView(),
-            'title'=>$this->translator->trans('admin.packs.new.title')
+            'title'=>$this->translator->trans('packs.new.title')
         ));
     }
 
@@ -99,7 +99,7 @@ class AdminController extends AbstractController
      * @param Pack $pack
      * @return RedirectResponse|Response
      */
-    public function editPackAction(Request $request,Pack $pack)
+    public function editPackAction(Request $request,Pack $pack):Response
     {
         $form=$this->createForm(PackType::class,$pack);
         $form->handleRequest($request);
@@ -115,14 +115,14 @@ class AdminController extends AbstractController
 
         return $this->render('admin/packs_form.html.twig', array(
             'form' => $form->createView(),
-            'title'=>$this->translator->trans('admin.packs.edit.title')
+            'title'=>$this->translator->trans('packs.edit.title')
         ));
     }
 
     /**
      * @Route("/users/{id}/show", name="app_admin_user_show")
      */
-    public function userShow(User $user)
+    public function userShow(User $user): Response
     {
         return $this->render('admin/show.html.twig',[
             'user' => $user
@@ -136,7 +136,7 @@ class AdminController extends AbstractController
      * @param Request $request
      * @return Response
      */
-    public function userEdit(User $user,Request $request)
+    public function userEdit(User $user,Request $request): Response
     {
         $form=$this->createForm(ProfileEditAdminType::class,$user);
         $form->handleRequest($request);
@@ -145,7 +145,7 @@ class AdminController extends AbstractController
             $em=$this->getDoctrine()->getManager();
             $em->persist($user);
             $em->flush();
-            $this->addFlash('success','Zapisano zmiany');
+            $this->addFlash('success',$this->translator->trans('changes_saved'));
             return $this->redirectToRoute('app_admin_user_show',['id'=>$user->getId()]);
         }
 

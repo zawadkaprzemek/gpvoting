@@ -23,7 +23,7 @@ class EventController extends AbstractController
     /**
      * @var TranslatorInterface
      */
-    private $translator;
+    private TranslatorInterface $translator;
 
     public function __construct(TranslatorInterface $translator)
     {
@@ -31,11 +31,11 @@ class EventController extends AbstractController
     }
 
     /**
-     * @Route("/{_locale}/manage/create_event   ", name="app_event_create")
+     * @Route("/{_locale}/manage/create_event", name="app_event_create")
      * @param Request $request
      * @return RedirectResponse|Response
      */
-    public function newEvent(Request $request)
+    public function newEvent(Request $request):Response
     {
         $this->denyAccessUnlessGranted("ROLE_USER");
         $event=new Event();
@@ -85,7 +85,7 @@ class EventController extends AbstractController
      * @param Request $request
      * @return RedirectResponse|Response
      */
-    public function editEvent(Event $event,Request $request)
+    public function editEvent(Event $event,Request $request):Response
     {
         $user=$this->getUser();
         if($event->getUser()!==$user)
@@ -121,7 +121,7 @@ class EventController extends AbstractController
             $em=$this->getDoctrine()->getManager();
             $em->persist($event);
             $em->flush();
-            $this->addFlash('success', 'changes.saved');
+            $this->addFlash('success', $this->translator->trans('changes_saved'));
             return $this->redirectToRoute('app_manage_event_show',['slug'=>$event->getSlug()]);
         }
         return $this->render('event/form.html.twig',[
@@ -136,7 +136,7 @@ class EventController extends AbstractController
      * @param RoomRepository $repository
      * @return Response
      */
-    public function show(Event $event,RoomRepository $repository)
+    public function show(Event $event,RoomRepository $repository): Response
     {
         if($event->getStatus()===0)
         {
@@ -150,7 +150,7 @@ class EventController extends AbstractController
         ]);
     }
 
-    private function generateEventCodes(Event $event,int $count=5)
+    private function generateEventCodes(Event $event,int $count=5): array
     {
         $codes=array();
         for($i=0;$i<$count;$i++)
@@ -199,7 +199,7 @@ class EventController extends AbstractController
      * @param Event $event
      * @return RedirectResponse
      */
-    public function openEvent(Event $event)
+    public function openEvent(Event $event): RedirectResponse
     {
         $user=$this->getUser();
         if($event->getUser()!==$user)
@@ -220,7 +220,7 @@ class EventController extends AbstractController
      * @param Event $event
      * @return RedirectResponse
      */
-    public function closeEvent(Event $event)
+    public function closeEvent(Event $event): RedirectResponse
     {
         $user=$this->getUser();
         if($event->getUser()!==$user)
@@ -232,7 +232,7 @@ class EventController extends AbstractController
         $em->persist($event);
         $em->flush();
 
-        $this->addFlash('success','Wydarzenie zostało zamknięte');
+        $this->addFlash('success',$this->translator->trans('event.close.success'));
         return $this->redirectToRoute('app_manage');
     }
 
@@ -242,7 +242,7 @@ class EventController extends AbstractController
      * @param Request $request
      * @return Response
      */
-    public function manageCodes(Event $event,Request $request)
+    public function manageCodes(Event $event,Request $request): Response
     {
         $user=$this->getUser();
         if($event->getUser()!==$user)
@@ -262,7 +262,7 @@ class EventController extends AbstractController
                 $em->persist($code);
             }
             $em->flush();
-            $this->addFlash('success','Wygenerowano nowe kody');
+            $this->addFlash('success',$this->translator->trans('codes.new.generated'));
             return  $this->redirectToRoute('app_event_codes_menage',['slug'=>$event->getSlug()]);
         }
         return $this->render('event/codes.html.twig',[

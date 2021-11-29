@@ -85,6 +85,7 @@ hold_on: Wstrzymało się
 active_voting: Aktualne głosowanie
 candidates: Kandydaci
 available_answers: Dostępne odpowiedzi
+changes_saved: Zapisano zmiany
 #Zarządzanie
 
 manage:
@@ -126,6 +127,7 @@ event:
     info: Wydarzenie będzie widoczne dla użytkowników
     confirm: Na pewno chcesz aktywować to wydarzenie?
   close:
+    success: Wydarzenie zostało zamknięte
     info: Zamknięcie wydarzenie, operacja nieodwracalna
     confirm: Na pewno chcesz zamknąć to wydarzenie?
 
@@ -157,13 +159,16 @@ codes:
     info: Zarządzanie kodami dostępu
     text: Zarządzaj kodami
 
+  new:
+    generated: Wygenerowano nowe kody
+
   enter_form:
     title: Wprowadź kod dostępu
     label: Kod dostępu
     clear: Wyczyść kod
 
   session_cleared: Kody wyczyszczone
-
+  valid_code_enter: Gratulacje, wprowadziłeś poprawny kod dostępu
   bad_code_enter: Wprowadzono błędny kod
 
 #Pokoje
@@ -213,6 +218,7 @@ import_error.too_many_participants: Błąd importu. Za duża ilość uczestnikó
 form:
   error:
     wrong_credentials: Wprowadzono nie aprawidłowe dane dostępowe
+    name_short: Imię powinno mieć conajmniej %limit% znaków
 
 #Resetowanie hasła:
 reset:
@@ -276,6 +282,15 @@ general_meeting:
   text: Walne zgromadzenie
   permission_denied: Nie możesz wziąć udziału w tym zgromadzeniu!
 
+  new:
+    success: Dodano nowe Walne zgromadzenie
+    title: Utwórz Walne zgromadzenie
+
+  edit:
+    title: Edytuj Walne zgromadzenie
+    success: Edycja Walnego zgromadzenia zakończona powodzeniem
+    cannot_edit: Nie można edytować rozpoczętego zgromadzenia!
+
   begin:
     button:
     confirm: Na pewno chcesz rozpocząć to zgromadzenie?
@@ -301,6 +316,13 @@ general_meeting:
       votes: głosów - co stanowi %per%%  całości %tot% głosów
       actions: akcji - co stanowi %per%% całości %tot% akcji
 
+    add:
+      success: Dodano nowe głosowanie
+      title: Dodaj głosowania
+
+    edit:
+      success: Edycja głosowania zakończona sukcesem
+      title: Edytuj głosowanie
 
     get_votes:
       button: Pobierz wyniki głosowań
@@ -344,6 +366,15 @@ general_meeting:
     required_percent: Procent obecnych uczestników niezbędny do osiągnięcia kworum
     success: Udało się osiągnąć kworum
     fail: Nie udało się osiągnąć kworum
+
+#pakiety
+packs:
+  new:
+    success: Dodano nowy pakiet
+    title: Dodaj nowy pakiet
+  edit:
+    success: Edycja zakończona sukcesem
+    title: Edytuj pakiet
 
 #emails
 email:
