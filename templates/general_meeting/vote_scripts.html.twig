@@ -1,13 +1,42 @@
 <script type="text/javascript">
-    const socket = new WebSocket("ws://{{app.request.getHost()}}:3100/meeting_{{ meeting.hashId }}");
+    let socket;
 
-    socket.onopen = function(e) {
+
+    const socketOpenListener = function (e){
         console.log("Connection established!");
     };
+    
+    const socketMessageListener = function (e) {
+        try
+        {
+            const message = JSON.parse(e.data);
+            addMessage(message.name, message.message,message.type,message.votes,message.actions,message.valid);
+        }
+        catch(e)
+        {
+            // Catch any errors
+        }
+    }
+    
+    const socketCloseListener = function (e) {
+        if (socket) {
+            //console.error('Connection closed!');
+        }
+        try{
+            socket = new WebSocket("ws://{{app.request.getHost()}}:3100/meeting_{{ meeting.hashId }}");
+            socket.addEventListener('open', socketOpenListener);
+            socket.addEventListener('message', socketMessageListener);
+            socket.addEventListener('close', socketCloseListener);
+        }catch (e) {
+
+        }
+
+    }
+    socketCloseListener();
 
 
     function addMessage(name, message,type,votes,actions,valid=true) {
-        console.log(name,message,type,votes,actions);
+        //console.log(name,message,type,votes,actions);
         let v_total = $('#votes_total').val();
         let a_total = $('#actions_total').val();
         if(type==="vote") {
@@ -132,10 +161,10 @@
                     default:
                         break;
                 }
-                console.log("#vote_"+name+"_"+vote);
+                //console.log("#vote_"+name+"_"+vote);
                 $("#vote_"+name+"_"+vote).addClass(getVoteColor(valid));
                 {% else %}
-                console.log("#vote_"+name+"_"+vote);
+                //console.log("#vote_"+name+"_"+vote);
                $("#vote_"+name+"_"+vote).addClass(getVoteColor(valid));
                 {% endif %}
             });
@@ -168,22 +197,12 @@
         return _class;
     }
 
-    socket.addEventListener("message", function(e) {
-        try
-        {
-            const message = JSON.parse(e.data);
-            addMessage(message.name, message.message,message.type,message.votes,message.actions,message.valid);
-        }
-        catch(e)
-        {
-            // Catch any errors
-        }
-    });
+
 
 
     $('.btn-test-vote-start').on("click touch",function () {
         let url=$(this).data('href');
-        if(confirm('{% trans %}Na pewno chcesz rozpocząć testowe głosowanie?{% endtrans %}'))
+        if(confirm('{% trans %}general_meeting.voting.test_begin.confirm{% endtrans %}'))
         {
             $.ajax({
                 type: 'PATCH',
@@ -207,7 +226,7 @@
 
     $('#gm-end-vote').on('click',function () {
         let url=$(this).data('href');
-        if(confirm('{% trans %}Na pewno chcesz zakończyć obecne głosowanie?{% endtrans %}'))
+        if(confirm('{% trans %}general_meeting.voting.end_vote.confirm{% endtrans %}'))
         {
             $.ajax({
                 type: 'PATCH',
@@ -258,7 +277,7 @@
 
     $('.btn-gm-begin').on('click touch',function () {
         let url=$(this).data('href');
-        if(confirm('{% trans %}Na pewno chcesz rozpocząć to zgromadzenie?{% endtrans %}'))
+        if(confirm('{% trans %}general_meeting.begin.confirm{% endtrans %}'))
         {
             $.ajax({
                 type: 'PATCH',
@@ -282,7 +301,7 @@
 
     $('.btn-gm-end').on('click touch',function () {
         let url=$(this).data('href');
-        if(confirm('{% trans %}Na pewno chcesz zakończyć to zgromadzenie?{% endtrans %}'))
+        if(confirm('{% trans %}general_meeting.end.confirm{% endtrans %}'))
         {
             $.ajax({
                 type: 'PATCH',
@@ -308,7 +327,7 @@
         let href=$(this).data('href');
         let hash=$(this).data('hash');
         let url=$(this).data('url');
-        if(confirm('{% trans %}Na pewno chcesz rozpocząć od nowa to zgromadzenie?{% endtrans %}'))
+        if(confirm('{% trans %}general_meeting.restart.confirm{% endtrans %}'))
         {
             $.ajax({
                 type: 'PATCH',
@@ -332,7 +351,7 @@
 
     $('.btn-gm-activate-vote').on('click',function(){
        let url=$(this).data('href');
-       if(confirm('{% trans %}Na pewno chcesz aktywować to głosowanie?{% endtrans %}'))
+       if(confirm('{% trans %}general_meeting.voting.activate.confirm{% endtrans %}'))
        {
            activateVote(url);
        }
@@ -340,7 +359,7 @@
 
     $('.btn-gm-repeat-vote').on('click',function(){
         let url=$(this).data('href');
-        if(confirm('{% trans %}Na pewno chcesz powtórzyć głosowanie nad tą uchwałą?{% endtrans %}'))
+        if(confirm('{% trans %}general_meeting.voting.repeat.confirm{% endtrans %}'))
         {
             activateVote(url);
         }
@@ -360,16 +379,16 @@
        e.preventDefault();
 
         let theCheckboxes =$(this).find("input[type='checkbox']");
-        const max={{ voting.toChoose }};
+        let max={{ voting.toChoose }};
         let checked=theCheckboxes.filter(":checked");
         let data=candidatesVoteData($(this).serializeArray());
         if(checked.length===0)
         {
-            alert("{% trans %}Wybierz kandydata/ów aby zagłosować{% endtrans %}")
+            alert("{% trans %}general_meeting.voting.choose_candidates_to_vote{% endtrans %}")
         }else if(checked.length>max)
         {
             {% if meeting.badVoteSettings==1 %}
-            if(confirm('{% trans %}Przy zatwierdzeniu tego wyboru oddasz nieważny głos. Kontynuwać?{% endtrans %}')) {
+            if(confirm('{% trans %}general_meeting.voting.invalid_vote.confirm{% endtrans %}')) {
                 candidatesVoteSend(data, false);
                 $(theCheckboxes).prop('disabled', true);
             }
@@ -384,7 +403,7 @@
                         alert(warning);
                         $(this).data('warned',true);
                     }else{
-                        if(confirm('{% trans %}Przy zatwierdzeniu tego wyboru oddasz nieważny głos. Kontynuwać?{% endtrans %}'))
+                        if(confirm('{% trans %}general_meeting.voting.invalid_vote.confirm{% endtrans %}'))
                         {
                             candidatesVoteSend(data,false);
                             $(theCheckboxes).prop('disabled',true);
@@ -403,10 +422,10 @@
         let theCheckboxes = {% if voting.multiChoose %}$(this).find("input[type='checkbox']"){% else %}$(this).find("input[type='radio']"){% endif %};
         let checked=theCheckboxes.filter(":checked");
         let data=candidatesVoteData($(this).serializeArray());
-        console.log(data);
+        //console.log(data);
         if(checked.length===0)
         {
-            alert("{% trans %}Zaznacz odpowiedź/odpowiedzi aby zagłosować{% endtrans %}")
+            alert("{% trans %}general_meeting.voting.choose_answers_to_vote{% endtrans %}")
         }else{
             answersVoteSend(data,true);
             $(theCheckboxes).prop('disabled',true);

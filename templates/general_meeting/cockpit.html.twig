@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}{% trans %}Walne zgromadzenie{% endtrans %}: {{ meeting.name }}{% endblock %}
+{% block title %}{% trans %}general_meeting.text{% endtrans %}: {{ meeting.name }}{% endblock %}
 
 {% block body %}
 
@@ -10,33 +10,33 @@
 
             <p>
                 {% if meeting.weight==1 %}
-                    {% trans %}Waga głosów{% endtrans %}
+                    {% trans %}weight.votes{% endtrans %}
                 {% else %}
-                    {% trans %}Waga akcji{% endtrans %}
+                    {% trans %}weight.actions{% endtrans %}
                 {% endif %}
             </p>
             {% if meeting.secret %}
-                <p>{% trans %}Głosowanie tajne{% endtrans %}</p>
+                <p>{% trans %}secret_voting{% endtrans %}</p>
             {% endif %}
             {% if meeting.kworum %}
-                <p class="mb-0">{% trans %}Procent obecnych uczestników niezbędny do osiągnięcia kworum{% endtrans %}: {{ meeting.kworumRequiredValue}}% </p>
+                <p class="mb-0">{% trans %}general_meeting.kworum.required_percent{% endtrans %}: {{ meeting.kworumRequiredValue}}% </p>
                 {% if active.kworum is defined and active.kworum is not null %}
                     {% if active.kworum %}
-                        <p class="text-success font-weight-bold mb-0">{% trans %}Udało się osiągnąć kworum {% endtrans %} - {{ meeting.kworumValue }}%</p>
+                        <p class="text-success font-weight-bold mb-0">{% trans %}general_meeting.kworum.success{% endtrans %} - {{ meeting.kworumValue }}%</p>
                         {% else %}
-                        <p class="text-danger font-weight-bold mb-0">{% trans %}Nie udało się osiągnąć kworum {% endtrans %} - {{  meeting.kworumValue }}%</p>
+                        <p class="text-danger font-weight-bold mb-0">{% trans %}general_meeting.kworum.fail{% endtrans %} - {{  meeting.kworumValue }}%</p>
                     {% endif %}
                 {% endif %}
             {% endif %}
             {% if participants is empty %}
-                <p class="text-danger">{% trans %}Nie wybrałeś jeszcze listy uczestników!!!{% endtrans %}</p>
+                <p class="text-danger">{% trans %}general_meeting.participants.list_not_selected{% endtrans %}</p>
             {% endif %}
 
-            <h4 class="mt-3">{% trans %}Lista głosowań{% endtrans %}</h4>
+            <h4 class="mt-3">{% trans %}general_meeting.voting.list{% endtrans %}</h4>
             <div class="voting-list mb-2">
                 <div class="row text-center font-weight-bold border align-items-center h-60px">
-                    <div class="col pt-3 border-right h-100">{% trans %}Głosowanie{% endtrans %}:</div>
-                    <div class="col pt-3 border-right h-100">{% trans %}Wynik{% endtrans %}:</div>
+                    <div class="col pt-3 border-right h-100">{% trans %}voting{% endtrans %}:</div>
+                    <div class="col pt-3 border-right h-100">{% trans %}result{% endtrans %}:</div>
                     {% if meeting.status == 1%}
                     <div class="col-4 pt-3 h-100"></div>
                     {% endif %}
@@ -49,11 +49,11 @@
                             {{ include('general_meeting/votting_results.html.twig',{voting:voting,votesSummary:voting.votesSummary})}}
                                 {% if voting.historicalResults is not empty %}
                                     <button class="btn btn-outline-secondary btn-sm historical-btn btn-block">
-                                        <span class="hide d-none">{% trans %}Ukryj poprzedni wynik{% endtrans %}</span>
-                                        <span class="show">{% trans %}Pokaż poprzedni wynik{% endtrans %}</span>
+                                        <span class="hide d-none">{% trans %}general_meeting.voting.previous.hide{% endtrans %}</span>
+                                        <span class="show">{% trans %}general_meeting.voting.previous.show{% endtrans %}</span>
                                     </button>
                                     <div class="pt-1 previous_results d-none">
-                                        <p class="font-weight-bold mb-1 text-center">{% trans %}Poprzedni wynik{% endtrans %}:</p>
+                                        <p class="font-weight-bold mb-1 text-center">{% trans %}general_meeting.voting.previous.text{% endtrans %}:</p>
                                         {{ include('general_meeting/votting_results.html.twig',{voting:voting,votesSummary:voting.historicalResults[0]})}}
                                     </div>
                                 {% endif %}
@@ -66,14 +66,14 @@
                                 <div class="btn-group btn-group-sm">
                                     <button class="btn-primary btn btn-gm-activate-vote" data-href="{{ path('app_general_meeting_activate_vote',{slug:meeting.slug,sort:voting.sort}) }}" type="button">
                                         {% if voting.votesSummary is empty %}
-                                            {% trans %}Aktywuj{% endtrans %}
+                                            {% trans %}activate{% endtrans %}
                                         {% else %}
-                                            {% trans %}Zrestartuj{% endtrans %}
+                                            {% trans %}general_meeting.restart.button{% endtrans %}
                                         {% endif %}
                                     </button>
-                                    <a class="btn-outline-secondary btn" href="{{ path('app_manage_general_meeting_edit_voting',{slug:meeting.slug,sort:voting.sort}) }}">{% trans %}Edycja{% endtrans %}</a>
+                                    <a class="btn-outline-secondary btn" href="{{ path('app_manage_general_meeting_edit_voting',{slug:meeting.slug,sort:voting.sort}) }}">{% trans %}edit{% endtrans %}</a>
                                     {% if meeting.secret == false %}
-                                        <a class="btn-secondary btn" href="{{ path('app_manage_general_meeting_course_voting',{slug:meeting.slug,sort:voting.sort}) }}">{% trans %}Przebieg{% endtrans %}</a>
+                                        <a class="btn-secondary btn" href="{{ path('app_manage_general_meeting_course_voting',{slug:meeting.slug,sort:voting.sort}) }}">{% trans %}course{% endtrans %}</a>
                                     {% endif %}
                                 </div>
                             {% endif %}
@@ -87,10 +87,10 @@
 
             <div class="btn-group btn-group-sm">
                 {% if meeting.status==0 %}
-                    <a href="{{ path('app_manage_general_meeting_edit',{slug:meeting.slug}) }}" class="btn btn-secondary">{% trans %}Edytuj{% endtrans %}</a>
+                    <a href="{{ path('app_manage_general_meeting_edit',{slug:meeting.slug}) }}" class="btn btn-secondary">{% trans %}edit{% endtrans %}</a>
                 {% endif %}
                 {% if participants is not empty %}
-                    <a href="{{ path('app_manage_participant_list_show_participants',{id:meeting.participantList.id}) }}" class="btn btn-sm btn-primary">{% trans %}Lista uczestników{% endtrans %} ({{ participants|length }})</a>
+                    <a href="{{ path('app_manage_participant_list_show_participants',{id:meeting.participantList.id}) }}" class="btn btn-sm btn-primary">{% trans %}participants.list.text{% endtrans %} ({{ participants|length }})</a>
                 {% endif %}
                 {{ include('polling/general_meeting_status.html.twig',{meeting:meeting}) }}
                 {% if meeting.status==1 %}
@@ -98,12 +98,12 @@
                         {{ include('polling/general_meeting_start_test_vote_form.html.twig',{meeting:meeting}) }}
                     {% endif %}
                     {% if active.active is defined and active.active is not null %}
-                        <button class="btn btn-outline-primary" data-href="{{ path('app_ajax_general_meeting_end_vote',{slug:meeting.slug}) }}" id="gm-end-vote">{% trans %}Zakończ obecne głosowanie{% endtrans %}</button>
+                        <button class="btn btn-outline-primary" data-href="{{ path('app_ajax_general_meeting_end_vote',{slug:meeting.slug}) }}" id="gm-end-vote">{% trans %}general_meeting.voting.end_vote.button{% endtrans %}</button>
                     {% endif %}
                     {% elseif meeting.status==2 %}
-                    <a class="btn btn-outline-dark" href="{{ path('general_meeting_results_pdf',{slug:meeting.slug,valid:1})}}">{% trans %}Pobierz wyniki głosowań{% endtrans %}</a>
+                    <a class="btn btn-outline-dark" href="{{ path('general_meeting_results_pdf',{slug:meeting.slug,valid:1})}}">{% trans %}general_meeting.voting.get_votes.button{% endtrans %}</a>
                         {% if meeting.secret == false %}
-                    <a class="btn btn-outline-success" href="{{ path('app_manage_general_meeting_course_meeting',{slug:meeting.slug})}}">{% trans %}Pobierz przebieg głosowań{% endtrans %}</a>
+                    <a class="btn btn-outline-success" href="{{ path('app_manage_general_meeting_course_meeting',{slug:meeting.slug})}}">{% trans %}general_meeting.voting.get_course.button{% endtrans %}</a>
                             {% endif %}
                 {% endif %}
             </div>
@@ -112,19 +112,19 @@
             <div class="activeStatus pt-3">
                 {% if active.active is defined and active.active is not null %}
                     {% if active.active == 0 %}
-                        <h4>{% trans %}Trwa sprawdzanie obecności uczestników{% endtrans %}</h4>
+                        <h4>{% trans %}general_meeting.voting.presence.checking{% endtrans %}</h4>
                     {% else %}
-                        <p>{% trans %}Aktualne głosowanie{% endtrans %}</p>
+                        <p>{% trans %}active_voting{% endtrans %}</p>
                         <h3>{{ voting.content }}</h3>
                         {% if voting.type==2 %}
-                            <p class="my-3">{% trans %}Kandydaci{% endtrans %}:</p>
+                            <p class="my-3">{% trans %}candidates{% endtrans %}:</p>
                             <ul class="list-group list-group-flush">
                                 {% for k,candidate in voting.candidates %}
                                     <li class="list-group-item">{{ k+1 }}. {{ candidate.name }}</li>
                                 {% endfor %}
                             </ul>
                         {% elseif voting.type==3 %}
-                            <p class="my-3">{% trans %}Dostępne odpowiedzi{% endtrans %}:</p>
+                            <p class="my-3">{% trans %}available_answers{% endtrans %}:</p>
                             <ul class="list-group list-group-flush">
                                 {% for k,answer in voting.answers %}
                                     <li class="list-group-item">{{ k+1 }}. {{ answer.content }}</li>
@@ -351,16 +351,18 @@
                     <input type="hidden" id="votes_total" value="{% if meeting.totalVotes is null or meeting.totalVotes==0 %}{{ t_vot }}{% else %}{{ meeting.totalVotes }}{% endif %}">
                 {% endif %}
                 {% if active.votes is defined %}
-                    <p>{% trans %}Zagłosowało{% endtrans %}:
+                    <p>{% trans %}voted{% endtrans %}:
                         <span class="counter">{% if voting is not null %}{{ active.voted|length }}{% else %}{{ active.votes|length }}{% endif %}</span>/<span class="sum">{% if voting is not null %}{{ active.votes|length }}{% else %}{{ (participants|length) }}{% endif %}</span></p>
                 {% endif %}
-                <p>{% trans %}Na sali znajduje się{% endtrans %}:</p>
+                <p>{% trans %}general_meeting.participants.status{% endtrans %}:</p>
                 <p>
                     {% if meeting.weight==1 %}
-                        <span id="vot_span">{{ vot }}</span> {% trans %}głosów - co stanowi{% endtrans %} <span id="vot_span_total">{{ ((vot/t_vot)*100)|number_format(2) }}</span>% {% trans%}całości{% endtrans%} ({{  t_vot }} {% trans %}głosów{% endtrans %})
-                    {% else %}
-                        <span id="act_span">{{ act }}</span> {% trans %}akcji - co stanowi{% endtrans %} <span id="act_span_total">{{ ((act/t_act)*100)|number_format(2) }}</span>% {% trans%}całości{% endtrans%} ({{ t_act }} {% trans %}akcji{% endtrans %})
-                    {% endif %}
+                        {% set percent = ((vot/t_vot)*100)|number_format(2) %}
+                        <span id="vot_span">{{ vot }}</span> {% trans with { '%per%':'<span id="vot_span_total">'~percent~'</span>', '%tot%': t_vot} %}general_meeting.voting.actual_status.votes{% endtrans %}
+                        {% else %}
+                        {% set percent = ((act/t_act)*100)|number_format(2) %}
+                            <span id="act_span">{{ act }}</span> {% trans with { '%per%':'<span id="vot_span_total">'~percent~'</span>', '%tot%': t_act} %}general_meeting.voting.actual_status.actions{% endtrans %}
+                        {% endif %}
                 </p>
             </div>
         </div>

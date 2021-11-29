@@ -1,9 +1,15 @@
 {% if meeting.status==0 %}
-    <button class="btn btn-sm btn-dark btn-gm-begin" {% if meeting.participantList is null %}disabled{% endif%} data-hash="{{ meeting.hashId }}" data-url="{{ path('app_manage_general_meeting_cockpit',{slug:meeting.slug}) }}" data-href="{{ path('app_manage_general_meeting_begin', {'id':meeting.id}) }}">{% trans %}Rozpocznij{% endtrans %}</button>
+    <button class="btn btn-sm btn-dark btn-gm-begin" {% if meeting.participantList is null %}disabled{% endif%} data-hash="{{ meeting.hashId }}" data-url="{{ path('app_manage_general_meeting_cockpit',{slug:meeting.slug}) }}" data-href="{{ path('app_manage_general_meeting_begin', {'id':meeting.id}) }}">
+        {% trans %}begin{% endtrans %}
+    </button>
 {% elseif meeting.status==1 %}
     {% if meeting.activeStatusArray.active is defined and meeting.activeStatusArray.active is null %}
-    <button class="btn btn-sm btn-dark btn-gm-end" data-hash="{{ meeting.hashId }}" data-url="{{ path('app_manage_general_meeting_cockpit',{slug:meeting.slug}) }}" data-href="{{ path('app_manage_general_meeting_end', {'id':meeting.id}) }}">{% trans %}Zakończ{% endtrans %}</button>
+    <button class="btn btn-sm btn-dark btn-gm-end" data-hash="{{ meeting.hashId }}" data-url="{{ path('app_manage_general_meeting_cockpit',{slug:meeting.slug}) }}" data-href="{{ path('app_manage_general_meeting_end', {'id':meeting.id}) }}">
+        {% trans %}general_meeting.end.button{% endtrans %}
+    </button>
     {% endif %}
 {% else %}
-    <button class="btn btn-sm btn-dark btn-gm-reset" data-hash="{{ meeting.hashId }}" data-url="{{ path('app_manage_general_meeting_cockpit',{slug:meeting.slug}) }}" data-href="{{ path('app_manage_general_meeting_reset', {'id':meeting.id}) }}">{% trans %}Rozpocznij na nowo{% endtrans %}</button>
+    <button class="btn btn-sm btn-dark btn-gm-reset" data-hash="{{ meeting.hashId }}" data-url="{{ path('app_manage_general_meeting_cockpit',{slug:meeting.slug}) }}" data-href="{{ path('app_manage_general_meeting_reset', {'id':meeting.id}) }}">
+        {% trans %}general_meeting.begin_as_new.button{% endtrans %}
+    </button>
 {% endif %}

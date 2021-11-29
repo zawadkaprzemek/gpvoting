@@ -63,9 +63,8 @@ class RoomRepository extends ServiceEntityRepository
     public function findRoomsWithCode(string $code)
     {
         return $this->createQueryBuilder('r')
-            ->join('r.code','c')
             ->join('r.event', 'e')
-            ->andWhere('c.name = :code')
+            ->andWhere('r.code = :code')
             ->setParameter('code',$code)
             ->andWhere('r.visible = 1')
             ->andWhere('e.status = 1')

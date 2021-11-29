@@ -1,0 +1,12 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{% trans %}terms{% endtrans %}{% endblock %}
+
+{% block body %}
+
+    <h1>{% trans %}terms{% endtrans %}</h1>
+
+    <div class="terms-container">
+        {{ terms|raw }}
+    </div>
+{% endblock %}

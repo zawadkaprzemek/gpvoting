@@ -1,0 +1,12 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{% trans %}instruction{% endtrans %}{% endblock %}
+
+{% block body %}
+
+    <h1>{% trans %}instruction{% endtrans %}</h1>
+
+    <div class="terms-container">
+        {{ help|raw }}
+    </div>
+{% endblock %}

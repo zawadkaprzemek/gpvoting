@@ -66,6 +66,25 @@ seconds: sekund
 second: sekunda
 greatings: Pozrawiamy
 gpvoting_team: Zespół GPVoting
+terms: Regulamin
+privacy: Polityka prywatności
+weight:
+  actions: Waga akcji
+  votes: Waga głosów
+
+secret_voting: Tajne głosowanie
+result: Wynik
+course: Przebieg
+begin: Rozpocznij
+voted: Zagłosowało
+accepted: Zaakceptowane
+declined: Odrzucone
+on: Za
+against: Przeciw
+hold_on: Wstrzymało się
+active_voting: Aktualne głosowanie
+candidates: Kandydaci
+available_answers: Dostępne odpowiedzi
 #Zarządzanie
 
 manage:
@@ -138,6 +157,15 @@ codes:
     info: Zarządzanie kodami dostępu
     text: Zarządzaj kodami
 
+  enter_form:
+    title: Wprowadź kod dostępu
+    label: Kod dostępu
+    clear: Wyczyść kod
+
+  session_cleared: Kody wyczyszczone
+
+  bad_code_enter: Wprowadzono błędny kod
+
 #Pokoje
 room:
   text: Pokój
@@ -171,6 +199,7 @@ room:
 #Lista uczestników
 participants:
   list:
+    text: Lista uczestników
     my: Moje listy uczestników
     info: Twoje listy uczestników
     email_with_password: Hasło dostępu uczestnika
@@ -242,6 +271,79 @@ register.form:
   username:
     label: Nazwa użytkownika
 
+#Walne zgromadzenia
+general_meeting:
+  text: Walne zgromadzenie
+  permission_denied: Nie możesz wziąć udziału w tym zgromadzeniu!
+
+  begin:
+    button:
+    confirm: Na pewno chcesz rozpocząć to zgromadzenie?
+
+  restart:
+    button: Zrestartuj
+    confirm: Na pewno chcesz rozpocząć od nowa to zgromadzenie?
+
+  begin_as_new:
+    button: Rozpocznij na nowo
+
+  end:
+    button: Zakończ
+    confirm: Na pewno chcesz zakończyć to zgromadzenie?
+
+  voting:
+    list: Lista głosowań
+    personal: Głosowanie personalne
+    poll: Głosowanie sondażowe
+    resolution: Głosowanie nad uchwałą
+    invalid_votes_count: Ilość głosów nie ważnych
+    actual_status:
+      votes: głosów - co stanowi %per%%  całości %tot% głosów
+      actions: akcji - co stanowi %per%% całości %tot% akcji
+
+
+    get_votes:
+      button: Pobierz wyniki głosowań
+    get_course:
+      button: Pobierz przebieg głosowań
+    previous:
+      text: Poprzedni wynik
+      show: Pokaż poprzedni wynik
+      hide: Ukryj poprzedni wynik
+    test_begin:
+      button: Rozpocznij testowe głosowanie
+      confirm: Na pewno chcesz rozpocząć testowe głosowanie?
+
+    presence:
+      confirm:
+      button: Rozpocznij sprawdzanie obecności
+      checking: Trwa sprawdzanie obecności uczestników
+
+    activate:
+      confirm: Na pewno chcesz aktywować to głosowanie?
+      button: x
+
+    repeat:
+      confirm: Na pewno chcesz powtórzyć głosowanie nad tą uchwałą?
+      button: y
+
+    end_vote:
+      button: Zakończ obecne głosowanie
+      confirm: Na pewno chcesz zakończyć obecne głosowanie?
+
+    choose_candidates_to_vote: Wybierz kandydata/ów aby zagłosować
+    choose_answers_to_vote: Zaznacz odpowiedź/odpowiedzi aby zagłosować
+    invalid_vote:
+      confirm: Przy zatwierdzeniu tego wyboru oddasz nieważny głos. Kontynuwać?
+
+  participants:
+    list_not_selected: Nie wybrałeś jeszcze listy uczestników!!!
+    status: Na sali znajduje się
+
+  kworum:
+    required_percent: Procent obecnych uczestników niezbędny do osiągnięcia kworum
+    success: Udało się osiągnąć kworum
+    fail: Nie udało się osiągnąć kworum
 
 #emails
 email:

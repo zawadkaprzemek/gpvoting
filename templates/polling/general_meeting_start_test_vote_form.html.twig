@@ -1,8 +1,8 @@
 <button class="btn btn-sm btn-dark btn-test-vote-start"
         data-href="{{ path('app_manage_general_meeting_test_vote_start', {'slug':meeting.slug}) }}">
     {% if meeting.kworum %}
-        {% trans %}Rozpocznij sprawdzanie obecności{% endtrans %}
+        {% trans %}general_meeting.voting.presence.button{% endtrans %}
     {% else %}
-    {% trans %}Rozpocznij testowe głosowanie{% endtrans %}
+    {% trans %}general_meeting.voting.test_vote.button{% endtrans %}
     {% endif %}
 </button>

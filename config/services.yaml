@@ -6,6 +6,7 @@
 parameters:
     upload_image_directory: '%kernel.project_dir%/public/assets/uploads/images/'
     excell_xlsx_path: '%kernel.project_dir%/public/assets/excell/'
+    front_url: 'http://gpvoting.gpedulife.pl/gpvoting-front/'
 
 services:
     # default configuration for services in *this* file

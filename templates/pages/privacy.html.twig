@@ -1,0 +1,12 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{% trans %}privacy{% endtrans %}{% endblock %}
+
+{% block body %}
+
+    <h1>{% trans %}privacy{% endtrans %}</h1>
+
+    <div class="terms-container">
+        {{ privacy|raw }}
+    </div>
+{% endblock %}

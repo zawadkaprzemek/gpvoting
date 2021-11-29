@@ -1,12 +1,12 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}{% trans %}Walne zgromadzenie{% endtrans %}: {{ meeting.name }}{% endblock %}
+{% block title %}{% trans %}general_meeting.text{% endtrans %}: {{ meeting.name }}{% endblock %}
 
 {% block body %}
 
     <div>
         <div class="alert alert-danger text-center">
-            <h3 class="py-3 mb-0">{% trans %}Nie możesz wziąć udziału w tym zgromadzeniu!{% endtrans %}</h3>
+            <h3 class="py-3 mb-0">{% trans %}general_meeting.permission_denied{% endtrans %}</h3>
         </div>
     </div>
 {% endblock %}

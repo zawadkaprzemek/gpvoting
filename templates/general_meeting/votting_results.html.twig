@@ -2,22 +2,22 @@
     <p class="mb-0 font-weight-bold text-center">
         {% if voting.weight==1 %}
             {% if votesSummary['votes']['accepted'] %}
-                {% trans %}Zaakceptowane{% endtrans %}
+                {% trans %}accepted{% endtrans %}
             {% else %}
-                {% trans %}Odrzucone{% endtrans %}
+                {% trans %}declined{% endtrans %}
             {% endif %}
         {% else %}
             {% if votesSummary['actions']['accepted'] %}
-                {% trans %}Zaakceptowane{% endtrans %}
+                {% trans %}accepted{% endtrans %}
             {% else %}
-                {% trans %}Odrzucone{% endtrans %}
+                {% trans %}declined{% endtrans %}
             {% endif %}
         {% endif %}
     </p>
-    <p class="mb-0">{% trans %}Za{% endtrans %}: {% if voting.weight==1 %}{{ votesSummary['votes'][1] }}{% else %}{{ votesSummary['actions'][1] }}{% endif %}%</p>
-    <p class="mb-0">{% trans %}Przeciw{% endtrans %}: {% if voting.weight==1 %}{{ votesSummary['votes'][0] }}{% else %}{{ votesSummary['actions'][0] }}{% endif %}%</p>
+    <p class="mb-0">{% trans %}on{% endtrans %}: {% if voting.weight==1 %}{{ votesSummary['votes'][1] }}{% else %}{{ votesSummary['actions'][1] }}{% endif %}%</p>
+    <p class="mb-0">{% trans %}against{% endtrans %}: {% if voting.weight==1 %}{{ votesSummary['votes'][0] }}{% else %}{{ votesSummary['actions'][0] }}{% endif %}%</p>
     {% if meeting.holdBack %}
-        <p class="mb-0">{% trans %}Wstrzymało się{% endtrans %}: {% if voting.weight==1 %}{{ votesSummary['votes'][2] }}{% else %}{{ votesSummary['actions'][2] }}{% endif %}%</p>
+        <p class="mb-0">{% trans %}hold_off{% endtrans %}: {% if voting.weight==1 %}{{ votesSummary['votes'][2] }}{% else %}{{ votesSummary['actions'][2] }}{% endif %}%</p>
     {% endif %}
 {% elseif voting.type==2 %}
     {% if votesSummary['valid'] is defined %}
@@ -40,7 +40,7 @@
             {% endfor %}
         {% endif %}
         {% if votesSummary['invalid'] is not iterable %}
-            <p class="small">{% trans %}Ilość głosów nie ważnych{% endtrans %}: {{ votesSummary['invalid'] }} </p>
+            <p class="small">{% trans %}general_meeting.voting.invalid_votes_count{% endtrans %}: {{ votesSummary['invalid'] }} </p>
         {% endif %}
     {% endif %}
 {% else %}

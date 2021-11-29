@@ -44,16 +44,16 @@ class AppVotingTypeExtension extends AbstractExtension
         switch ($value->getType())
         {
             case 1:
-                $type=$this->translator->trans('Głosowanie nad uchwałą');
+                $type=$this->translator->trans('general_meeting.voting.resolution');
                 break;
             case 2:
-                $type=$this->translator->trans('Głosowanie personalne');
+                $type=$this->translator->trans('general_meeting.voting.personal');
                 if($withNumbers) {
                     $type.=" (" . sizeof($value->getCandidates()) . ")";
                 }
                 break;
             case 3:
-                $type=$this->translator->trans('Głosowanie sondażowe');
+                $type=$this->translator->trans('general_meeting.voting.poll');
                 if($withNumbers)
                 {
                     $type.=" (".sizeof($value->getAnswers()).")";

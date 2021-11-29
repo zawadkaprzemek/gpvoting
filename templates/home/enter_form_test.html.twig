@@ -1,0 +1,24 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{% trans %}codes.enter_form.title{% endtrans %}{% endblock %}
+
+{% block body %}
+
+    {{ form_start(form,{'action': path('app_enter_front')}) }}
+    <div class="row form-group">
+        {% if code is not null %}
+        <div class="col-12">
+            <p>{% trans %}code{% endtrans %}: {{ code }}</p>
+            <a href="{{ path('app_clear_session_codes') }}" class="btn btn-primary">{% trans %}codes.enter_form.clear{% endtrans %}</a>
+        </div>
+        {% endif %}
+        <div class="col-12 col-sm-3 col-form-label">
+            {{form_label(form.event_code)}}
+        </div>
+        <div class="col-12 col-sm-9">
+            {{ form_widget(form.event_code) }}
+        </div>
+    </div>
+    {{ form_row(form.submit) }}
+    {{ form_end(form) }}
+{% endblock %}
