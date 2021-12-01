@@ -21,7 +21,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  * Class AdminController
  * @package App\Controller
  * @IsGranted("ROLE_ADMIN")
- * @Route("{_locale}/admin")
+ * @Route("/admin")
  */
 class AdminController extends AbstractController
 {

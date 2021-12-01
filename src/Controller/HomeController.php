@@ -29,16 +29,15 @@ class HomeController extends AbstractController
         $this->translator = $translator;
     }
 
-    /**
-     * @Route("/", name="home")
-     */
-    public function indexNoLocale()
+
+    public function indexNoLocale(): RedirectResponse
     {
         return $this->redirectToRoute('app_event_list',array('_locale'=>'pl'));
     }
 
+
     /**
-     * @Route("/{_locale}", name="app_event_list")
+     * @Route("/", name="app_event_list")
      * @param EventRepository $repository
      * @param PaginatorInterface $paginator
      * @param Request $request
@@ -55,7 +54,7 @@ class HomeController extends AbstractController
 
 
     /**
-     * @Route("/{_locale}/enter/", name="app_enter_front")
+     * @Route("/enter/", name="app_enter_front")
      * @param Request $request
      * @param RoomRepository $roomRepository
      * @param PollingRepository $pollingRepository
@@ -149,7 +148,7 @@ class HomeController extends AbstractController
     }
 
     /**
-     * @Route("/{_locale}/enter_form_test", name="enter_form_test")
+     * @Route("/enter_form_test", name="enter_form_test")
      * @param Request $request
      * @return Response
      */
@@ -173,7 +172,7 @@ class HomeController extends AbstractController
     }
 
     /**
-     * @Route("/{_locale}/clear_session_codes", name="app_clear_session_codes")
+     * @Route("/clear_session_codes", name="app_clear_session_codes")
      * @param Request $request
      * @return RedirectResponse
      */

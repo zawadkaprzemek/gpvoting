@@ -28,7 +28,7 @@ class PollingController extends AbstractController
     /**
      * @var TranslatorInterface
      */
-    private $translator;
+    private TranslatorInterface $translator;
 
     public function __construct(TranslatorInterface $translator)
     {
@@ -36,17 +36,7 @@ class PollingController extends AbstractController
     }
 
     /**
-     * @Route("/polling", name="polling")
-     */
-    public function index()
-    {
-        return $this->render('polling/index.html.twig', [
-            'controller_name' => 'PollingController',
-        ]);
-    }
-
-    /**
-     * @Route("/{_locale}/manage/{slug_parent}/{slug_child}/create_polling", name="app_manage_create_polling")
+     * @Route("/manage/{slug_parent}/{slug_child}/create_polling", name="app_manage_create_polling")
      * @ParamConverter("event", options={"mapping": {"slug_parent": "slug"}})
      * @ParamConverter("room", options={"mapping": {"slug_child": "slug"}})
      * @param Event $event
@@ -54,7 +44,7 @@ class PollingController extends AbstractController
      * @param Request $request
      * @return Response
      */
-    public function new(Event $event,Room $room,Request $request)
+    public function newPollingAction(Event $event,Room $room,Request $request): Response
     {
         $user=$this->getUser();
         if($event->getUser()!==$user)
@@ -68,13 +58,13 @@ class PollingController extends AbstractController
         if ($form->isSubmitted()){
             if($polling->getStartDate()< new DateTime())
             {
-                $form->get('startDate')->addError(new FormError('Głosowanie nie może zaczynać się w przeszłości'));
+                $form->get('startDate')->addError(new FormError($this->translator->trans('polling.error.cannot_begin_in_past')));
             }
             if(!$polling->getSession())
             {
                 if($polling->getEndDate()<$polling->getStartDate())
                 {
-                    $form->get('endDate')->addError(new FormError('Data końcowa nie może być wcześniejsza od daty startowej'));
+                    $form->get('endDate')->addError(new FormError($this->translator->trans('polling.error.date_end_must_be_greater_than_start')));
                 }
             }
             if ($form->isValid()) {
@@ -84,18 +74,18 @@ class PollingController extends AbstractController
                 }
                 $em->persist($polling);
                 $em->flush();
-                $this->addFlash('success', 'Dodano nowe głosowanie');
+                $this->addFlash('success', $this->translator->trans('polling.new.success'));
                 return $this->redirectToRoute('app_questions_add', ['slug' => $polling->getSlug()]);
             }
         }
         return $this->render('polling/form.html.twig',[
            'form'=>$form->createView(),
-            'title'=>$this->translator->trans('Dodaj nowe głosowanie')
+            'title'=>$this->translator->trans('polling.new.text')
         ]);
     }
 
     /**
-     * @Route("/{_locale}/polling/{slug}", name="app_polling_show")
+     * @Route("/polling/{slug}", name="app_polling_show")
      * @param Polling $polling
      * @return Response
      */
@@ -107,7 +97,7 @@ class PollingController extends AbstractController
     }
 
     /**
-     * @Route("/{_locale}/manage/polling/{slug}/edit", name="app_polling_edit")
+     * @Route("/manage/polling/{slug}/edit", name="app_polling_edit")
      * @param Polling $polling
      * @param Request $request
      * @return Response
@@ -126,7 +116,7 @@ class PollingController extends AbstractController
             {
                 if($polling->getEndDate()<$polling->getStartDate())
                 {
-                    $form->get('endDate')->addError(new FormError('Data końcowa nie może być wcześniejsza od daty startowej'));
+                    $form->get('endDate')->addError(new FormError($this->translator->trans('polling.error.date_end_must_be_greater_than_start')));
                 }
             }
             if($form->isValid())
@@ -138,18 +128,18 @@ class PollingController extends AbstractController
                 }
                 $em->persist($polling);
                 $em->flush();
-                $this->addFlash('success', 'Zapisano zmiany');
+                $this->addFlash('success', $this->translator->trans('changes_saved'));
                 return $this->redirectToRoute('app_polling_show',['slug'=>$polling->getSlug()]);
             }
         }
         return $this->render('polling/form.html.twig',[
             'form'=>$form->createView(),
-            'title'=>$this->translator->trans('Edytuj głosowanie')
+            'title'=>$this->translator->trans('polling.edit.text')
         ]);
     }
 
     /**
-     * @Route("/{_locale}/manage/polling/{slug}/addQuestions", name="app_questions_add")
+     * @Route("/manage/polling/{slug}/addQuestions", name="app_questions_add")
      * @param Polling $polling
      * @param Request $request
      * @param QuestionRepository $repository
@@ -168,7 +158,7 @@ class PollingController extends AbstractController
         $sort=$repository->getSort($polling);
         if(sizeof($polling->getQuestions())==$polling->getQuestionsCount())
         {
-            $this->addFlash('warning','Osiągnięto limit pytań dla tego głosowania');
+            $this->addFlash('warning',$this->translator->trans('polling.error.limit_questions_reached'));
             return $this->redirectToRoute('app_polling_show',['slug'=>$polling->getSlug()]);
         }
         $question->setSort($sort['sort']+1);
@@ -203,7 +193,7 @@ class PollingController extends AbstractController
             $em=$this->getDoctrine()->getManager();
             $em->persist($question);
             $em->flush();
-            $this->addFlash('success', 'Dodano nowe pytanie');
+            $this->addFlash('success', $this->translator->trans('polling.new.question.success'));
             if(isset($form["next"]))
             {
                 if($form->get('next')->getData())
@@ -218,18 +208,18 @@ class PollingController extends AbstractController
         }
         return $this->render('question/form.html.twig',[
             'form'=>$form->createView(),
-            'title'=>$this->translator->trans('Dodaj nowe pytanie')
+            'title'=>$this->translator->trans('polling.new.question.text')
         ]);
     }
 
 
 
     /**
-     * @Route("{_locale}/polling/{slug}/results",name="app_polling_results")
+     * @Route("polling/{slug}/results",name="app_polling_results")
      * @param Polling $polling
      * @return RedirectResponse
      */
-    public function results(Polling $polling)
+    public function resultsAction(Polling $polling): RedirectResponse
     {
         $user=$this->getUser();
         if($polling->getRoom()->getEvent()->getUser()!==$user)
@@ -243,7 +233,7 @@ class PollingController extends AbstractController
     }
 
     /**
-     * @Route("/{_locale}/polling/{id}/delete", name="app_polling_delete", methods={"DELETE"})
+     * @Route("/polling/{id}/delete", name="app_polling_delete", methods={"DELETE"})
      * @param Request $request
      * @param Polling $polling
      * @return Response
@@ -259,7 +249,7 @@ class PollingController extends AbstractController
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->remove($polling);
             $entityManager->flush();
-            $this->addFlash('success','Usunięto głosowanie');
+            $this->addFlash('success',$this->translator->trans('polling.delete.success'));
         }
         return $this->redirectToRoute('app_manage_room',[
             'slug_parent'=>$polling->getRoom()->getEvent()->getSlug(),
@@ -268,7 +258,7 @@ class PollingController extends AbstractController
     }
 
     /**
-     * @Route("/{_locale}/polling/{slug}/enter", name="app_polling_enter")
+     * @Route("/polling/{slug}/enter", name="app_polling_enter")
      * @param Polling $polling
      * @param Request $request
      * @return Response
@@ -294,7 +284,7 @@ class PollingController extends AbstractController
             $code=$form->get('code')->getData();
             if($code!==$polling->getCode()->getName())
             {
-                $form->get('code')->addError(new FormError('Nie poprawny kod'));
+                $form->get('code')->addError(new FormError($this->translator->trans('codes.bad_code_enter')));
             }
             if($form->isValid())
             {

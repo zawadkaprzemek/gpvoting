@@ -31,7 +31,7 @@ class EventController extends AbstractController
     }
 
     /**
-     * @Route("/{_locale}/manage/create_event", name="app_event_create")
+     * @Route("/manage/create_event", name="app_event_create")
      * @param Request $request
      * @return RedirectResponse|Response
      */
@@ -80,7 +80,7 @@ class EventController extends AbstractController
     }
 
     /**
-     * @Route("/{_locale}/manage/{slug}/edit", name="app_event_edit")
+     * @Route("/manage/{slug}/edit", name="app_event_edit")
      * @param Event $event
      * @param Request $request
      * @return RedirectResponse|Response
@@ -131,7 +131,7 @@ class EventController extends AbstractController
     }
 
     /**
-     * @Route("/{_locale}/event/{slug}", name="app_event_show")
+     * @Route("/event/{slug}", name="app_event_show")
      * @param Event $event
      * @param RoomRepository $repository
      * @return Response
@@ -164,7 +164,7 @@ class EventController extends AbstractController
     }
 
     /**
-     * @Route("/{_locale}/event/{id}/delete", name="app_event_delete", methods={"DELETE"})
+     * @Route("/event/{id}/delete", name="app_event_delete", methods={"DELETE"})
      * @param Request $request
      * @param Event $event
      * @return Response
@@ -195,7 +195,7 @@ class EventController extends AbstractController
     }
 
     /**
-     * @Route("/{_locale}/manage/{slug}/open", name="app_event_open", methods={"PATCH"})
+     * @Route("/manage/{slug}/open", name="app_event_open", methods={"PATCH"})
      * @param Event $event
      * @return RedirectResponse
      */
@@ -216,7 +216,7 @@ class EventController extends AbstractController
     }
 
     /**
-     * @Route("/{_locale}/manage/event{slug}/close", name="app_manage_close_event", methods={"PATCH"})
+     * @Route("/manage/event{slug}/close", name="app_manage_close_event", methods={"PATCH"})
      * @param Event $event
      * @return RedirectResponse
      */
@@ -237,7 +237,7 @@ class EventController extends AbstractController
     }
 
     /**
-     * @Route("{_locale}/manage/event/{slug}/codes", name="app_event_codes_menage")
+     * @Route("manage/event/{slug}/codes", name="app_event_codes_menage")
      * @param Event $event
      * @param Request $request
      * @return Response

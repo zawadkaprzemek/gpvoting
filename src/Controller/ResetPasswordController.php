@@ -20,17 +20,17 @@ use SymfonyCasts\Bundle\ResetPassword\Exception\ResetPasswordExceptionInterface;
 use SymfonyCasts\Bundle\ResetPassword\ResetPasswordHelperInterface;
 
 /**
- * @Route("/{_locale}/reset-password")
+ * @Route("/reset-password")
  */
 class ResetPasswordController extends AbstractController
 {
     use ResetPasswordControllerTrait;
 
-    private $resetPasswordHelper;
+    private ResetPasswordHelperInterface $resetPasswordHelper;
     /**
      * @var TranslatorInterface
      */
-    private $translator;
+    private TranslatorInterface $translator;
 
     public function __construct(ResetPasswordHelperInterface $resetPasswordHelper, TranslatorInterface $translator)
     {
@@ -101,7 +101,7 @@ class ResetPasswordController extends AbstractController
 
         $token = $this->getTokenFromSession();
         if (null === $token) {
-            throw $this->createNotFoundException($this->translator->trans('Nie znaleziono tokenu w adresie URL'));
+            throw $this->createNotFoundException($this->translator->trans('reset.token_not_found'));
         }
 
         try {
@@ -172,7 +172,7 @@ class ResetPasswordController extends AbstractController
         $email = (new TemplatedEmail())
             ->from(new Address('kontakt@gpvoting.pl', 'GpVoting'))
             ->to($user->getEmail())
-            ->subject($this->translator->trans("Twoja prośba resetu hasła"))
+            ->subject($this->translator->trans("reset.email.your_password_reset_request"))
             ->htmlTemplate('reset_password/email.html.twig')
             ->context([
                 'resetToken' => $resetToken,

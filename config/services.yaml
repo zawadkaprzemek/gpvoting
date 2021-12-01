@@ -7,12 +7,18 @@ parameters:
     upload_image_directory: '%kernel.project_dir%/public/assets/uploads/images/'
     excell_xlsx_path: '%kernel.project_dir%/public/assets/excell/'
     front_url: 'http://gpvoting.gpedulife.pl/gpvoting-front/'
+    app_locales: pl|en
+    default_locale: pl
 
 services:
     # default configuration for services in *this* file
     _defaults:
         autowire: true      # Automatically injects dependencies in your services.
         autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
+
+        bind:
+           $locales: '%app_locales%'
+           $defaultLocale: '%default_locale%'
 
     # makes classes in src/ available to be used as services
     # this creates a service per class whose id is the fully-qualified class name

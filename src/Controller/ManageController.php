@@ -20,11 +20,19 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class ManageController extends AbstractController
 {
+    private TranslatorInterface $translator;
+
+    public function __construct(TranslatorInterface $translator)
+    {
+        $this->translator = $translator;
+    }
+
     /**
-     * @Route("/{_locale}/manage", name="app_manage")
+     * @Route("/manage", name="app_manage")
      * @param Request $request
      * @param EventRepository $repository
      * @return Response
@@ -41,7 +49,7 @@ class ManageController extends AbstractController
     }
 
     /**
-     * @Route("/{_locale}/manage/{slug}", name="app_manage_event_show")
+     * @Route("/manage/{slug}", name="app_manage_event_show")
      * @param Event $event
      * @return Response
      */
@@ -61,14 +69,14 @@ class ManageController extends AbstractController
     }
 
     /**
-     * @Route("/{_locale}/manage/{slug_parent}/room/{slug_child}/show", name="app_manage_room")
+     * @Route("/manage/{slug_parent}/room/{slug_child}/show", name="app_manage_room")
      * @ParamConverter("event", options={"mapping": {"slug_parent": "slug"}})
      * @ParamConverter("room", options={"mapping": {"slug_child": "slug"}})
      * @param Event $event
      * @param Room $room
      * @return Response
      */
-    public function manageRoom(Event $event,Room $room)
+    public function manageRoom(Event $event,Room $room): Response
     {
         $user=$this->getUser();
         if($event->getUser()!==$user)
@@ -84,7 +92,7 @@ class ManageController extends AbstractController
     }
 
     /**
-     * @Route("/{_locale}/manage/polling/{slug}/show", name="app_manage_polling_show")
+     * @Route("/manage/polling/{slug}/show", name="app_manage_polling_show")
      * @param Polling $polling
      * @return Response
      */
@@ -108,12 +116,12 @@ class ManageController extends AbstractController
     }
 
     /**
-     * @Route("/{_locale}/manage/event_code/{id}/edit", name="app_manage_code_edit")
+     * @Route("/manage/event_code/{id}/edit", name="app_manage_code_edit")
      * @param EventCode $code
      * @param Request $request
      * @return RedirectResponse|Response
      */
-    public function editCode(EventCode $code,Request $request)
+    public function editCode(EventCode $code,Request $request):Response
     {
         $user=$this->getUser();
         if($code->getEvent()->getUser()!==$user)
@@ -127,7 +135,7 @@ class ManageController extends AbstractController
             $em=$this->getDoctrine()->getManager();
             $em->persist($code);
             $em->flush();
-            $this->addFlash('success','Kod został edytowany');
+            $this->addFlash('success',$this->translator->trans('codes.manage.edit.success'));
             return $this->redirectToRoute('app_event_codes_menage',['slug'=>$code->getEvent()->getSlug()]);
         }
 
@@ -137,7 +145,7 @@ class ManageController extends AbstractController
     }
 
     /**
-     * @Route("/{_locale}/manage/polling/{slug}/session_settings", name="app_manage_session_settings")
+     * @Route("/manage/polling/{slug}/session_settings", name="app_manage_session_settings")
      * @param Polling $polling
      * @param Request $request
      * @param SessionSettingsRepository $repository
@@ -180,7 +188,7 @@ class ManageController extends AbstractController
             }
             $em->persist($settings);
             $em->flush();
-            $this->addFlash('success','Zapisano ustawienia sesji');
+            $this->addFlash('success',$this->translator->trans('session.settings.edit.success'));
             return $this->redirectToRoute('app_manage_polling_show',[
                 //'slug_child'=>$polling->getRoom()->getSlug(),
                 'slug'=>$polling->getSlug()
@@ -194,7 +202,7 @@ class ManageController extends AbstractController
     }
 
     /**
-     * @Route("/{_locale}/manage/polling/{slug}/session_users", name="app_manage_session_users")
+     * @Route("/manage/polling/{slug}/session_users", name="app_manage_session_users")
      * @param Polling $polling
      * @param SessionUsersRepository $repository
      * @return Response
@@ -214,7 +222,7 @@ class ManageController extends AbstractController
     }
 
     /**
-     * @Route("/{_locale}/manage/polling/{slug}/begin_session",name="app_manage_begin_session")
+     * @Route("/manage/polling/{slug}/begin_session",name="app_manage_begin_session")
      * @param Polling $polling
      * @param SessionSettingsRepository $repository
      * @param Request $request
@@ -249,12 +257,12 @@ class ManageController extends AbstractController
         $em=$this->getDoctrine()->getManager();
         $em->persist($settings);
         $em->flush();
-        $this->addFlash('success','session.begin.success');
+        $this->addFlash('success',$this->translator->trans('session.begin.success'));
         return $this->redirect($request->headers->get('referer'));
     }
 
     /**
-     * @Route("/{_locale}/manage/polling/{slug}/end_session", name="app_manage_end_session", methods={"PATCH"})
+     * @Route("/manage/polling/{slug}/end_session", name="app_manage_end_session", methods={"PATCH"})
      * @param Polling $polling
      * @param Request $request
      * @param SessionSettingsRepository $repository
@@ -281,13 +289,13 @@ class ManageController extends AbstractController
     }
 
     /**
-     * @Route("/{_locale}/pollings", name="app_pollings")
+     * @Route("/pollings", name="app_pollings")
      * @param Request $request
      * @param PollingRepository $repository
      * @param SessionSettingsRepository $settingsRepository
      * @return RedirectResponse|Response
      */
-    public function pollings(Request $request,PollingRepository $repository,SessionSettingsRepository $settingsRepository)
+    public function pollings(Request $request,PollingRepository $repository,SessionSettingsRepository $settingsRepository):Response
     {
         $user=$this->getUser();
         /*if($polling->getRoom()->getEvent()->getUser()!==$user)

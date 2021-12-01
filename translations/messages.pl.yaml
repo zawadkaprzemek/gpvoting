@@ -9,7 +9,17 @@ profile:
   edit: Edytuj profil
   change_password: Zmień hasło
   settings: Ustawienia
-
+  wrong_password: Podano nie prawidłowe hasło
+  change_password.success: Zmiana hasła zakończona powodzeniem
+  create:
+    success: Konto zostało utworzone
+    text: Utwórz konto
+    button: Stwórz konto
+  subaccount:
+    create:
+      success: Podkonto zostało utworzone
+      button: Stwórz podkonto
+      text: Utwórz podkonto
 
 admin:
   create_user: Stwórz konto użytkownika
@@ -21,12 +31,42 @@ voting: Głosowanie
 polling:
   single: Głosowanie
   many: Głosowania
+  error:
+    cannot_begin_in_past: Głosowanie nie może zaczynać się w przeszłości
+    date_end_must_be_greater_than_start: Data końcowa nie może być wcześniejsza od daty startowej
+    limit_questions_reached: Osiągnięto limit pytań dla tego głosowania
+
+  new:
+    success: Dodano nowe głosowanie
+    text: Dodaj nowe głosowanie
+    question:
+      success: Dodano nowe pytanie
+      text: Dodaj nowe pytanie
+
+  edit:
+    text: Edytuj głosowanie
+
+  delete:
+    success: Usunięto głosowanie
+    text: Usuń głosowanie
 
 vote:
   on: Głos za
   against: Głos przeciw
   hold_on: Głos wstrzymany
 
+#Pytania
+question:
+  add:
+    success:
+    text:
+
+  edit:
+    text: Edytuj pytanie
+
+  delete:
+    success:
+    text:
 
 #Analiza
 analysis:
@@ -158,6 +198,8 @@ codes:
   manage:
     info: Zarządzanie kodami dostępu
     text: Zarządzaj kodami
+    edit:
+      success: Kod został edytowany
 
   new:
     generated: Wygenerowano nowe kody
@@ -183,31 +225,79 @@ room:
 
   create:
     new: Stwórz nowy pokój
+    text: Dodaj pokój
     info: Tworzenie nowego pokoju
+    success: Dodano nowy pokój
 
   preview:
     info: Podgląd pokoju
   edit:
     info: Edycja pokoju
+    text: Edytuj pokój
   delete:
     info: Usunięcie pokoju
     confirm: Na pewno chcesz usunąć ten pokój?
   hide:
     info: Ukrycie pokoju dla użytkowników
     confirm: Na pewno chcesz ukryć ten pokój?
+    success: Ukryto pokój
   unhide:
     info: Pokój będzie widoczny dla użytkowników
     confirm: Na pewno chcesz odkryć ten pokój?
+    success: Odkryto pokój
   close:
     info: Zamknięcie wydarzenie, operacja nieodwracalna
     confirm: Na pewno chcesz zamknąć to wydarzenie?
 #Lista uczestników
 participants:
+
+  single:
+    edit:
+      success: Edycja uczestnika zakończona sukcesem
+
+    accept:
+      success: Zaakceptowano uczestnika
+
+    reject:
+      success: Odrzucono uczestnika
+
+    delete:
+      success: Usunięto uczestnika
+
   list:
     text: Lista uczestników
     my: Moje listy uczestników
     info: Twoje listy uczestników
     email_with_password: Hasło dostępu uczestnika
+
+    accept:
+      success: Zaakceptowano listę uczestników
+
+    reject:
+      success: Odrzucono akceptację listy uczestników
+
+
+    open:
+      text:
+      info:
+      help:
+      success: Otwarto listę
+
+    close:
+      text:
+      info:
+      help:
+      success: Zamknięto listę
+
+    new:
+      help: xx
+      info: ii
+      success: Stworzono nową listę uczestników
+      text: Utwórz listę uczestników
+
+    edit:
+      success: Edycja listy uczestników zakończona sukcesem
+      text: Edytuj listę uczestników
 
 participants_import_success: Import uczestników zakończony sukcesem, %new% nowych uczestników, %exists% istniejących uczestników
 list_full_cannot_open: Lista jest pełna, nie można jej otworzyć do zapisów!
@@ -224,8 +314,10 @@ form:
 reset:
   title: Zresetuj hasło
   header: Zresetuj swoje hasło
+  token_not_found: Nie znaleziono tokenu w adresie URL
   email:
     small_text: Wprowadź swój adres email, a dostaniesz od nas link do zmiany swojego hasła
+    your_password_reset_request: Twoja prośba resetu hasła
 
   request_send:
     title: Wysłano maila z resetem hasła
@@ -261,6 +353,9 @@ session:
     help: Ustawienia sesji
     info: Ustawienia sesji
 
+    edit:
+      success: Zapisano ustawienia sesji
+
 #Pozostałe
 name.form:
   label: Twoje imię
@@ -273,6 +368,10 @@ register.form:
   terms:
     label: Akceptuję regulamin serwisu
     error: Musisz zaakceptować regulamin serwisu
+
+  verify_email:
+    text: Potwierdź swój email
+    success: Twój adres email został zweryfikowany
 
   username:
     label: Nazwa użytkownika

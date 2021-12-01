@@ -18,13 +18,13 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * @IsGranted("ROLE_USER")
- * @Route("/{_locale}/profile")
+ * @Route("/profile")
  * Class ProfileController
  * @package App\Controller
  */
 class ProfileController extends AbstractController
 {
-    private $translator;
+    private TranslatorInterface $translator;
 
     public function __construct(TranslatorInterface $translator)
     {
@@ -34,7 +34,7 @@ class ProfileController extends AbstractController
     /**
      * @Route("/", name="app_profile")
      */
-    public function index()
+    public function index(): Response
     {
         return $this->render('profile/show.html.twig', [
             'user'=>$this->getUser()
@@ -46,7 +46,7 @@ class ProfileController extends AbstractController
      * @param Request $request
      * @return Response
      */
-    public function edit(Request $request)
+    public function editAction(Request $request): Response
     {
         $user=$this->getUser();
         $form=$this->createForm(UserEditType::class,$user);
@@ -56,7 +56,7 @@ class ProfileController extends AbstractController
             $em=$this->getDoctrine()->getManager();
             $em->persist($user);
             $em->flush();
-            $this->addFlash('success','Zapisano zmiany');
+            $this->addFlash('success',$this->translator->trans('changes_saved'));
             return $this->redirectToRoute('app_profile');
         }
 
@@ -80,7 +80,7 @@ class ProfileController extends AbstractController
         if($form->isSubmitted())
         {
             if(!$passwordEncoder->isPasswordValid($user,$form->get('oldPassword')->getData())){
-                $form->get('oldPassword')->addError(new FormError('Podano nie prawidłowe hasło'));
+                $form->get('oldPassword')->addError(new FormError($this->translator->trans('profile.wrong_password')));
             }
             if($form->isValid())
             {
@@ -90,7 +90,7 @@ class ProfileController extends AbstractController
                 $entityManager->persist($user);
                 $entityManager->flush();
 
-                $this->addFlash('success', 'Zmiana hasła zakończona powodzeniem');
+                $this->addFlash('success', $this->translator->trans('profile.change_password.success'));
                 return $this->redirectToRoute('app_profile');
             }
         }
@@ -130,13 +130,13 @@ class ProfileController extends AbstractController
             $entityManager->persist($user);
             $entityManager->flush();
 
-            $this->addFlash('success',$this->translator->trans("Konto zostało utworzone"));
+            $this->addFlash('success',$this->translator->trans("profile.subaccount.create.success"));
             return $this->redirectToRoute('app_profile');
         }
         return $this->render('registration/create_account.html.twig', [
             'form' => $form->createView(),
-            'button_text'=>$this->translator->trans('Stwórz podkonto'),
-            'title'=>$this->translator->trans('Utwórz podkonto')
+            'button_text'=>$this->translator->trans('profile.subaccount.create.button'),
+            'title'=>$this->translator->trans('profile.subaccount.create.text')
         ]);
     }
 }

@@ -21,7 +21,7 @@ class RoomController extends AbstractController
     /**
      * @var TranslatorInterface
      */
-    private $translator;
+    private TranslatorInterface $translator;
 
     public function __construct(TranslatorInterface $translator)
     {
@@ -29,7 +29,7 @@ class RoomController extends AbstractController
     }
 
     /**
-     * @Route("/{_locale}/manage/{slug}/create_room", name="app_manage_add_room")
+     * @Route("/manage/{slug}/create_room", name="app_manage_add_room")
      * @param Event $event
      * @param Request $request
      * @return RedirectResponse|Response
@@ -51,18 +51,18 @@ class RoomController extends AbstractController
             $em=$this->getDoctrine()->getManager();
             $em->persist($room);
             $em->flush();
-            $this->addFlash('sucess','Dodano nowy pokój');
+            $this->addFlash('sucess',$this->translator->trans('room.create.success'));
             return $this->redirectToRoute('app_manage_event_show',['slug'=>$event->getSlug()]);
         }
 
         return $this->render('room/form.html.twig',[
             'form'=>$form->createView(),
-            'title'=>$this->translator->trans('Dodaj pokój')
+            'title'=>$this->translator->trans('room.create.text')
         ]);
     }
 
     /**
-     * @Route("/{_locale}/manage/{slug_parent}/{slug_child}/edit", name="app_manage_edit_room")
+     * @Route("/manage/{slug_parent}/{slug_child}/edit", name="app_manage_edit_room")
      * @ParamConverter("event", options={"mapping": {"slug_parent": "slug"}})
      * @ParamConverter("room", options={"mapping": {"slug_child": "slug"}})
      * @param Event $event
@@ -70,7 +70,7 @@ class RoomController extends AbstractController
      * @param Request $request
      * @return RedirectResponse|Response
      */
-    public function editRoom(Event $event,Room $room,Request $request)
+    public function editRoom(Event $event,Room $room,Request $request):Response
     {
         $user=$this->getUser();
         if($event->getUser()!==$user)
@@ -84,25 +84,25 @@ class RoomController extends AbstractController
             $em=$this->getDoctrine()->getManager();
             $em->persist($room);
             $em->flush();
-            $this->addFlash('success','Zapisano zmiany');
+            $this->addFlash('success',$this->translator->trans('changes_saved'));
             return $this->redirectToRoute('app_manage_event_show',['slug'=>$event->getSlug()]);
         }
 
         return $this->render('room/form.html.twig',[
             'form'=>$form->createView(),
-            'title'=>$this->translator->trans('Edytuj pokój')
+            'title'=>$this->translator->trans('room.edit.text')
         ]);
     }
 
     /**
-     * @Route("/{_locale}/event/{slug_parent}/room/{slug_child}/show", name="app_room_show")
+     * @Route("/event/{slug_parent}/room/{slug_child}/show", name="app_room_show")
      * @ParamConverter("event", options={"mapping": {"slug_parent": "slug"}})
      * @ParamConverter("room", options={"mapping": {"slug_child": "slug"}})
      * @param Event $event
      * @param Room $room
      * @return Response
      */
-    public function showRoom(Event $event,Room $room)
+    public function showRoom(Event $event,Room $room): Response
     {
         if(!$room->getVisible())
         {
@@ -131,14 +131,14 @@ class RoomController extends AbstractController
     }
 
     /**
-     * @Route("/{_locale}/room/{slug_parent}/{slug_child}/enter", name="app_room_enter")
+     * @Route("/room/{slug_parent}/{slug_child}/enter", name="app_room_enter")
      * @ParamConverter("event", options={"mapping": {"slug_parent": "slug"}})
      * @ParamConverter("room", options={"mapping": {"slug_child": "slug"}})
      * @param Room $room
      * @param Request $request
      * @return RedirectResponse|Response
      */
-    public function enter(Room $room,Request $request)
+    public function enterAction(Room $room,Request $request):Response
     {
         if(!$room->getVisible())
         {
@@ -161,7 +161,7 @@ class RoomController extends AbstractController
             //$name=$form->get('name')->getData();
             if($code!==$room->getCode())
             {
-                $form->get('code')->addError(new FormError('Nie poprawny kod'));
+                $form->get('code')->addError(new FormError($this->translator->trans('codes.bad_code_enter')));
             }
             if($form->isValid())
             {
@@ -180,12 +180,12 @@ class RoomController extends AbstractController
     }
 
     /**
-     * @Route("/{_locale}/manage/room/{id}/delete", name="app_room_delete", methods={"DELETE"})
+     * @Route("/manage/room/{id}/delete", name="app_room_delete", methods={"DELETE"})
      * @param Room $room
      * @param Request $request
      * @return Response
      */
-    public function deleteRoom(Room $room,Request $request)
+    public function deleteRoom(Room $room,Request $request): Response
     {
         $user=$this->getUser();
         if($room->getEvent()->getUser()!==$user)
@@ -201,11 +201,11 @@ class RoomController extends AbstractController
     }
 
     /**
-     * @Route("{_locale}/manage/room/{slug}/visible", name="app_room_visible", methods={"PATCH"})
+     * @Route("manage/room/{slug}/visible", name="app_room_visible", methods={"PATCH"})
      * @param Room $room
      * @return RedirectResponse
      */
-    public function visibleRoom(Room $room)
+    public function visibleRoom(Room $room): RedirectResponse
     {
         $user=$this->getUser();
         if($room->getEvent()->getUser()!==$user)
@@ -216,7 +216,7 @@ class RoomController extends AbstractController
         $room->setVisible(!$room->getVisible());
         $em->persist($room);
         $em->flush();
-        $this->addFlash('success',($room->getVisible()? 'Odkryto pokój' : 'Ukryto pokój'));
+        $this->addFlash('success',$this->translator->trans($room->getVisible()? 'room.unhide.success' : 'room.hide.success'));
         return $this->redirectToRoute('app_manage_event_show',['slug'=>$room->getEvent()->getSlug()]);
     }
 }

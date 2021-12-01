@@ -40,7 +40,7 @@ class GeneralMeetingController extends AbstractController
     }
 
     /**
-     * @Route("/{_locale}/manage/{slug_parent}/{slug_child}/create_general_meeting", name="app_manage_create_general_meeting")
+     * @Route("/manage/{slug_parent}/{slug_child}/create_general_meeting", name="app_manage_create_general_meeting")
      * @ParamConverter("event", options={"mapping": {"slug_parent": "slug"}})
      * @ParamConverter("room", options={"mapping": {"slug_child": "slug"}})
      * @param Event $event
@@ -72,7 +72,7 @@ class GeneralMeetingController extends AbstractController
     }
 
     /**
-     * @Route("/{_locale}/manage/{slug}/add_voting", name="app_manage_general_meeting_add_voting")
+     * @Route("/manage/{slug}/add_voting", name="app_manage_general_meeting_add_voting")
      * @param Request $request
      * @param GeneralMeeting $meeting
      * @return RedirectResponse|Response
@@ -130,7 +130,7 @@ class GeneralMeetingController extends AbstractController
     }
 
     /**
-     * @Route("/{_locale}/manage/{slug}/edit/{sort}", name="app_manage_general_meeting_edit_voting")
+     * @Route("/manage/{slug}/edit/{sort}", name="app_manage_general_meeting_edit_voting")
      * @param Request $request
      * @param GeneralMeeting $meeting
      * @param MeetingVoting $voting
@@ -206,7 +206,7 @@ class GeneralMeetingController extends AbstractController
     }
 
     /**
-     * @Route("/{_locale}/manage/voting/{id}/delete", name="app_manage_meeting_voting_delete", methods={"DELETE"})
+     * @Route("/manage/voting/{id}/delete", name="app_manage_meeting_voting_delete", methods={"DELETE"})
      * @param Request $request
      * @param MeetingVoting $voting
      * @return Response
@@ -247,7 +247,7 @@ class GeneralMeetingController extends AbstractController
     }
 
     /**
-     * @Route("/{_locale}/manage/meeting/{slug}/vottings", name="app_manage_show_vottings")
+     * @Route("/manage/meeting/{slug}/vottings", name="app_manage_show_vottings")
      * @param GeneralMeeting $meeting
      * @return RedirectResponse|Response
      */
@@ -267,7 +267,7 @@ class GeneralMeetingController extends AbstractController
     }
 
     /**
-     * @Route("/{_locale}/manage/general_meeting/{slug}", name="app_manage_general_meeting_show")
+     * @Route("/manage/general_meeting/{slug}", name="app_manage_general_meeting_show")
      * @param GeneralMeeting $meeting
      * @return RedirectResponse|Response
      */
@@ -288,7 +288,7 @@ class GeneralMeetingController extends AbstractController
 
 
     /**
-     * @Route("/{_locale}/manage/general_meeting/{slug}/edit", name="app_manage_general_meeting_edit")
+     * @Route("/manage/general_meeting/{slug}/edit", name="app_manage_general_meeting_edit")
      * @param GeneralMeeting $meeting
      * @param Request $request
      * @return RedirectResponse|Response
@@ -331,7 +331,7 @@ class GeneralMeetingController extends AbstractController
     }
 
     /**
-     * @Route("/{_locale}/manage/general_meeting/{id}/begin", name="app_manage_general_meeting_begin", methods={"PATCH"})
+     * @Route("/manage/general_meeting/{id}/begin", name="app_manage_general_meeting_begin", methods={"PATCH"})
      * @param GeneralMeeting $meeting
      * @param Request $request
      * @return JsonResponse|RedirectResponse
@@ -358,7 +358,7 @@ class GeneralMeetingController extends AbstractController
     }
 
     /**
-     * @Route("/{_locale}/manage/general_meeting/{slug}/startTestVote", name="app_manage_general_meeting_test_vote_start", methods={"PATCH"})
+     * @Route("/manage/general_meeting/{slug}/startTestVote", name="app_manage_general_meeting_test_vote_start", methods={"PATCH"})
      * @param GeneralMeeting $meeting
      * @param Request $request
      * @return JsonResponse
@@ -389,7 +389,7 @@ class GeneralMeetingController extends AbstractController
     }
 
     /**
-     * @Route("/{_locale}/general_meeting/{slug}/vote_save", name="app_ajax_general_meeting_save",methods={"PATCH"})
+     * @Route("/general_meeting/{slug}/vote_save", name="app_ajax_general_meeting_save",methods={"PATCH"})
      * @param GeneralMeeting $meeting
      * @param Request $request
      * @param MeetingVotingRepository $repository
@@ -446,7 +446,7 @@ class GeneralMeetingController extends AbstractController
     }
 
     /**
-     * @Route("/{_locale}/general_meeting/{slug}/end_vote", name="app_ajax_general_meeting_end_vote", methods={"PATCH"})
+     * @Route("/general_meeting/{slug}/end_vote", name="app_ajax_general_meeting_end_vote", methods={"PATCH"})
      * @param GeneralMeeting $meeting
      * @return JsonResponse
      */
@@ -677,7 +677,7 @@ class GeneralMeetingController extends AbstractController
     }
 
     /**
-     * @Route("/{_locale}/manage/general_meeting/{id}/end", name="app_manage_general_meeting_end", methods={"PATCH"}))
+     * @Route("/manage/general_meeting/{id}/end", name="app_manage_general_meeting_end", methods={"PATCH"}))
      * @param GeneralMeeting $meeting
      * @param Request $request
      * @return JsonResponse
@@ -702,7 +702,7 @@ class GeneralMeetingController extends AbstractController
     }
 
     /**
-     * @Route("/{_locale}/manage/general_meeting/{id}/reset", name="app_manage_general_meeting_reset", methods={"PATCH"}))
+     * @Route("/manage/general_meeting/{id}/reset", name="app_manage_general_meeting_reset", methods={"PATCH"}))
      * @param GeneralMeeting $meeting
      * @return JsonResponse
      */
@@ -739,7 +739,7 @@ class GeneralMeetingController extends AbstractController
 
 
     /**
-     * @Route("/{_locale}/manage/general_meeting/{slug}/cockpit", name="app_manage_general_meeting_cockpit")
+     * @Route("/manage/general_meeting/{slug}/cockpit", name="app_manage_general_meeting_cockpit")
      * @param GeneralMeeting $meeting
      * @param MeetingVotingRepository $repository
      * @return RedirectResponse|Response
@@ -783,7 +783,7 @@ class GeneralMeetingController extends AbstractController
 
 
     /**
-     * @Route("/{_locale}/general_meeting/{slug}/join", name="app_general_meeting_join")
+     * @Route("/general_meeting/{slug}/join", name="app_general_meeting_join")
      * @param GeneralMeeting $meeting
      * @param Request $request
      * @param ParticipantRepository $repository
@@ -836,7 +836,7 @@ class GeneralMeetingController extends AbstractController
 
 
     /**
-     * @Route("/{_locale}/general_meeting/{slug}/vote", name="app_general_meeting_vote")
+     * @Route("/general_meeting/{slug}/vote", name="app_general_meeting_vote")
      * @param GeneralMeeting $meeting
      * @param Request $request
      * @param MeetingVotingRepository $repository
@@ -885,7 +885,7 @@ class GeneralMeetingController extends AbstractController
     }
 
     /**
-     * @Route("/{_locale}/general_meeting/{slug}/activate_vote/{sort}", name="app_general_meeting_activate_vote", methods={"PATCH"})
+     * @Route("/general_meeting/{slug}/activate_vote/{sort}", name="app_general_meeting_activate_vote", methods={"PATCH"})
      * @param GeneralMeeting $meeting
      * @param MeetingVoting $voting
      * @return JsonResponse
@@ -918,7 +918,7 @@ class GeneralMeetingController extends AbstractController
     }
 
     /**
-     * @Route("{_locale}/manage/general_meeting/{id}/duplicate", name="app_manage_general_meeting_duplicate", methods={"PATCH"})
+     * @Route("manage/general_meeting/{id}/duplicate", name="app_manage_general_meeting_duplicate", methods={"PATCH"})
      * @param GeneralMeeting $meeting
      * @return RedirectResponse
      */
@@ -962,7 +962,7 @@ class GeneralMeetingController extends AbstractController
 
 
     /**
-     * @Route("/{_locale}/manage/general_meeting/{slug}/course/{sort}", name="app_manage_general_meeting_course_voting")
+     * @Route("/manage/general_meeting/{slug}/course/{sort}", name="app_manage_general_meeting_course_voting")
      * @param GeneralMeeting $meeting
      * @param MeetingVoting $voting
      * @return Response
@@ -976,7 +976,7 @@ class GeneralMeetingController extends AbstractController
     }
 
     /**
-     * @Route("/{_locale}/manage/general_meeting/{slug}/download_course", name="app_manage_general_meeting_course_meeting")
+     * @Route("/manage/general_meeting/{slug}/download_course", name="app_manage_general_meeting_course_meeting")
      * @param GeneralMeeting $meeting
      * @param Request $request
      * @param ExcelCourseGenerator $generator

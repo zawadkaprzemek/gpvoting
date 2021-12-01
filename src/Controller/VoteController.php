@@ -22,7 +22,7 @@ use Symfony\Component\Routing\Annotation\Route;
 class VoteController extends AbstractController
 {
     /**
-     * @Route("/{_locale}/polling/{slug}/vote", name="app_polling_vote")
+     * @Route("/polling/{slug}/vote", name="app_polling_vote")
      * @param Polling $polling
      * @param Request $request
      * @param QuestionRepository $repository
@@ -137,7 +137,7 @@ class VoteController extends AbstractController
     }
 
     /**
-     * @Route("/{_locale}/polling/{slug}/vote_test", name="app_polling_vote_test")
+     * @Route("/polling/{slug}/vote_test", name="app_polling_vote_test")
      * @param Polling $polling
      * @param Request $request
      * @return RedirectResponse
@@ -155,7 +155,7 @@ class VoteController extends AbstractController
     }
 
     /**
-     * @Route("/{_locale}/polling/{slug}/end", name="app_polling_vote_end")
+     * @Route("/polling/{slug}/end", name="app_polling_vote_end")
      * @param Polling $polling
      * @param Request $request
      * @param VoteRepository $repository
@@ -185,7 +185,7 @@ class VoteController extends AbstractController
     }
 
     /**
-     * @Route("/{_locale}/vote/{id}/delete", name="app_vote_delete", methods={"DELETE"})
+     * @Route("/vote/{id}/delete", name="app_vote_delete", methods={"DELETE"})
      * @param Vote $vote
      * @param Request $request
      * @return RedirectResponse
@@ -209,7 +209,7 @@ class VoteController extends AbstractController
     }
 
     /**
-     * @Route("/{_locale}/polling/{slug}/vote_session", name="app_polling_vote_session")
+     * @Route("/polling/{slug}/vote_session", name="app_polling_vote_session")
      * @param Polling $polling
      * @param Request $request
      * @param SessionSettingsRepository $repository

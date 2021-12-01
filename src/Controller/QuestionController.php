@@ -13,16 +13,24 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class QuestionController extends AbstractController
 {
+    private TranslatorInterface $translator;
+
+    public function __construct(TranslatorInterface $translator)
+    {
+        $this->translator = $translator;
+    }
+
     /**
-     * @Route("/{_locale}/polling/{slug}/question/{sort}", name="app_question_show")
+     * @Route("/polling/{slug}/question/{sort}", name="app_question_show")
      * @param Polling $polling
      * @param Question $question
      * @return Response
      */
-    public function index(Polling $polling,Question $question)
+    public function indexAction(Polling $polling,Question $question): Response
     {
         return $this->render('question/index.html.twig', [
             'question' => $question,
@@ -31,14 +39,14 @@ class QuestionController extends AbstractController
     }
 
     /**
-     * @Route("/{_locale}/polling/{slug}/question/{sort}/edit", name="app_question_edit")
+     * @Route("/polling/{slug}/question/{sort}/edit", name="app_question_edit")
      * @param Polling $polling
      * @param Question $question
      * @param Request $request
      * @param QuestionTypeRepository $typeRepository
      * @return Response
      */
-    public function edit(Polling $polling,Question $question,Request $request,QuestionTypeRepository $typeRepository)
+    public function editAction(Polling $polling,Question $question,Request $request,QuestionTypeRepository $typeRepository): Response
     {
         $form=$this->createForm(QuestionType::class,$question);
 
@@ -78,18 +86,18 @@ class QuestionController extends AbstractController
             $question->setQuestionType($qType);
             $em->persist($question);
             $em->flush();
-            $this->addFlash('success', 'Zapisano zmiany');
+            $this->addFlash('success', $this->translator->trans('changes_saved'));
             return $this->redirectToRoute('app_polling_show',['slug'=>$polling->getSlug()]);
         }
 
         return $this->render('question/form.html.twig',[
            'form'=>$form->createView(),
-            'title'=>'Edytuj pytanie'
+            'title'=>$this->translator->trans('question.edit.text')
         ]);
     }
 
     /**
-     * @Route("/{_locale}/polling/{slug}/question/{id}/delete", name="app_question_delete", methods={"DELETE"})
+     * @Route("/polling/{slug}/question/{id}/delete", name="app_question_delete", methods={"DELETE"})
      * @param Request $request
      * @param Question $question
      * @param QuestionRepository $repository
@@ -116,13 +124,13 @@ class QuestionController extends AbstractController
     }
 
     /**
-     * @Route("{_locale}/polling/{slug}/question/{sort}/results",name="app_question_results")
+     * @Route("polling/{slug}/question/{sort}/results",name="app_question_results")
      * @param Polling $polling
      * @param Question $question
      * @param VoteRepository $repository
      * @return Response
      */
-    public function questionResults(Polling $polling,Question $question,VoteRepository $repository)
+    public function questionResults(Polling $polling,Question $question,VoteRepository $repository): Response
     {
         $votes=$repository->getQuestionVotes($question);
         if(count($votes)==0)

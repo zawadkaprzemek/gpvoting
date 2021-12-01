@@ -32,7 +32,7 @@ class RegistrationController extends AbstractController
     }
 
     /**
-     * @Route("/{_locale}/register", name="app_register")
+     * @Route("/register", name="app_register")
      * @param Request $request
      * @param UserPasswordHasherInterface $passwordEncoder
      * @param GuardAuthenticatorHandler $guardHandler
@@ -71,7 +71,7 @@ class RegistrationController extends AbstractController
                 (new TemplatedEmail())
                     ->from(new Address('kontakt@gpvoting.pl', 'GpVoting'))
                     ->to($user->getEmail())
-                    ->subject($this->translator->trans('Potwierdź swój email'))
+                    ->subject($this->translator->trans('register.form.verify_email.text'))
                     ->htmlTemplate('registration/confirmation_email.html.twig')
             );
             // do anything else you need here, like send an email
@@ -91,7 +91,7 @@ class RegistrationController extends AbstractController
     }
 
     /**
-     * @Route("/{_locale}/verify/email", name="app_verify_email")
+     * @Route("/verify/email", name="app_verify_email")
      * @param Request $request
      * @return Response
      */
@@ -107,15 +107,13 @@ class RegistrationController extends AbstractController
 
             return $this->redirectToRoute('app_register');
         }
+        $this->addFlash('success', $this->translator->trans('register.form.verify_email.success'));
 
-        // @TODO Change the redirect on success and handle or remove the flash message in your templates
-        $this->addFlash('success', $this->translator->trans('Twój adres email został zweryfikowany'));
-
-        return $this->redirectToRoute('app_register');
+        return $this->redirectToRoute('home');
     }
 
     /**
-     * @Route("/{_locale}/admin/create_account", name="app_admin_create_account")
+     * @Route("/admin/create_account", name="app_admin_create_account")
      * @param Request $request
      * @param UserPasswordHasherInterface $passwordEncoder
      * @return Response
@@ -153,13 +151,13 @@ class RegistrationController extends AbstractController
                     ->context(['password' => $form->get('plainPassword')->getData()])
             );
             // do anything else you need here, like send an email
-            $this->addFlash('success',$this->translator->trans("Konto zostało utworzone"));
+            $this->addFlash('success',$this->translator->trans("profile.create.success"));
             return $this->redirectToRoute('home');
         }
         return $this->render('registration/create_account.html.twig', [
             'form' => $form->createView(),
-            'button_text'=>$this->translator->trans('Stwórz konto'),
-            'title'=>$this->translator->trans('Utwórz konto')
+            'button_text'=>$this->translator->trans('profile.create.button'),
+            'title'=>$this->translator->trans('profile.create.text')
         ]);
     }
 }

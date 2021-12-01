@@ -13,7 +13,7 @@ use Symfony\Component\Routing\Annotation\Route;
 class PdfController extends AbstractController
 {
     /**
-     * @Route("{_locale}/pdf/general_meeting_results/{slug}/{valid}", name="general_meeting_results_pdf", requirements={"valid":"0|1"}, defaults={"valid":"0"})
+     * @Route("pdf/general_meeting_results/{slug}/{valid}", name="general_meeting_results_pdf", requirements={"valid":"0|1"}, defaults={"valid":"0"})
      * @param Pdf $knpSnappyPdf
      * @param GeneralMeeting $meeting
      * @param Request $request

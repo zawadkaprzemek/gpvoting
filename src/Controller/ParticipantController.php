@@ -30,11 +30,11 @@ class ParticipantController extends AbstractController
     /**
      * @var TranslatorInterface
      */
-    private $translator;
+    private TranslatorInterface $translator;
     /**
      * @var MailerInterface
      */
-    private $mailer;
+    private MailerInterface $mailer;
     private MessageBusInterface $messageBus;
 
     public function __construct(TranslatorInterface $translator,MailerInterface $mailer,MessageBusInterface $messageBus)
@@ -45,11 +45,11 @@ class ParticipantController extends AbstractController
     }
 
     /**
-     * @Route("/{_locale}/manage/participants_lists/show", name="app_manage_participants_lists")
+     * @Route("/manage/participants_lists/show", name="app_manage_participants_lists")
      * @param ParticipantListRepository $repository
      * @return Response
      */
-    public function index(ParticipantListRepository $repository)
+    public function listAction(ParticipantListRepository $repository): Response
     {
         $this->denyAccessUnlessGranted("ROLE_USER");
         /** @var User $user */
@@ -63,11 +63,11 @@ class ParticipantController extends AbstractController
     }
 
     /**
-     * @Route("/{_locale}/manage/participant_lists/new", name="app_manage_participant_list_new")
+     * @Route("/manage/participant_lists/new", name="app_manage_participant_list_new")
      * @param Request $request
      * @return Response
      */
-    public function new(Request $request)
+    public function newListAction(Request $request): Response
     {
         $list= new ParticipantList();
         /** @var User $user */
@@ -81,23 +81,23 @@ class ParticipantController extends AbstractController
             $list->setHashId(md5($list->getName()));
             $em->persist($list);
             $em->flush();
-            $this->addFlash('success',$this->translator->trans('Stworzono nową listę uczestników'));
+            $this->addFlash('success',$this->translator->trans('participants.list.new.success'));
             return $this->redirectToRoute('app_manage_participants_lists');
         }
 
         return $this->render('participant/lists_form.html.twig',[
            'form'=>$form->createView(),
-            'title'=>$this->translator->trans('Utwórz listę uczestników')
+            'title'=>$this->translator->trans('participants.list.new.text')
         ]);
     }
 
     /**
-     * @Route("/{_locale}/manage/participants_lists/{id}/edit", name="app_manage_participant_list_edit")
+     * @Route("/manage/participants_lists/{id}/edit", name="app_manage_participant_list_edit")
      * @param ParticipantList $list
      * @param Request $request
      * @return RedirectResponse|Response
      */
-    public function edit(ParticipantList $list,Request $request)
+    public function edit(ParticipantList $list,Request $request):Response
     {
         if($list->getUser()!==$this->getUser())
         {
@@ -110,22 +110,22 @@ class ParticipantController extends AbstractController
             $em=$this->getDoctrine()->getManager();
             $em->persist($list);
             $em->flush();
-            $this->addFlash('success',$this->translator->trans('Edycja listy uczestników zakończona sukcesem'));
+            $this->addFlash('success',$this->translator->trans('participants.list.edit.success'));
             return $this->redirectToRoute('app_manage_participants_lists');
         }
 
         return $this->render('participant/lists_form.html.twig',[
             'form'=>$form->createView(),
-            'title'=>$this->translator->trans('Edytuj listę uczestników')
+            'title'=>$this->translator->trans('participants.list.edit.text')
         ]);
     }
 
     /**
-     * @Route("/{_locale}/manage/participants_lists/{id}/show", name="app_manage_participant_list_show")
+     * @Route("/manage/participants_lists/{id}/show", name="app_manage_participant_list_show")
      * @param ParticipantList $list
      * @return RedirectResponse|Response
      */
-    public function show(ParticipantList $list)
+    public function showListAction(ParticipantList $list):Response
     {
         if($list->getUser()!==$this->getUser())
         {
@@ -138,12 +138,12 @@ class ParticipantController extends AbstractController
     }
 
     /**
-     * @Route("/{_locale}/manage/participants_lists/{id}/participants", name="app_manage_participant_list_show_participants")
+     * @Route("/manage/participants_lists/{id}/participants", name="app_manage_participant_list_show_participants")
      * @param ParticipantList $list
      * @param ParticipantRepository $repository
      * @return RedirectResponse|Response
      */
-    public function showParticipants(ParticipantList $list,ParticipantRepository $repository)
+    public function showParticipantsAction(ParticipantList $list,ParticipantRepository $repository):Response
     {
         if($list->getUser()!==$this->getUser())
         {
@@ -160,13 +160,13 @@ class ParticipantController extends AbstractController
 
 
     /**
-     * @Route("/{_locale}/manage/participants_lists/{id}/import", name="app_manage_participant_list_import")
+     * @Route("/manage/participants_lists/{id}/import", name="app_manage_participant_list_import")
      * @param ParticipantList $list
      * @param Request $request
      * @param ParticipantRepository $repository
      * @return RedirectResponse|Response
      */
-    public function importParticipants(ParticipantList $list,Request $request,ParticipantRepository $repository)
+    public function importParticipants(ParticipantList $list,Request $request,ParticipantRepository $repository):Response
     {
         if($list->getUser()!==$this->getUser())
         {
@@ -240,12 +240,12 @@ class ParticipantController extends AbstractController
     }
 
     /**
-     * @Route("/{_locale}/assign_to_list/{hashId}/", name="app_participant_list_assign")
+     * @Route("/assign_to_list/{hashId}/", name="app_participant_list_assign")
      * @param ParticipantList $list
      * @param Request $request
      * @return Response
      */
-    public function signToList(ParticipantList $list,Request $request)
+    public function signToListAction(ParticipantList $list,Request $request): Response
     {
         $em=$this->getDoctrine()->getManager();
         if(sizeof($list->getParticipants())>=$list->getUser()->getParticipantListSize())
@@ -285,12 +285,12 @@ class ParticipantController extends AbstractController
     }
 
     /**
-     * @Route("/{_locale}/assign_to_list/{hashId}/complete", name="app_participant_list_assign_complete")
+     * @Route("/assign_to_list/{hashId}/complete", name="app_participant_list_assign_complete")
      * @param ParticipantList $list
      * @param Request $request
      * @return Response
      */
-    public function assignComplete(ParticipantList $list,Request $request)
+    public function assignCompleteAction(ParticipantList $list,Request $request): Response
     {
         $session=$request->getSession();
         $aid=$session->get("assign_".$list->getHashId());
@@ -305,12 +305,12 @@ class ParticipantController extends AbstractController
     }
 
     /**
-     * @Route("/{_locale}/manage/participant/{id}/edit", name="app_manage_participant_edit")
+     * @Route("/manage/participant/{id}/edit", name="app_manage_participant_edit")
      * @param Participant $participant
      * @param Request $request
      * @return RedirectResponse|Response
      */
-    public function editParticipant(Participant $participant,Request $request)
+    public function editParticipantAction(Participant $participant,Request $request):Response
     {
         if($participant->getList()->getUser()!==$this->getUser())
         {
@@ -325,7 +325,7 @@ class ParticipantController extends AbstractController
             $em=$this->getDoctrine()->getManager();
             $em->persist($participant);
             $em->flush();
-            $this->addFlash('success',$this->translator->trans('Edycja uczestnika zakończona sukcesem'));
+            $this->addFlash('success',$this->translator->trans('participants.single.edit.success'));
             return $this->redirectToRoute('app_manage_participant_list_show_participants',['id'=>$participant->getList()->getId()]);
         }
 
@@ -337,11 +337,11 @@ class ParticipantController extends AbstractController
     }
 
     /**
-     * @Route("/{_locale}/ajax/participant_list/{id}/open", name="app_participant_list_open")
+     * @Route("/ajax/participant_list/{id}/open", name="app_participant_list_open")
      * @param ParticipantList $list
      * @return RedirectResponse
      */
-    public function openClose(ParticipantList $list)
+    public function openCloseAction(ParticipantList $list):RedirectResponse
     {
         if($list->getUser()!==$this->getUser())
         {
@@ -363,16 +363,16 @@ class ParticipantController extends AbstractController
         $em->flush();
         if($list->getOpen())
         {
-            $this->addFlash('success',$this->translator->trans('Otwarto listę'));
+            $this->addFlash('success',$this->translator->trans('participants.list.open.success'));
 
         }else{
-            $this->addFlash('success',$this->translator->trans('Zamknięto listę'));
+            $this->addFlash('success',$this->translator->trans('participants.list.close.success'));
         }
         return $this->redirectToRoute('app_manage_participant_list_show',['id'=>$list->getId()]);
     }
 
     /**
-     * @Route("/{_locale}/manage/participant/{id}/delete", name="app_manage_participant_delete", methods={"DELETE"})
+     * @Route("/manage/participant/{id}/delete", name="app_manage_participant_delete", methods={"DELETE"})
      * @param Participant $participant
      * @return RedirectResponse
      */
@@ -386,16 +386,16 @@ class ParticipantController extends AbstractController
         $em=$this->getDoctrine()->getManager();
         $em->remove($participant);
         $em->flush();
-        $this->addFlash('success',$this->translator->trans("Usunięto uczestnika"));
+        $this->addFlash('success',$this->translator->trans("participants.single.delete.success"));
         return $this->redirectToRoute("app_manage_participant_list_show_participants",['id'=>$participant->getList()->getId()]);
     }
 
     /**
-     * @Route("/{_locale}/manage/participant/{id}/accept", name="app_manage_participant_accept", methods={"PATCH"})
+     * @Route("/manage/participant/{id}/accept", name="app_manage_participant_accept", methods={"PATCH"})
      * @param Participant $participant
      * @return RedirectResponse
      */
-    public function acceptParticipant(Participant $participant)
+    public function acceptParticipantAction(Participant $participant): RedirectResponse
     {
         if($participant->getList()->getUser()!==$this->getUser())
         {
@@ -406,17 +406,17 @@ class ParticipantController extends AbstractController
         $em=$this->getDoctrine()->getManager();
         $em->persist($participant);
         $em->flush();
-        $this->addFlash('success',($participant->getAccepted()? $this->translator->trans("Zaakceptowano uczestnika"): $this->translator->trans("Odrzucono uczestnika")));
+        $this->addFlash('success',($participant->getAccepted()? $this->translator->trans("participants.single.accept.success"): $this->translator->trans("participants.single.reject.success")));
         return $this->redirectToRoute("app_manage_participant_list_show_participants",['id'=>$participant->getList()->getId()]);
     }
 
     /**
-     * @Route("/{_locale}/manage/participant_list/{id}/accept", name="app_manage_participant_list_accept", methods={"PATCH"})
+     * @Route("/manage/participant_list/{id}/accept", name="app_manage_participant_list_accept", methods={"PATCH"})
      * @param Request $request
      * @param ParticipantList $list
      * @return RedirectResponse
      */
-    public function acceptParticipantList(Request $request, ParticipantList $list)
+    public function acceptParticipantListAction(Request $request, ParticipantList $list): RedirectResponse
     {
         if($list->getUser()!==$this->getUser())
         {
@@ -430,11 +430,12 @@ class ParticipantController extends AbstractController
             $em->persist($participant);
         }
         $em->flush();
-        $this->addFlash('success',($newStatus ? $this->translator->trans('Zaakceptowano listę uczestników') : $this->translator->trans('Odrzucono akceptację listy uczestników')));
+        $this->addFlash('success',($newStatus ? $this->translator->trans('participants.list.accept.success') : $this->translator->trans('participants.list.reject.success')));
         return $this->redirect($request->headers->get('referer'));
     }
 
-    private function generateRandomString($length = 10) {
+    private function generateRandomString($length = 10): string
+    {
         $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_-!';
         $charactersLength = strlen($characters);
         $randomString = '';
