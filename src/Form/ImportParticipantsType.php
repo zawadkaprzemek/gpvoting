@@ -16,7 +16,7 @@ class ImportParticipantsType extends AbstractType
         $builder
             ->add('file',FileType::class,
                 array(
-                    'label'=>'Wgraj plik',
+                    'label'=>'upload_file',
                     'constraints' => [
                         new File([
                             'maxSize' => '5M',
@@ -25,12 +25,12 @@ class ImportParticipantsType extends AbstractType
                                 'application/vnd.ms-excel',
                                 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
                             ],*/
-                            'mimeTypesMessage' => 'Proszę wgrać odpowiedni plik',
+                            'mimeTypesMessage' => 'file.mimetypemessage',
                         ])
                     ]
                     )
             )
-            ->add('submit',SubmitType::class,array('label'=>'Importuj'))
+            ->add('submit',SubmitType::class,array('label'=>'import'))
         ;
     }
 

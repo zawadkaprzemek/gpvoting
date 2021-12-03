@@ -14,8 +14,8 @@ class EventCodeType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('name',TextType::class,array('label'=>'Kod'))
-            ->add('submit',SubmitType::class,array('label'=>'Zapisz'))
+            ->add('name',TextType::class,array('label'=>'code'))
+            ->add('submit',SubmitType::class,array('label'=>'save'))
         ;
     }
 

@@ -21,27 +21,27 @@ class SessionSettingsType extends AbstractType
         }
         $builder
             ->add('active_question',ChoiceType::class,array(
-                'label'=>'Aktywne pytanie',
+                'label'=>'session.active_question',
                 'choices'=>$questions,
-                'placeholder'=>'Wybierz aktywne pytanie'
+                'placeholder'=>'session.choose_actiove_question'
             ))
             ->add('timeForAnswer',ChoiceType::class,array(
-                'label'=>'Czas na odpowiedź',
+                'label'=>'session.time_for_answer',
                 'choices'=>array(
                     '30 sekund'=>30,
                     '1 minuta'=>60,
                     '1.5 minuty'=>90,
                     '2 minuty'=>120
                 ),
-                'placeholder'=>'Wybierz czas na odpowiedź na pytanie'
+                'placeholder'=>'session.time_for_answer_choose'
             ))
-            ->add('submit',SubmitType::class,array('label'=>'Zapisz'))
+            ->add('submit',SubmitType::class,array('label'=>'save'))
         ;
         if($options['data']->getStatus()==0)
         {
             $builder
                 ->add('begin',CheckboxType::class,array(
-                    'label'=>'Rozpocznij sesję',
+                    'label'=>'session.begin.button',
                     'mapped'=>false,
                     'required'=>false)
                 );

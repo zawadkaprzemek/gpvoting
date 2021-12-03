@@ -20,14 +20,14 @@ class GeneralMeetingCandidatesType extends AbstractType
         $meeting=$options['data'];
         $builder
             ->add('candidates',CollectionType::class,[
-                'label'=>'Kandydaci',
+                'label'=>'candidates',
                 'entry_type'=>CandidateType::class,
                 'entry_options'=>['label'=>false],
                 'allow_add'=>false,
                 'allow_delete'=>false,
                 'by_reference' => false
             ])
-            ->add('submit',SubmitType::class,array('label'=>'Zapisz'))
+            ->add('submit',SubmitType::class,array('label'=>'save'))
         ;
     }
 

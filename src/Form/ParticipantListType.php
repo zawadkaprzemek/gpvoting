@@ -14,8 +14,8 @@ class ParticipantListType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('name',TextType::class,array('label'=>'Nazwa'))
-            ->add('submit',SubmitType::class,array('label'=>'Zapisz'))
+            ->add('name',TextType::class,array('label'=>'name'))
+            ->add('submit',SubmitType::class,array('label'=>'save'))
         ;
     }
 

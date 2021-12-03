@@ -28,6 +28,7 @@ admin:
 
 #Głosowanie
 voting: Głosowanie
+
 polling:
   single: Głosowanie
   many: Głosowania
@@ -35,6 +36,16 @@ polling:
     cannot_begin_in_past: Głosowanie nie może zaczynać się w przeszłości
     date_end_must_be_greater_than_start: Data końcowa nie może być wcześniejsza od daty startowej
     limit_questions_reached: Osiągnięto limit pytań dla tego głosowania
+
+  questions_count: Ilość pytań
+  default_answers_count: Domyślna ilość odpowiedzi
+  enter_code_choose: Wybierz kod dostępu
+  results_graph: Przedstawienie wyników
+  chart:
+    vertical: Wykres pionowy
+    horizontal: Wykres poziomy
+    choose: Wybierz sposób przedstawienia wyników
+
 
   new:
     success: Dodano nowe głosowanie
@@ -51,12 +62,14 @@ polling:
     text: Usuń głosowanie
 
 vote:
+  text: Zagłosuj
   on: Głos za
   against: Głos przeciw
   hold_on: Głos wstrzymany
 
 #Pytania
 question:
+  text: Pytanie
   add:
     success:
     text:
@@ -87,6 +100,7 @@ submit: Wyślij
 save: Zapisz
 login.to.site: Zaloguj się!
 password: Hasło
+enter_password: Wprowadź hasło
 login.text: Login
 please.login: Proszę się zalogować
 please.register: Zarejestruj się
@@ -99,6 +113,7 @@ name: Nazwa
 email.address: Adres email
 captcha: Kod z obrazka
 enter: Wejdź
+enter_polling: Przystąp do głosowania
 send: Wyślij
 minute: minuta
 minutes: minuty
@@ -111,7 +126,9 @@ privacy: Polityka prywatności
 weight:
   actions: Waga akcji
   votes: Waga głosów
-
+votes: Głosy
+actions: Akcje
+choose: Wybierz
 secret_voting: Tajne głosowanie
 result: Wynik
 course: Przebieg
@@ -124,8 +141,26 @@ against: Przeciw
 hold_on: Wstrzymało się
 active_voting: Aktualne głosowanie
 candidates: Kandydaci
+answers: Odpowiedzi
 available_answers: Dostępne odpowiedzi
 changes_saved: Zapisano zmiany
+resolutions: Uchwały
+answer: Odpowiedź
+valid: Poprawna
+candidate_data: Dane kandydata
+code: Kod
+password_enter: Hasło dostępu
+join: Dołącz
+upload_file: Wgraj plik
+import: Importuj
+content: Treść
+voting_type: Typ głosowania
+multiple_choise: Wielokrotny wybór
+add_next: Dodaj następne
+phone: Numer telefonu
+old_password: Stare hasło
+start_date: Data początkowa
+end_date: Data zakończenia
 #Zarządzanie
 
 manage:
@@ -198,6 +233,10 @@ codes:
   manage:
     info: Zarządzanie kodami dostępu
     text: Zarządzaj kodami
+
+    new_codes:
+      count: Ilość nowych kodów
+      generate: Generuj
     edit:
       success: Kod został edytowany
 
@@ -250,7 +289,7 @@ room:
     confirm: Na pewno chcesz zamknąć to wydarzenie?
 #Lista uczestników
 participants:
-
+  limit_list: Limit wielkości listy uczestników
   single:
     edit:
       success: Edycja uczestnika zakończona sukcesem
@@ -266,6 +305,7 @@ participants:
 
   list:
     text: Lista uczestników
+    choose: Wybierz listę uczestników
     my: Moje listy uczestników
     info: Twoje listy uczestników
     email_with_password: Hasło dostępu uczestnika
@@ -337,7 +377,9 @@ duplicate_success: Tworzenie duplikatu Walnego zgromadzenia zakończone sukcesem
 
 #Głosowania sesyjne
 session:
+  text: Głosowanie sesyjne
   begin:
+    button: Rozpocznij sesję
     success: Głosowanie sesyjne rozpoczęte
 
   manage: Zarządzanie sesją
@@ -347,6 +389,9 @@ session:
   ended: Zakończona
   time_to_end_vote: Czas do zakończenia głosowania
   active_question: Aktywne pytanie
+  choose_actiove_question: Wybierz aktywne pytanie
+  time_for_answer: Czas na odpowiedź
+  time_for_answer_choose: Wybierz czas na odpowiedź na pytanie
 
   settings:
     text: Ustawienia sesji
@@ -379,8 +424,18 @@ register.form:
 #Walne zgromadzenia
 general_meeting:
   text: Walne zgromadzenie
+  date: Data zgromadzenia
   permission_denied: Nie możesz wziąć udziału w tym zgromadzeniu!
+  votings_count: Ilość głosowań
+  hold_on_available: Dostępna opcja wstrzymuje się
+  choose_type_weight: Wybierz typ wagi
+  share_results_with_participants: Udostępnij wyniki dla uczestników
 
+  bad_vote_settings:
+    text: Błędne głosy
+    not_allowed: Nie pozwól, blokuj
+    allowed: Pozwól, nie ostrzegaj
+    allow_with_alert: Ostrzegaj ale pozwól
   new:
     success: Dodano nowe Walne zgromadzenie
     title: Utwórz Walne zgromadzenie
@@ -407,9 +462,12 @@ general_meeting:
 
   voting:
     list: Lista głosowań
+    tochoose: Do wyboru
+    choose_type: Wybierz typ głosowania
     personal: Głosowanie personalne
     poll: Głosowanie sondażowe
     resolution: Głosowanie nad uchwałą
+    resolution_content: Treść uchwały
     invalid_votes_count: Ilość głosów nie ważnych
     actual_status:
       votes: głosów - co stanowi %per%%  całości %tot% głosów
@@ -462,12 +520,18 @@ general_meeting:
     status: Na sali znajduje się
 
   kworum:
+    text: Kworum
+    type: Typ kworum
+    placeholder: Wybierz typ kworum
+    one_to_one: 1 do 1
     required_percent: Procent obecnych uczestników niezbędny do osiągnięcia kworum
     success: Udało się osiągnąć kworum
     fail: Nie udało się osiągnąć kworum
 
 #pakiety
 packs:
+  single_text: Pakiet
+  many_text: Pakiety
   new:
     success: Dodano nowy pakiet
     title: Dodaj nowy pakiet

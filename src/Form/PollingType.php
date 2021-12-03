@@ -27,23 +27,23 @@ class PollingType extends AbstractType
         $endDate= clone $startDate;
         $endDate->modify("+1 month");
         $builder
-            ->add('name',TextType::class,array('label'=>'Nazwa'))
-            ->add('questionsCount',RangeType::class,array('label'=>'Ilość pytań','attr' => [
+            ->add('name',TextType::class,array('label'=>'name'))
+            ->add('questionsCount',RangeType::class,array('label'=>'polling.questions_count','attr' => [
                 'min' => 1,
                 'max' => 50,
                 'step'=>1,
                 'class'=>'custom-range'
             ]))
-            ->add('default_answers',RangeType::class,array('label'=>'Domyślna ilość odpowiedzi',
+            ->add('default_answers',RangeType::class,array('label'=>'polling.default_answers_count',
                 'attr' => [
                     'min' => 2,
                     'max' => 6,
                     'step'=>1,
                     'class'=>'custom-range'
                 ]))
-            ->add('session',CheckboxType::class,array('label'=>'Głosowanie sesyjne','required'=>false))
+            ->add('session',CheckboxType::class,array('label'=>'session.text','required'=>false))
             ->add('startDate',DateTimeType::class,array(
-                'label'=>'Data początkowa',
+                'label'=>'start_date',
                 'html5'=>true,
                 'widget'=>'single_text',
                 'data' => (is_null($options['data']->getId()) ? $startDate: $options['data']->getStartDate()),
@@ -51,7 +51,7 @@ class PollingType extends AbstractType
                 'with_seconds'=>false
                 ))
             ->add('endDate',DateTimeType::class,array(
-                'label'=>'Data zakończenia',
+                'label'=>'end_date',
                 'required'=>false,
                 'html5'=>true,
                 'widget'=>'single_text',
@@ -60,23 +60,23 @@ class PollingType extends AbstractType
                 'with_seconds'=>false
                 ))
             ->add('code',EntityType::class,array(
-                'label'=>'Kod dostępu',
+                'label'=>'codes.enter_form.label',
                 'required'=>false,
                 'class'=>EventCode::class,
-                'placeholder'=>'Wybierz kod dostępu',
+                'placeholder'=>'polling.enter_code_choose',
                 'query_builder'=>function (EventCodeRepository $ec) use ($event) {
                     return $ec->getEventCodesQuery($event);
                 },
                 'choice_label' => 'name'))
             ->add('resultsGraph',ChoiceType::class,array(
-                'label'=>'Przedstawienie wyników',
+                'label'=>'polling.results_graph',
                 'choices'=>array(
-                    'Wykres pionowy'=>1,
-                    'Wykres poziomy'=>2
+                    'polling.chart.vertical'=>1,
+                    'polling.chart.horizontal'=>2
                 ),
-                'placeholder'=>'Wybierz sposób przedstawienia wyników'
+                'placeholder'=>'polling.chart.choose'
                 ))
-            ->add('submit',SubmitType::class,array('label'=>'Zapisz'))
+            ->add('submit',SubmitType::class,array('label'=>'save'))
         ;
     }
 

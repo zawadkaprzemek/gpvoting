@@ -13,7 +13,7 @@ class ResolutionType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('content',TextareaType::class,array('label'=>'Treść uchwały'))
+            ->add('content',TextareaType::class,array('label'=>'general_meeting.voting.resolution_content'))
         ;
     }
 

@@ -15,9 +15,9 @@ class GeneralMeetingJoinType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('email',EmailType::class,array('label'=>'Adres email'))
-            ->add('password',PasswordType::class,array('label'=>'Hasło dostępu'))
-            ->add('submit',SubmitType::class,array('label'=>'Dołącz'))
+            ->add('email',EmailType::class,array('label'=>'email.address'))
+            ->add('password',PasswordType::class,array('label'=>'password_enter'))
+            ->add('submit',SubmitType::class,array('label'=>'join'))
         ;
     }
 

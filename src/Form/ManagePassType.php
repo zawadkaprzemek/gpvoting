@@ -13,8 +13,8 @@ class ManagePassType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('password',PasswordType::class,array('label'=>'Wprowadź hasło'))
-            ->add('submit',SubmitType::class,array('label'=>'Wyślij'))
+            ->add('password',PasswordType::class,array('label'=>'enter_password'))
+            ->add('submit',SubmitType::class,array('label'=>'send'))
         ;
     }
 

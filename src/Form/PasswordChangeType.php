@@ -16,32 +16,32 @@ class PasswordChangeType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('oldPassword',PasswordType::class,array('label'=>'Stare hasło'))
+            ->add('oldPassword',PasswordType::class,array('label'=>'old_password'))
             ->add('plainPassword', RepeatedType::class, array(
                 'type' => PasswordType::class,
                 'first_options' => [
                     'constraints' => [
                         new NotBlank([
-                            'message' => 'Prosze wprowadzić hasło',
+                            'message' => 'form.error.enter_password',
                         ]),
                         new Length([
                             'min' => 6,
-                            'minMessage' => 'Hasło musi się składać conajmniej z  {{ limit }} znaków',
+                            'minMessage' => 'register.form.password.minMessage',
                             // max length allowed by Symfony for security reasons
                             'max' => 4096,
                         ]),
                     ],
-                    'label' => 'Nowe hasło',
+                    'label' => 'reset.reset_form.password_new',
                 ],
                 'second_options' => [
-                    'label' => 'Powtórz hasło',
+                    'label' => 'reset.reset_form.repeat_password',
                 ],
-                'invalid_message' => 'Hasła muszą się zgadzać',
+                'invalid_message' => 'reset.reset_form.passwords_do_not_match',
                 // Instead of being set onto the object directly,
                 // this is read and encoded in the controller
                 'mapped' => false,
             ))
-            ->add('submit',SubmitType::class,array('label'=>'Zapisz'))
+            ->add('submit',SubmitType::class,array('label'=>'save'))
         ;
     }
 

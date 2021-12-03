@@ -14,10 +14,10 @@ class RoomEnterType extends AbstractType
     {
         $builder
             ->add('code',TextType::class,array(
-                'label'=>'Kod',
+                'label'=>'code',
                 'required'=>true,
                 'attr'=>array('min'=>5,'max'=>20)))
-            ->add('submit',SubmitType::class,array('label'=>'Wejdź do pokoju'))
+            ->add('submit',SubmitType::class,array('label'=>'room.enter'))
         ;
     }
 

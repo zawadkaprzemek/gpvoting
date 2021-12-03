@@ -1,5 +1,6 @@
 #Pojedyńcze wyrazy
 close: Zamknij
+file.mimetypemessage: Proszę wgrać odpowiedni plik
 
 #Rejestracja
 register.form:
@@ -15,7 +16,7 @@ register.form:
 
   password:
     blank: Prosze wprowadzić hasło
-    minMessage: Hasło musi się składać conajmniej z  %limit% znaków
+    minMessage: "Hasło musi się składać conajmniej z  {{ limit }} znaków"
 
 #Resetowanie hasła:
 reset:
@@ -32,3 +33,5 @@ reset:
 form:
   error:
     wrong_credentials: Wprowadzono nie aprawidłowe dane dostępowe
+    enter_password: Prosze wprowadzić hasło
+    enter_email: Proszę wprowadzić swój adres email

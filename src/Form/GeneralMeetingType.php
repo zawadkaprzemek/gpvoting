@@ -27,16 +27,16 @@ class GeneralMeetingType extends AbstractType
         $meeting=$options['data'];
         $user=$meeting->getRoom()->getEvent()->getUser();
         $builder
-            ->add('name',TextType::class,array('label'=>'Nazwa'))
+            ->add('name',TextType::class,array('label'=>'name'))
             ->add('date',DateTimeType::class,array(
-                'label'=>'Data zgromadzenia','html5'=>true,
+                'label'=>'general_meeting.date','html5'=>true,
                 'widget'=>'single_text',
                 'data' => (is_null($meeting->getId()) ? $startDate: $meeting->getDate()),
                 'with_minutes'=>false,
                 'with_seconds'=>false
             ))
             ->add('count',RangeType::class,
-                array('label'=>'Ilość głosowań',
+                array('label'=>'general_meeting.votings_count',
                     'attr' => [
                         'min' => (sizeof($meeting->getMeetingVotings())>0 ? sizeof($meeting->getMeetingVotings()): 1),
                         'max' => 50,
@@ -45,47 +45,47 @@ class GeneralMeetingType extends AbstractType
                     ]
                     ))
             ->add('holdBack',CheckboxType::class,array(
-                'label'=>'Dostępna opcja wstrzymuje się',
+                'label'=>'general_meeting.hold_on_available',
                 'required'=>false
                 ))
             ->add('weight',ChoiceType::class,array(
-                'label'=>'Waga głosów',
+                'label'=>'weight.votes',
                 'choices'=>array(
-                    'Waga głosów'=>1,
-                    'Waga akcji'=>2
+                    'weight.votes'=>1,
+                    'weight.actions'=>2
                 ),
                 'placeholder'=>'Wybierz typ wagi'
             ))
             ->add('secret',CheckboxType::class,array(
-                'label'=>'Tajne głosowanie','required'=>false
+                'label'=>'general_meeting.choose_type_weight','required'=>false
             ))
             ->add('badVoteSettings',ChoiceType::class,array(
-                'label'=>'Błędne głosy',
+                'label'=>'general_meeting.bad_vote_settings',
                 'choices'=>array(
-                    'Pozwól, nie ostrzegaj'=>1,
-                    'Nie pozwól, blokuj'=>2,
-                    'Ostrzegaj ale pozwól'=>3
+                    'general_meeting.bad_vote_settings.allowed'=>1,
+                    'general_meeting.bad_vote_settings.not_allowed'=>2,
+                    'general_meeting.bad_vote_settings.allow_with_alert'=>3
                 ),
-                'placeholder'=>'Wybierz'
+                'placeholder'=>'choose'
             ))
             ->add('participantList',EntityType::class,array(
-                'label'=>'Lista uczestników',
+                'label'=>'participants.list.text',
                 'required'=>false,
                 'class'=>ParticipantList::class,
-                'placeholder'=>'Wybierz listę uczestników',
+                'placeholder'=>'participants.list.choose',
                 'query_builder'=>function (ParticipantListRepository $pl) use ($user) {
                     return $pl->getUsersListsQuery($user);
                 },
                 'choice_label' => 'name'))
             ->add('resultsForParticipants',CheckboxType::class,array(
-                'label'=>'Udostępnij wyniki dla uczestników',
+                'label'=>'general_meeting.share_results_with_participants',
                 'required'=>false
             ))
             ->add('kworum',CheckboxType::class,array(
-                'label'=>'Kworum','required'=>false
+                'label'=>'general_meeting.kworum.text','required'=>false
             ))
             ->add('kworumRequiredValue',RangeType::class,
-                array('label'=>'Procent obecnych uczestników niezbędny do kworum',
+                array('label'=>'general_meeting.kworum.required_percent',
                     'attr' => [
                         'min' => 1,
                         'max' =>100,
@@ -94,13 +94,13 @@ class GeneralMeetingType extends AbstractType
                     ]
                 ))
             ->add('kworumType',ChoiceType::class,
-                array('label'=>'Typ kworum',
+                array('label'=>'general_meeting.kworum.type',
                     'choices'=>array(
-                        '1 do 1'=>'1to1',
-                        'Waga akcji'=>'actions',
-                        'Waga głosów'=>'votes'
+                        'one_to_one'=>'1to1',
+                        'weight.actions'=>'actions',
+                        'weight.votes'=>'votes'
                     ),
-                    'placeholder'=>'Wybierz typ kworum'
+                    'placeholder'=>'general_meeting.kworum.placeholder'
                 ))
 
             /*->add('toChoose',RangeType::class,
@@ -113,7 +113,7 @@ class GeneralMeetingType extends AbstractType
                         'class'=>'custom-range'
                     ]
                 ))*/
-            ->add('submit',SubmitType::class,array('label'=>'Zapisz'))
+            ->add('submit',SubmitType::class,array('label'=>'save'))
         ;
     }
 

@@ -18,26 +18,26 @@ class ParticipantType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('name',TextType::class,array('label'=>'Imię'))
-            ->add('surname',TextType::class,array('label'=>'Nazwisko'))
-            ->add('password',PasswordType::class,array('label'=>'Hasło'))
-            ->add('phone',TelType::class,array('label'=>'Numer telefonu'))
-            ->add('email',EmailType::class,array('label'=>'Adres email'))
+            ->add('name',TextType::class,array('label'=>'firstName'))
+            ->add('surname',TextType::class,array('label'=>'lastName'))
+            ->add('password',PasswordType::class,array('label'=>'password'))
+            ->add('phone',TelType::class,array('label'=>'phone'))
+            ->add('email',EmailType::class,array('label'=>'email.address'))
             ->add('votes',NumberType::class,array(
-                'label'=>"Głosy",
+                'label'=>"votes",
                 'html5'=>true,
                 'attr'=>[
                     'min'=>1
                 ]
                 ))
             ->add('actions',NumberType::class,array(
-                'label'=>"Akcje",
+                'label'=>"actions",
                 'html5'=>true,
                 'attr'=>[
                     'min'=>1
                 ]
                 ))
-            ->add('submit',SubmitType::class,array('label'=>'Zapisz'))
+            ->add('submit',SubmitType::class,array('label'=>'save'))
         ;
     }
 

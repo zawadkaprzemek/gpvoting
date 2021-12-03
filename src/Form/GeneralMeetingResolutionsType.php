@@ -15,14 +15,14 @@ class GeneralMeetingResolutionsType extends AbstractType
     {
         $builder
             ->add('resolutions',CollectionType::class,[
-                'label'=>'Uchwały',
+                'label'=>'resolutions',
                 'entry_type'=>ResolutionType::class,
                 'entry_options'=>['label'=>false],
                 'allow_add'=>false,
                 'allow_delete'=>false,
                 'by_reference' => false
             ])
-            ->add('submit',SubmitType::class,array('label'=>'Zapisz'))
+            ->add('submit',SubmitType::class,array('label'=>'save'))
         ;
     }
 

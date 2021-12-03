@@ -18,12 +18,12 @@ class ProfileEditAdminType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('username',TextType::class,array('label'=>'Login'))
-            ->add('name',TextType::class,array('label'=>'Imię'))
-            ->add('surname',TextType::class,array('label'=>'Nazwisko'))
-            ->add('email',EmailType::class,array('label'=>'Adres e-mail'))
+            ->add('username',TextType::class,array('label'=>'login.text'))
+            ->add('name',TextType::class,array('label'=>'firstName'))
+            ->add('surname',TextType::class,array('label'=>'lastName'))
+            ->add('email',EmailType::class,array('label'=>'email.address'))
             ->add('participantListSize',NumberType::class,array(
-                'label'=>'Limit wielkości listy uczestników',
+                'label'=>'participants.limit_list',
                 'html5'=>true,
                 'attr'=>[
                     'min'=>5,
@@ -31,11 +31,11 @@ class ProfileEditAdminType extends AbstractType
                 ]
             ))
             ->add('pack',EntityType::class,array(
-                'label'=>'user.pack',
+                'label'=>'packs.single_text',
                 'class'=>Pack::class,
                 'choice_label'=>'name'
                 ))
-            ->add('submit',SubmitType::class,array('label'=>'Zapisz'))
+            ->add('submit',SubmitType::class,array('label'=>'save'))
         ;
     }
 

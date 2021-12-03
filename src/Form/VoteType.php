@@ -30,7 +30,7 @@ class VoteType extends AbstractType
         }*/
         $builder
             ->add('startDateString',HiddenType::class,array('data'=>$startDate,'mapped'=>false))
-            ->add('submit',SubmitType::class,array('label'=>'Zagłosuj'))
+            ->add('submit',SubmitType::class,array('label'=>'vote.text'))
         ;
     }
 

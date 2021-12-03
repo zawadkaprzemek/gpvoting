@@ -25,9 +25,9 @@ class QuestionType extends AbstractType
         $polling=$question->getPolling();
         $count=sizeof($polling->getQuestions());
         $builder
-            ->add('question_content',TextType::class,array('label'=>'Pytanie'))
+            ->add('question_content',TextType::class,array('label'=>'question.text'))
             ->add('answers',CollectionType::class,[
-                'label'=>'Odpowiedzi',
+                'label'=>'answers',
                 'entry_type'=>AnswerType::class,
                 'entry_options'=>['label'=>false],
                 'allow_add'=>true,
@@ -35,13 +35,13 @@ class QuestionType extends AbstractType
                 'by_reference' => false
             ])
 
-            ->add('submit',SubmitType::class,array('label'=>"Zapisz"))
+            ->add('submit',SubmitType::class,array('label'=>"save"))
         ;
         if(!$isEdit&&($count+1)<$polling->getQuestionsCount())
         {
             $builder
                 ->add('next',CheckboxType::class,
-                    array('label'=>'Dodaj następne','mapped'=>false,'required'=>false,'value'=>1,'attr'=>array(
+                    array('label'=>'add_next','mapped'=>false,'required'=>false,'value'=>1,'attr'=>array(
                         'checked'=>true
                     ))
                 );

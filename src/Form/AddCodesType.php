@@ -13,8 +13,8 @@ class AddCodesType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('count',NumberType::class,array('label'=>'Ilość nowych kodów','html5'=>true,'data'=>1,'attr'=>['min'=>1]))
-            ->add('submit',SubmitType::class,array('label'=>'Generuj'))
+            ->add('count',NumberType::class,array('label'=>'codes.manage.new_codes.count','html5'=>true,'data'=>1,'attr'=>['min'=>1]))
+            ->add('submit',SubmitType::class,array('label'=>'codes.manage.new_codes.generate'))
         ;
     }
 

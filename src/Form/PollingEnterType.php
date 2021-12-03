@@ -14,10 +14,10 @@ class PollingEnterType extends AbstractType
     {
         $builder
             ->add('code',TextType::class,array(
-                'label'=>'Kod',
+                'label'=>'code',
                 'required'=>true,
                 'attr'=>array('min'=>5,'max'=>20)))
-            ->add('submit',SubmitType::class,array('label'=>'Przystąp do głosowania'))
+            ->add('submit',SubmitType::class,array('label'=>'enter_polling'))
         ;
     }
 

@@ -13,7 +13,7 @@ class CandidateType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('name',TextType::class,array('label'=>'Dane kandydata'))
+            ->add('name',TextType::class,array('label'=>'candidate_data'))
         ;
     }
 

@@ -21,16 +21,16 @@ class MeetingVotingType extends AbstractType
         $voting=$options['data'];
         $meeting=$voting->getMeeting();
         $builder
-            ->add('content',TextareaType::class,array('label'=>'Treść'))
-            ->add('type',ChoiceType::class,array('label'=>'Typ głosowania',
+            ->add('content',TextareaType::class,array('label'=>'content'))
+            ->add('type',ChoiceType::class,array('label'=>'voting_type',
                 'choices'=>array(
-                    'Głosowanie nad uchwałą'=>1,
-                    'Głosowanie personalne'=>2,
-                    'Głosowanie sondażowe'=>3
+                    'general_meeting.voting.resolution'=>1,
+                    'general_meeting.voting.personal'=>2,
+                    'general_meeting.voting.poll'=>3
                 ),
-                'placeholder'=>'Wybierz typ głosowania'
+                'placeholder'=>'general_meeting.voting.choose_type'
             ))
-            ->add('tochoose',RangeType::class,array('label'=>'Do wyboru',
+            ->add('tochoose',RangeType::class,array('label'=>'general_meeting.voting.tochoose',
                 'required'=>false,
                 'attr'=>array(
                     'min'=>1,
@@ -39,17 +39,17 @@ class MeetingVotingType extends AbstractType
                 )
             ))
             ->add('weight',ChoiceType::class,array(
-                'label'=>'Waga głosów',
+                'label'=>'weight.votes',
                 'choices'=>array(
-                    'Waga głosów'=>1,
-                    'Waga akcji'=>2
+                    'weight.votes'=>1,
+                    'weight.actions'=>2
                 ),
-                'placeholder'=>'Wybierz typ wagi'
+                'placeholder'=>'choose_type_weight'
             ))
-            ->add('multiChoose',CheckboxType::class,array('label'=>'Wielokrotny wybór','required'=>false))
-            ->add('submit',SubmitType::class,array('label'=>'Zapisz'))
+            ->add('multiChoose',CheckboxType::class,array('label'=>'multiple_choise','required'=>false))
+            ->add('submit',SubmitType::class,array('label'=>'save'))
             ->add('candidates',CollectionType::class,[
-                'label'=>'Kandydaci',
+                'label'=>'candidates',
                 'entry_type'=>CandidateType::class,
                 'entry_options'=>['label'=>false],
                 'allow_add'=>true,
@@ -58,7 +58,7 @@ class MeetingVotingType extends AbstractType
                 'required'=>false
             ])
             ->add('answers',CollectionType::class,[
-                'label'=>'Odpowiedzi',
+                'label'=>'answers',
                 'entry_type'=>MeetingAnswerType::class,
                 'entry_options'=>['label'=>false],
                 'allow_add'=>true,
@@ -71,7 +71,7 @@ class MeetingVotingType extends AbstractType
         {
             $builder->add('add_next',CheckboxType::class,
                 array(
-                    'label'=>'Dodaj następne',
+                    'label'=>'add_next',
                     'mapped'=>false,
                     'required'=>false,
                     'disabled'=>(sizeof($meeting->getMeetingVotings())+1)==$meeting->getCount()
