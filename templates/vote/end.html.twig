@@ -1,24 +1,24 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}{% trans %}Dziękujemy za udział w głosowaniu{% endtrans %}{% endblock %}
+{% block title %}{% trans %}votings.thanks_for_participation{% endtrans %}{% endblock %}
 
 {% block body %}
     <div class="row">
         <div class="col-md-6">
             <div class="alert alert-info">
-                <h4>{% trans %}Twoje dane{% endtrans %}:</h4>
-                <p class="mb-0">{% trans %}Nazwa użytkownika{% endtrans %}: <strong>{{ app.request.session.get('name') }}</strong></p>
+                <h4>{% trans %}profile.your_data{% endtrans %}:</h4>
+                <p class="mb-0">{% trans %}register.form.username.label{% endtrans %}: <strong>{{ app.request.session.get('name') }}</strong></p>
                 {% if seconds is defined %}
-                    <p>{% trans %}Czas na oddawanie głosów{% endtrans %}: <span id="seconds_counter"></span></p>
+                    <p>{% trans %}voting.time_for_answer{% endtrans %}: <span id="seconds_counter"></span></p>
                 {% endif %}
             </div>
         </div>
     </div>
     <div class="">
         <div class="alert alert-success">
-            {% trans %}Dziękujemy za głosowanie! {% endtrans %}
+            {% trans %}votings.thanks_for_voting{% endtrans %}
         </div>
         <p>Tutaj będzie jakieś podsumowanie oddanych głosów</p>
-        <p class="text-info">Twoje głosowanie trwało: {{ diff }}</p>
+        <p class="text-info">{% trans %}votings.your_voting_time{% endtrans %}: {{ diff }}</p>
     </div>
 {% endblock %}

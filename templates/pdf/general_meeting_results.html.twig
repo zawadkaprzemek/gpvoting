@@ -1,6 +1,6 @@
 {% extends 'base-pdf.html.twig' %}
 
-{% block title %}{% trans %}Walne zgromadzenie{% endtrans %}: {{ meeting.name }}{% endblock %}
+{% block title %}{% trans %}general_meeting.text{% endtrans %}: {{ meeting.name }}{% endblock %}
 
 {% block body %}
 
@@ -10,19 +10,19 @@
 
             <p>
                 {% if meeting.weight==1 %}
-                    {% trans %}Waga głosów{% endtrans %}
+                    {% trans %}weight.votes{% endtrans %}
                 {% else %}
-                    {% trans %}Waga akcji{% endtrans %}
+                    {% trans %}weight.actions{% endtrans %}
                 {% endif %}
             </p>
             {% if meeting.secret %}
-                <p>{% trans %}Głosowanie tajne{% endtrans %}</p>
+                <p>{% trans %}general_meeting.secret_voting{% endtrans %}</p>
             {% endif %}
-            <h4>{% trans %}Wyniki głosowań{% endtrans %}</h4>
+            <h4>{% trans %}general_meeting.voting_results{% endtrans %}</h4>
             <div class="voting-list mb-2">
                 <div class="row text-center font-weight-bold border align-items-center h-60px">
-                    <div class="col-6 pt-3 border-right h-100">{% trans %}Głosowanie{% endtrans %}:</div>
-                    <div class="col-6 pt-3 border-right h-100">{% trans %}Wynik{% endtrans %}:</div>
+                    <div class="col-6 pt-3 border-right h-100">{% trans %}voting{% endtrans %}:</div>
+                    <div class="col-6 pt-3 border-right h-100">{% trans %}result{% endtrans %}:</div>
                 </div>
                 {% for voting in meeting.meetingVotings %}
                     <div class="row border-bottom border-left">
@@ -33,22 +33,22 @@
                                     <p class="mb-0 font-weight-bold text-center">
                                         {% if meeting.weight==1 %}
                                             {% if voting.votesSummary['votes']['accepted'] %}
-                                                {% trans %}Zaakceptowane{% endtrans %}
+                                                {% trans %}accepted{% endtrans %}
                                             {% else %}
-                                                {% trans %}Odrzucone{% endtrans %}
+                                                {% trans %}declined{% endtrans %}
                                             {% endif %}
                                         {% else %}
                                             {% if voting.votesSummary['actions']['accepted'] %}
-                                                {% trans %}Zaakceptowane{% endtrans %}
+                                                {% trans %}accepted{% endtrans %}
                                             {% else %}
-                                                {% trans %}Odrzucone{% endtrans %}
+                                                {% trans %}declined{% endtrans %}
                                             {% endif %}
                                         {% endif %}
                                     </p>
-                                    <p class="mb-0">{% trans %}Za{% endtrans %}: {% if meeting.weight==1 %}{{ voting.votesSummary['votes'][1] }}{% else %}{{ voting.votesSummary['actions'][1] }}{% endif %}%</p>
-                                    <p class="mb-0">{% trans %}Przeciw{% endtrans %}: {% if meeting.weight==1 %}{{ voting.votesSummary['votes'][0] }}{% else %}{{ voting.votesSummary['actions'][0] }}{% endif %}%</p>
+                                    <p class="mb-0">{% trans %}on{% endtrans %}: {% if meeting.weight==1 %}{{ voting.votesSummary['votes'][1] }}{% else %}{{ voting.votesSummary['actions'][1] }}{% endif %}%</p>
+                                    <p class="mb-0">{% trans %}against{% endtrans %}: {% if meeting.weight==1 %}{{ voting.votesSummary['votes'][0] }}{% else %}{{ voting.votesSummary['actions'][0] }}{% endif %}%</p>
                                     {% if meeting.holdBack %}
-                                        <p class="mb-0">{% trans %}Wstrzymało się{% endtrans %}: {% if meeting.weight==1 %}{{ voting.votesSummary['votes'][2] }}{% else %}{{ voting.votesSummary['actions'][2] }}{% endif %}%</p>
+                                        <p class="mb-0">{% trans %}hold_on{% endtrans %}: {% if meeting.weight==1 %}{{ voting.votesSummary['votes'][2] }}{% else %}{{ voting.votesSummary['actions'][2] }}{% endif %}%</p>
                                     {% endif %}
                                 {% elseif voting.type==2 %}
                                     {% if voting.votesSummary['valid'] is defined %}
@@ -70,7 +70,7 @@
                                                 {% set lp=lp+1 %}
                                             {% endfor %}
                                         {% endif %}
-                                        <p class="small">{% trans %}Ilość głosów nie ważnych{% endtrans %}: {{ voting.votesSummary['invalid'] }} </p>
+                                        <p class="small">{% trans %}general_meeting.voting.invalid_votes_count{% endtrans %}: {{ voting.votesSummary['invalid'] }} </p>
                                     {% endif %}
                                 {% else %}
                                     {% for key,vote in voting.votesSummary %}

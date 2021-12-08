@@ -123,10 +123,12 @@ class RoomController extends AbstractController
                 }
             }
         }
+        $meetings=$room->getGeneralMeetings();
         return $this->render('room/index.html.twig',[
            'room'=>$room,
             'manage'=>false,
-            'pollings'=>$pollings
+            'pollings'=>$pollings,
+            'meetings'=>$meetings
         ]);
     }
 

@@ -8,6 +8,14 @@
     <input type="hidden" name="_method" value="PATCH">
     <input type="hidden" name="_token" value="{{ csrf_token('patch' ~ room.id) }}">
     <button class="btn btn-sm btn-outline-success rounded-0">
-        {% if room.visible %}{% trans %}hide{% endtrans %}{% else %}{% trans %}unhide{% endtrans %}{% endif %}
+        {% if room.visible %}
+            {{ 'room.hide'|info_icon }}
+            {{ 'room.hide'|help_icon }}
+            {% trans %}hide{% endtrans %}
+        {% else %}
+            {{ 'room.unhide'|info_icon }}
+            {{ 'room.unhide'|help_icon }}
+            {% trans %}unhide{% endtrans %}
+        {% endif %}
     </button>
 </form>

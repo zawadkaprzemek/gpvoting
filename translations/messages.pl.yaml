@@ -98,6 +98,7 @@ question:
 
   delete:
     info: Usuń pytanie
+    help: Usunięcie pytania
     success:
     text:
     confirm: Na pewno chcesz usunąć to pytanie?
@@ -212,6 +213,9 @@ event_limit: Limit wydarzeń
 events_count: Ilość wydarzeń
 participants_list_count: Ilość list uczestników
 duplicate: Duplikuj
+percent: Procent
+link_expires: Link wygaśnie w ciągu %hours% godzin.
+best_regards: Pozdrowienia
 #Zarządzanie
 
 manage:
@@ -318,6 +322,9 @@ codes:
 room:
   text: Pokój
   many: Pokoje
+  enter_code:
+    title: Podaj kod dostępu do pokoju
+    header: Wprowadź kod aby wejśc do tego pokoju
 
   enter: Wejdź do pokoju
 
@@ -467,6 +474,7 @@ reset:
     small_text: Wprowadź swój adres email, a dostaniesz od nas link do zmiany swojego hasła
     your_password_reset_request: Twoja prośba resetu hasła
 
+
   request_send:
     title: Wysłano maila z resetem hasła
     text1: Wiadomość zawierająca link do zmiany hasła została wysłana. Ten link wygaśnie w ciągu %hours% godzin.
@@ -487,8 +495,18 @@ duplicate_success: Tworzenie duplikatu Walnego zgromadzenia zakończone sukcesem
 session:
   text: Głosowanie sesyjne
   begin:
+    help: Rozpocznij
+    info: Rozpoczęcie sesji
     button: Rozpocznij sesję
     success: Głosowanie sesyjne rozpoczęte
+
+  statuses:
+    waiting_for_start: Oczekiwanie na rozpoczęcie głosowania przez organizatora
+    waiting_for_question: Sesja trwa, za kilka chwil wyświetli się pytanie
+    waiting_for_next_question: Oczekiwanie na aktywowanie kolejnego pytania
+
+  results:
+    previous: Wyniki poprzedniego pytania
 
   users_list: Lista użytkowników sesji
   last_activity: Ostatnia data aktywności
@@ -499,6 +517,7 @@ session:
   waiting: Oczekuje na rozpoczęcie
   running: Rozpoczęta
   ended: Zakończona
+  ended_info: Sesja została zakończona
   time_to_end_vote: Czas do zakończenia głosowania
   active_question: Aktywne pytanie
   choose_actiove_question: Wybierz aktywne pytanie
@@ -536,11 +555,35 @@ register.form:
 
   username:
     label: Nazwa użytkownika
+
+  email:
+    account_created:
+      title: Witaj! Zostało stworzone dla Ciebie hasło w serwisie GPVoting
+      your_password: Twoje hasło to
+    confirm:
+      title: Witaj! Prosimy o potwierdzenie adresu email
+      text1: Potwierdź swój adres email klikając poniższy link
+      my_email: Potwiedź mój adres email
 #głosowania
 votings:
+  planed_date: Planowana data głosowania
+  available_between: Głosowanie dostępne od %start% do %end%
+  thanks_for_voting: Dziękujemy za głosowanie!
+  thanks_for_participation: Dziękujemy za udział w głosowaniu
+  your_voting_time: Twoje głosowanie trwało
+  enter_code: Wprowadź kod aby wiąć udział w tym głosowaniu
+  enter_code_title: Podaj kod do głosowania
 
+  test_vote:
+    button: Testowe głosowanie
+    help: Test
+    info: Test
   delete:
     confirm: Na pewno chcesz usunąć to głosowanie?
+
+  vote:
+    delete:
+      confirm: Na pewno chcesz usunąć tą odpowiedź?
 
 #Walne zgromadzenia
 general_meeting:
@@ -557,9 +600,10 @@ general_meeting:
   go_to_cockpit: Przejdź do zarządzania
   course_voting: Przebieg głosowania
   secret_voting: Tajne głosowanie
+  voting_results: Wyniki głosowań
   add_candidate: Dodaj kandydata
   remove_candidate: Usuń kandydata
-
+  join: Dołącz do zgromadzenia
   bad_vote_settings:
     text: Błędne głosy
     not_allowed: Nie pozwól, blokuj
@@ -596,7 +640,7 @@ general_meeting:
     confirm: Na pewno chcesz zakończyć to zgromadzenie?
 
   voting:
-    no_votins: Brak głosowań
+    no_votings: Brak głosowań
     list: Lista głosowań
     tochoose: Do wyboru
     choose_type: Wybierz typ głosowania

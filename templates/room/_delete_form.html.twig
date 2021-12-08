@@ -1,5 +1,8 @@
 <form method="post" action="{{ path('app_room_delete', {'id': room.id}) }}" onsubmit="return confirm('{% trans %}room.delete.confirm{% endtrans %}');">
     <input type="hidden" name="_method" value="DELETE">
     <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ room.id) }}">
-    <button class="btn btn-sm btn-dark rounded-left-0">{% trans %}delete{% endtrans %}</button>
+    <button class="btn btn-sm btn-dark rounded-left-0">
+        {{ 'room.delete'|info_icon }}
+        {{ 'room.delete'|help_icon }}
+        {% trans %}delete{% endtrans %}</button>
 </form>

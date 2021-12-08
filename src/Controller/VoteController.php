@@ -98,7 +98,7 @@ class VoteController extends AbstractController
                 ->setAddressIP($request->getClientIp())
                 ->setStartDate(new \DateTime($form['startDateString']->getData()))
                 ->setEndDate(new \DateTime())
-                ->setWho(($test ? 'Test' :$session->get('name')))
+                ->setWho(($test ? 'Test' :($session->get('name')?? 'guest')))
                 ->setTest($test)
             ;
             $diff=$vote->getEndDate()->diff($vote->getStartDate());

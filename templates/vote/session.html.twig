@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}{% trans %}Głosowanie{% endtrans %}: {{ polling.name }}{% endblock %}
+{% block title %}{% trans %}voting{% endtrans %}: {{ polling.name }}{% endblock %}
 {% block metatags %}
     {% if seconds is not null %}
     <meta http-equiv="refresh" content="{{ seconds }}" >
@@ -14,23 +14,23 @@
     <div class="row">
         <div class="col-md-6">
             <div class="alert alert-info">
-                <h4>{% trans %}Twoje dane{% endtrans %}:</h4>
-                <p class="mb-0">{% trans %}Nazwa użytkownika{% endtrans %}: <strong>{{ app.request.session.get('name') }}</strong></p>
+                <h4>{% trans %}profile.your_data{% endtrans %}:</h4>
+                <p class="mb-0">{% trans %}register.form.username.label{% endtrans %}: <strong>{{ app.request.session.get('name') }}</strong></p>
             </div>
         </div>
     </div>
     <div class="">
         {% if status ==2 %}
-            <h4 class="text-danger">{% trans %}Sesja została zakończona{% endtrans %}</h4>
-            <p class="text-primary">{% trans %}Dziękujemy za udział w głosowaniu!{% endtrans %}</p>
+            <h4 class="text-danger">{% trans %}session.ended_info{% endtrans %}</h4>
+            <p class="text-primary">{% trans %}votings.thanks_for_participation{% endtrans %}!</p>
             {% else %}
         <h4 class="text-success">
             {% if status==0 %}
-            {% trans %}Oczekiwanie na rozpoczęcie głosowania przez organizatora{% endtrans %}
+            {% trans %}session.statuses.waiting_for_start{% endtrans %}
             {% elseif status==1 %}
-            {% trans %}Sesja trwa, za kilka chwil wyświetli się pytanie{% endtrans %}
+            {% trans %}session.statuses.waiting_for_question{% endtrans %}
                 {% elseif status==3 %}
-                {% trans %}Oczekiwanie na aktywowanie kolejnego pytania{% endtrans %}
+                {% trans %}session.statuses.waiting_for_next_questionOczekiwanie na aktywowanie kolejnego pytania{% endtrans %}
             {% endif %}
         </h4>
         {% endif %}
@@ -38,7 +38,7 @@
 
     {% if results is defined and results is not null %}
 
-        <h5>{% trans %}Wyniki poprzedniego pytania{% endtrans %}</h5>
+        <h5>{% trans %}session.results.previous{% endtrans %}</h5>
         <h6>{{ question.questionContent }}</h6>
         <div class="chart-container">
             <canvas id="myChart" width="300" height="150"></canvas>
@@ -47,7 +47,7 @@
                 var myChart = new Chart(ctx, {
                     type: '{{ (question.polling.resultsGraph==1 ? 'bar' : 'horizontalBar') }}',
                     data: {
-                        labels: ['{% trans %}Procent{% endtrans %}'],
+                        labels: ['{% trans %}percent{% endtrans %}'],
                         datasets: [
                             {% for result in results %}
                             {
