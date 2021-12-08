@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}{% trans %}Wyniki do pytania{% endtrans %}: {{ question.questionContent}} {% endblock %}
+{% block title %}{% trans %}question.results{% endtrans %}: {{ question.questionContent}} {% endblock %}
 {% block js_top %}
     {{ parent() }}
     <script src="{{ asset('assets/js/Chart.min.js') }}"></script>
@@ -8,21 +8,21 @@
 {% block body %}
     <div>
         <h4>{{ question.questionContent }}</h4>
-        <h5>{% trans %}Wyniki{% endtrans %}</h5>
+        <h5>{% trans %}results{% endtrans %}</h5>
 
-        <div class="alert alert-info text-center">{% trans %}Brak wyników do tego pytania{% endtrans %}</div>
+        <div class="alert alert-info text-center">{% trans %}question.no_results{% endtrans %}</div>
         <div class="row">
             <div class="col-6 text-left">
                 {% if(question.sort>1) %}
                     <a class="btn btn-secondary btn-sm" href="{{ path('app_question_results',{slug:question.polling.slug,sort:(question.sort-1)}) }}">
-                        {% trans %}Poprzednie pytanie{% endtrans %}
+                        {% trans %}question.previous{% endtrans %}
                     </a>
                 {% endif %}
             </div>
             <div class="col-6 text-right">
                 {% if(question.sort<(question.polling.questions|length)) %}
                     <a class="btn btn-secondary btn-sm" href="{{ path('app_question_results',{slug:question.polling.slug,sort:(question.sort+1)}) }}">
-                        {% trans %}Następne pytanie{% endtrans %}
+                        {% trans %}question.next{% endtrans %}
                     </a>
                 {% endif %}
             </div>

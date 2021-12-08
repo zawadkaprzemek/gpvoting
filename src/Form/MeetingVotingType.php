@@ -44,7 +44,7 @@ class MeetingVotingType extends AbstractType
                     'weight.votes'=>1,
                     'weight.actions'=>2
                 ),
-                'placeholder'=>'choose_type_weight'
+                'placeholder'=>'general_meeting.choose_type_weight'
             ))
             ->add('multiChoose',CheckboxType::class,array('label'=>'multiple_choise','required'=>false))
             ->add('submit',SubmitType::class,array('label'=>'save'))

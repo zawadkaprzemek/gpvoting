@@ -39,7 +39,7 @@
             <div class="custom-control custom-switch">
                 <input type="checkbox" {% if form.session.vars.checked %}checked{% endif%} name="{{ form.session.vars.full_name }}"
                        class="custom-control-input" id="{{ form.session.vars.id }}" value="{{ form.session.vars.value }}">
-                <label class="custom-control-label" for="{{ form.session.vars.id }}">{{ form.session.vars.label }}</label>
+                <label class="custom-control-label" for="{{ form.session.vars.id }}">{{ form.session.vars.label|trans }}</label>
             </div>
         </div>
     </div>

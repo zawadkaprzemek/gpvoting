@@ -1,16 +1,21 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}{% if edit %}{% trans %}Edycja danych uczestnika{% endtrans %}{% else %}{% trans %}Zapisz się do listy uczestników{% endtrans %}{% endif %}{% endblock %}
+{% block title %}{% if edit %}
+    {% trans %}participants.single.edit.text{% endtrans %}
+{% else %}
+    {% trans %}participants.assign.form.title{% endtrans %}
+{% endif %}
+{% endblock %}
 
 {% block body %}
 <div>
     {% if list.open or edit==true %}
         {% if edit %}
-            <h3>{% trans %}Zapis do listy uczestników{% endtrans %}</h3>
-            <p>{% trans %}Edycja danych uczestnika{% endtrans %}</p>
+            <h3>{% trans %}participants.assign_to_list.text{% endtrans %}</h3>
+            <p>{% trans %}participants.single.edit.text{% endtrans %}</p>
         {% else %}
-                <h3>{% trans %}Zapisz się do listy uczestników{% endtrans %}</h3>
-                <p>{% trans %}Wprowadź swoje dane aby się zapisać{% endtrans %}</p>
+                <h3>{% trans %}participants.assign.form.title{% endtrans %}</h3>
+                <p>{% trans %}participants.assign.form.text{% endtrans %}</p>
         {% endif %}
     {{ form_start(form) }}
         <div class="form-group row">

@@ -21,6 +21,8 @@ class RegistrationFormType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        /** @var User $user */
+        $user=$options['data'];
         $builder
             ->add('username',TextType::class,array('label'=>'register.form.username.label'))
             ->add('agreeTerms', CheckboxType::class, [
@@ -52,9 +54,16 @@ class RegistrationFormType extends AbstractType
             ->add('name',TextType::class,array('label'=>'firstName',))
             ->add('surname',TextType::class,array('label'=>'lastName'))
             ->add('email',EmailType::class,array('label'=>'email.address'))
-            ->add('captcha',CaptchaType::class,array('label'=>'captcha'))
-            ->add('submit',SubmitType::class,array('label'=>'registration'))
+            ->add('submit',SubmitType::class,array(
+                'label'=>($user->getParent()===null ? 'registration' :'profile.subaccount.create.button')
+
+            ))
         ;
+        if($user->getParent()===null)
+        {
+            $builder
+                ->add('captcha',CaptchaType::class,array('label'=>'captcha'));
+        }
     }
 
     public function configureOptions(OptionsResolver $resolver)

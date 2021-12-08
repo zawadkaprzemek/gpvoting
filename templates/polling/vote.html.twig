@@ -4,17 +4,17 @@
         <meta http-equiv="refresh" content="{{ seconds }}" >
         {% endif %}
     {% endblock %}
-{% block title %}{% trans %}Głosowanie{% endtrans %}: {{ polling.name }}{% endblock %}
+{% block title %}{% trans %}voting{% endtrans %}: {{ polling.name }}{% endblock %}
 
 {% block body %}
 
     <div class="row">
         <div class="col-md-6">
             <div class="alert alert-info">
-                <h4>{% trans %}Twoje dane{% endtrans %}:</h4>
-                <p class="mb-0">{% trans %}Nazwa użytkownika{% endtrans %}: <strong>{{ app.request.session.get('name') }}</strong></p>
+                <h4>{% trans %}profile.your_data{% endtrans %}:</h4>
+                <p class="mb-0">{% trans %}register.form.username.label{% endtrans %}: <strong>{{ app.request.session.get('name') }}</strong></p>
                 {% if seconds is defined %}
-                    <p>{% trans %}Czas na oddawanie głosów{% endtrans %}: <span id="seconds_counter"></span></p>
+                    <p>{% trans %}voting.time_for_answer{% endtrans %}: <span id="seconds_counter"></span></p>
                 {% endif %}
             </div>
         </div>
@@ -23,7 +23,7 @@
 
     <h3>{{ question.questionContent }}</h3>
     {% if question.multiChoice %}
-    <p><small>{% trans %}Pytanie wielokrotnego wyboru{% endtrans %}</small></p>
+    <p><small>{% trans %}question.multi_choice{% endtrans %}</small></p>
     {% endif %}
         <ul class="list-group mb-2 vote-ul">
             {% for key,answer in question.answers %}
@@ -62,9 +62,9 @@
             let html='';
             if(minutes>0)
             {
-                html+=minutes+' {% trans %}minuta{% endtrans %}';
+                html+=minutes+' {% trans %}minute{% endtrans %}';
             }
-            html+=' '+seconds+ ' {% trans %}sekund{% endtrans %}';
+            html+=' '+seconds+ ' {% trans %}seconds{% endtrans %}';
             document.getElementById("seconds_counter").innerHTML = html;
 
             // If the count down is finished, write some text

@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Polling;
+use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -69,6 +70,17 @@ class PollingRepository extends ServiceEntityRepository
             ->join('r.event','e')
             ->andWhere('e.password = :pass')
             ->setParameter('pass',$pass)
+            ->getQuery()
+            ->getResult();
+    }
+
+    public function findByUser(User $user)
+    {
+        return $this->createQueryBuilder('p')
+            ->join('p.room','r')
+            ->join('r.event','e')
+            ->andWhere('e.user = :user')
+            ->setParameter('user',$user)
             ->getQuery()
             ->getResult();
     }

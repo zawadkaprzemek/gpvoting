@@ -5,34 +5,42 @@
 {% block body %}
     {{ form_start(form) }}
     <div class="row form-group">
-        <div class="col-12 col-sm-3 col-form-label">
+        <div class="col-12 col-sm-4 col-form-label">
+            {{ 'general_meeting.voting.content'|info_icon}}
+            {{ 'general_meeting.voting.content'|help_icon}}
             {{form_label(form.content)}}
         </div>
-        <div class="col-12 col-sm-9 d-flex">
+        <div class="col-12 col-sm-8 d-flex">
             {{ form_widget(form.content) }}
         </div>
     </div>
     <div class="row form-group">
-        <div class="col-12 col-sm-3 col-form-label">
+        <div class="col-12 col-sm-4 col-form-label">
+            {{ 'general_meeting.voting.type'|info_icon}}
+            {{ 'general_meeting.voting.type'|help_icon}}
             {{form_label(form.type)}}
         </div>
-        <div class="col-12 col-sm-9 d-flex">
+        <div class="col-12 col-sm-8 d-flex">
             {{ form_widget(form.type) }}
         </div>
     </div>
     <div class="row form-group weight d-none">
-        <div class="col-12 col-sm-3 col-form-label">
+        <div class="col-12 col-sm-4 col-form-label">
+            {{ 'general_meeting.choose_type_weight'|info_icon}}
+            {{ 'general_meeting.choose_type_weight'|help_icon}}
             {{form_label(form.weight)}}
         </div>
-        <div class="col-12 col-sm-9 d-flex">
+        <div class="col-12 col-sm-8 d-flex">
             {{ form_widget(form.weight) }}
         </div>
     </div>
     <div class="row form-group toChoose d-none">
-        <div class="col-12 col-sm-3 col-form-label">
+        <div class="col-12 col-sm-4 col-form-label">
+            {{ 'general_meeting.voting.tochoose'|info_icon}}
+            {{ 'general_meeting.voting.tochoose'|help_icon}}
             {{form_label(form.tochoose)}}
         </div>
-        <div class="col-12 col-sm-9 d-flex">
+        <div class="col-12 col-sm-8 d-flex">
             {{ form_widget(form.tochoose) }}
             <span id="toChooseCountSpan" class="font-weight-bold text-primary ml-2 mt-1 valueSpan">20</span>
         </div>
@@ -41,10 +49,12 @@
         {% for key,candidate in form.candidates %}
             <div class="row form-group candidate">
                 {% for child in candidate.children %}
-                    <div class="col-12 col-sm-3 col-form-label">
-                        {{ form_label(child,child.vars.label~" "~(key+1)) }}
+                    <div class="col-12 col-sm-4 col-form-label">
+                        {{ 'general_meeting.voting.candidates'|info_icon}}
+                        {{ 'general_meeting.voting.candidates'|help_icon}}
+                        {{ form_label(child,child.vars.label) }} {{ (key+1) }}
                     </div>
-                    <div class="col-12 col-sm-9">
+                    <div class="col-12 col-sm-8">
                         {{ form_widget(child) }}
                     </div>
                 {% endfor %}
@@ -53,14 +63,16 @@
     </div>
 
     <div class="row form-group answers">
-            <div class="col-12 col-sm-3 col-form-label">
+            <div class="col-12 col-sm-4 col-form-label">
+                {{ 'general_meeting.voting.multiple_choise'|info_icon}}
+                {{ 'general_meeting.voting.multiple_choise'|help_icon}}
                 {{form_label(form.multiChoose)}}
             </div>
-            <div class="col-12 col-sm-9">
+            <div class="col-12 col-sm-8">
                 <div class="custom-control custom-switch">
                     <input type="checkbox" {% if form.multiChoose.vars.checked %}checked{% endif%} name="{{ form.multiChoose.vars.full_name }}"
                            class="custom-control-input" id="{{ form.multiChoose.vars.id }}" value="{{ form.multiChoose.vars.value }}">
-                    <label class="custom-control-label" for="{{ form.multiChoose.vars.id }}">{{ form.multiChoose.vars.label }}</label>
+                    <label class="custom-control-label" for="{{ form.multiChoose.vars.id }}">{{ form.multiChoose.vars.label|trans }}</label>
                 </div>
             </div>
     </div>
@@ -70,21 +82,23 @@
             <div class="row form-group answer">
                 {% for child in answer.children %}
                     {% if child.vars.name=="valid" %}
-                        <div class="col-12 col-sm-3 col-form-label">
+                        <div class="col-12 col-sm-4 col-form-label">
                             {{form_label(child)}}
                         </div>
-                        <div class="col-12 col-sm-9">
+                        <div class="col-12 col-sm-8">
                             <div class="custom-control custom-switch">
                                 <input type="checkbox" {% if child.vars.checked %}checked{% endif%} name="{{ child.vars.full_name }}"
                                        class="custom-control-input" id="{{ child.vars.id }}" value="{{ child.vars.value }}">
-                                <label class="custom-control-label" for="{{ child.vars.id }}">{{ child.vars.label }}</label>
+                                <label class="custom-control-label" for="{{ child.vars.id }}">{{ child.vars.label|trans }}</label>
                             </div>
                         </div>
                     {% else %}
-                    <div class="col-12 col-sm-3 col-form-label">
-                        {{ form_label(child,child.vars.label~" "~(key+1)) }}
+                    <div class="col-12 col-sm-4 col-form-label">
+                        {{ 'general_meeting.voting.answers'|info_icon}}
+                        {{ 'general_meeting.voting.answers'|help_icon}}
+                        {{ form_label(child,child.vars.label) }} {{ (key+1) }}
                     </div>
-                    <div class="col-12 col-sm-9">
+                    <div class="col-12 col-sm-8">
                         {{ form_widget(child) }}
                     </div>
                     {% endif %}
@@ -94,14 +108,16 @@
     </div>
     {% if form.vars.value.id is null %}
     <div class="row form-group">
-        <div class="col-12 col-sm-3 col-form-label">
+        <div class="col-12 col-sm-4 col-form-label">
+            {{ 'general_meeting.voting.add_next'|info_icon}}
+            {{ 'general_meeting.voting.add_next'|help_icon}}
             {{form_label(form.add_next)}}
         </div>
-        <div class="col-12 col-sm-9">
+        <div class="col-12 col-sm-8">
             <div class="custom-control custom-switch">
                 <input type="checkbox" {% if form.add_next.vars.checked %}checked{% endif%} {% if form.add_next.vars.disabled %}disabled{% endif%} name="{{ form.add_next.vars.full_name }}"
                        class="custom-control-input" id="{{ form.add_next.vars.id }}" value="{{ form.add_next.vars.value }}">
-                <label class="custom-control-label" for="{{ form.add_next.vars.id }}">{{ form.add_next.vars.label }}</label>
+                <label class="custom-control-label" for="{{ form.add_next.vars.id }}">{{ form.add_next.vars.label|trans }}</label>
             </div>
         </div>
     </div>
@@ -165,8 +181,8 @@
 
             var $collectionCandidatesHolder;
             var $collectionAnswersHolder;
-            var $addCandidateButton = $('<button type="button" class="add_candidate_link btn btn-light">{% trans %}Dodaj kandydata{% endtrans %}</button>');
-            var $addAnswerButton = $('<button type="button" class="add_answer_link btn btn-light">{% trans %}Dodaj odpowiedź{% endtrans %}</button>');
+            var $addCandidateButton = $('<button type="button" class="add_candidate_link btn btn-light">{% trans %}general_meeting.add_candidate{% endtrans %}</button>');
+            var $addAnswerButton = $('<button type="button" class="add_answer_link btn btn-light">{% trans %}add_answer{% endtrans %}</button>');
             var $newLinkCLi = $('<div></div>').append($addCandidateButton);
             var $newLinkQLi = $('<div></div>').append($addAnswerButton);
 
@@ -221,7 +237,7 @@
                 }
 
                 function addCandidateFormDeleteLink($tagFormLi) {
-                    var $removeFormButton = $('<button class="btn btn-dark removeCandidateButton" type="button" title="{% trans %}Usuń kandydata{% endtrans %}">&times;</button>');
+                    var $removeFormButton = $('<button class="btn btn-dark removeCandidateButton" disabled type="button" title="{% trans %}general_meeting.remove_candidate{% endtrans %}">&times;</button>');
                     $tagFormLi.append($removeFormButton);
 
                     $('body').on('click','.removeCandidateButton', function(e) {
@@ -229,7 +245,7 @@
                         var len=($('.candidate').length);
                         $('#meeting_voting_tochoose').attr('max',len).trigger('change');
 
-                        if(len===2)
+                        if(len<3)
                         {
                             $('.removeCandidateButton').prop('disabled',true);
                         }
@@ -262,13 +278,13 @@
                 }
 
                 function addAnswerFormDeleteLink($tagFormLi) {
-                    var $removeFormButton = $('<button class="btn btn-dark removeAnswerButton" type="button" title="{% trans %}Usuń odpowiedź{% endtrans %}">&times;</button>');
+                    var $removeFormButton = $('<button class="btn btn-dark removeAnswerButton" disabled type="button" title="{% trans %}remove_answer{% endtrans %}">&times;</button>');
                     $tagFormLi.append($removeFormButton);
 
                     $('body').on('click','.removeAnswerButton', function(e) {
                         $(this).parent().remove();
                         var len=($('.answer').length);
-                        if(len===2)
+                        if(len<3)
                         {
                             $('.removeAnswerButton').prop('disabled',true);
                         }

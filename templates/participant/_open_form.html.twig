@@ -1,13 +1,21 @@
 <form method="post" action="{{ path('app_participant_list_open', {'id': list.id}) }}"
       {% if list.open %}
-      onsubmit="return confirm('{% trans %}Na pewno chcesz zamknąć tą listę?{% endtrans %}');"
+      onsubmit="return confirm('{% trans %}participants.list.close.confirm{% endtrans %}');"
       {% else %}
-          onsubmit="return confirm('{% trans %}Na pewno chcesz otworzyć tą listę?{% endtrans %}');"
+          onsubmit="return confirm('{% trans %}participants.list.open.confirm{% endtrans %}');"
       {% endif %}
 >
     <input type="hidden" name="_method" value="PATCH">
     <input type="hidden" name="_token" value="{{ csrf_token('patch' ~ list.id) }}">
     <button class="btn btn-sm btn-primary rounded-0">
-        {% if list.open %}{% trans %}Zamknij{% endtrans %}{% else %}{% trans %}Otwórz{% endtrans %}{% endif %}
+        {% if list.open %}
+            {{ 'participants.list.close'|info_icon }}
+            {{ 'participants.list.close'|help_icon }}
+            {% trans %}close{% endtrans %}
+        {% else %}
+            {{ 'participants.list.open'|info_icon }}
+            {{ 'participants.list.open'|help_icon }}
+            {% trans %}open{% endtrans %}
+        {% endif %}
     </button>
 </form>

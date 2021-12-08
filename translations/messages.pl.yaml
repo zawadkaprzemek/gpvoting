@@ -4,7 +4,11 @@ guest: Gość
 login: Logowanie
 registration: Rejestracja
 logout: Wyloguj
+hello: Witaj
 profile:
+  your_data: Twoje dane
+  change_data: Zmień dane
+  user: Profil użytkownika
   my: Mój profil
   edit: Edytuj profil
   change_password: Zmień hasło
@@ -16,22 +20,29 @@ profile:
     text: Utwórz konto
     button: Stwórz konto
   subaccount:
+    no_subaccounts: Nie posiadasz jeszcze żadnych podkont
     create:
       success: Podkonto zostało utworzone
       button: Stwórz podkonto
       text: Utwórz podkonto
-
+#admin
 admin:
+  page: Panel administracyjny
   create_user: Stwórz konto użytkownika
   users_list: Lista użytkowników
+  edit_user_profile: Edytuj profil użytkownika
+  packs_list: Lista pakietów
+  edit_user_data: Edytuj dane użytkownika
 
 
 #Głosowanie
 voting: Głosowanie
+voting.time_for_answer: Czas na oddanie głosu
 
 polling:
   single: Głosowanie
   many: Głosowania
+  my_pollings: Moje głosowania
   error:
     cannot_begin_in_past: Głosowanie nie może zaczynać się w przeszłości
     date_end_must_be_greater_than_start: Data końcowa nie może być wcześniejsza od daty startowej
@@ -69,17 +80,27 @@ vote:
 
 #Pytania
 question:
+  multi_choice: Pytanie wielokrotnego wyboru
+  no_questions: Brak pytań
   text: Pytanie
+  many: Pytania
+  preview: Podgląd pytania
+  previous: Poprzednie pytanie
+  next: Następne pytanie
+  results: Wyniki do pytania
+  no_results: Brak wyników do tego pytania
   add:
     success:
-    text:
+    text: Dodaj nowe pytanie
 
   edit:
     text: Edytuj pytanie
 
   delete:
+    info: Usuń pytanie
     success:
     text:
+    confirm: Na pewno chcesz usunąć to pytanie?
 
 #Analiza
 analysis:
@@ -93,6 +114,7 @@ show: Pokaż
 hide: Ukryj
 unhide: Odkryj
 close: Zamknij
+open: Otwórz
 activate: Aktywuj
 delete: Usuń
 irreversible_operation: Operacja ta jest nieodwracalna!
@@ -102,19 +124,37 @@ login.to.site: Zaloguj się!
 password: Hasło
 enter_password: Wprowadź hasło
 login.text: Login
+login.text.info: Login
+login.text.help: Login
 please.login: Proszę się zalogować
 please.register: Zarejestruj się
 remember_me: Zapamiętaj mnie
 log.in: Zaloguj
 lost_password: Nie pamiętam hasła
+full_name: Imię i nazwisko
+register_date: Data rejestracji
+last_login: Ostatnie logowanie
 firstName: Imię
+firstName.info: Imię
+firstName.help: Imię
 lastName: Nazwisko
+lastName.info: Nazwisko
+lastName.help: Nazwisko
 name: Nazwa
 email.address: Adres email
+email.address.info: Adres email
+email.address.help: Adres email
+subaccounts: Podkonta
+no_subaccounts: Użytkownik nie posiada żadnych podkont
 captcha: Kod z obrazka
 enter: Wejdź
 enter_polling: Przystąp do głosowania
+access_to_rooms_pollings: Uzyskałeś dostęp do pokoi/głosowań
 send: Wyślij
+30_sek: 30 sekund
+1_min: 1 minuta
+1_5_min: 1.5 minuty
+2_min: 2 minuty
 minute: minuta
 minutes: minuty
 seconds: sekund
@@ -127,10 +167,13 @@ weight:
   actions: Waga akcji
   votes: Waga głosów
 votes: Głosy
+votes_count: Ilość głosów
+actions_count: Ilość akcji
 actions: Akcje
 choose: Wybierz
 secret_voting: Tajne głosowanie
 result: Wynik
+results: Wyniki
 course: Przebieg
 begin: Rozpocznij
 voted: Zagłosowało
@@ -146,6 +189,8 @@ available_answers: Dostępne odpowiedzi
 changes_saved: Zapisano zmiany
 resolutions: Uchwały
 answer: Odpowiedź
+add_answer: Dodaj odpowiedź
+remove_answer: Usuń odpowiedź
 valid: Poprawna
 candidate_data: Dane kandydata
 code: Kod
@@ -161,10 +206,17 @@ phone: Numer telefonu
 old_password: Stare hasło
 start_date: Data początkowa
 end_date: Data zakończenia
+cancel: Anuluj
+id: Id
+event_limit: Limit wydarzeń
+events_count: Ilość wydarzeń
+participants_list_count: Ilość list uczestników
+duplicate: Duplikuj
 #Zarządzanie
 
 manage:
   text: Zarządzanie
+  codes: Zarządzanie kodami
 
 #Wydarzenia
 event:
@@ -175,7 +227,7 @@ event:
   empty_list: Brak nadchodzących wydarzeń
   activated: Aktywowano wydarzenie
   hidden: Ukryto wydarzenie
-
+  no_rooms: Brak pokoi
 
   manage_events: Zarządzaj wydarzeniami
   add:
@@ -230,6 +282,9 @@ event:
 
 #Kody dostępu
 codes:
+
+  assigned_votings: Przypisane głosowania
+  not_assigned: Kod nie przypisany do żadnego głosowania
   manage:
     info: Zarządzanie kodami dostępu
     text: Zarządzaj kodami
@@ -237,7 +292,14 @@ codes:
     new_codes:
       count: Ilość nowych kodów
       generate: Generuj
+      generate_many: Generuj nowe kody
+      generate_many.info: Generuj nowe kody
+      generate_many.help: Generuj nowe kody
     edit:
+      title: Edycja kodu
+      text: Edytuj kod
+      text.info: Edytuj kod
+      text.help: Edytuj kod
       success: Kod został edytowany
 
   new:
@@ -287,29 +349,72 @@ room:
   close:
     info: Zamknięcie wydarzenie, operacja nieodwracalna
     confirm: Na pewno chcesz zamknąć to wydarzenie?
+
 #Lista uczestników
 participants:
   limit_list: Limit wielkości listy uczestników
+  limit_list.info: Limit wielkości listy uczestników
+  limit_list.help: Limit wielkości listy uczestników
+  assign_to_list.text: Zapis do listy uczestników
+  count: Ilość uczestników
+  show_participants: Pokaż uczestników
+
+  import:
+    title: Importuj listę uczestników
+    columns_order: Kolejność kolumn w pliku
+    error: Niewłaściwa kolejność kolumn w przesłanym pliku
+  assign:
+    show_link: Pokaż link do zapisów
+    form:
+      title: Zapisz się do listy uczestników
+      text: Wprowadź swoje dane aby się zapisać
+
+    complete:
+      title: Zapisałeś się do listy uczestników
+      text: Zapis do listy uczestników zakończony sukcesem
+      your_id_number: Twój numer identyfikacyjny dla tej listy to
+
   single:
     edit:
+      text: Edycja danych uczestnika
       success: Edycja uczestnika zakończona sukcesem
 
     accept:
+      text: Zaakceptowany
+      button: Akceptuj
+      confirm: Na pewno chcesz zaakceptować tego uczestnika?
       success: Zaakceptowano uczestnika
 
+    accept_all:
+      button: Akceptuj wszystkich
+      confirm: Na pewno chcesz zaakceptować wszystkich uczestników z tej listy?
+      success: Zaakceptowano uczestnika
+
+    reject_all:
+      button: Odrzuć wszystkich
+      confirm: Na pewno chcesz odrzucić wszystkich uczestników z tej listy?
+
     reject:
+      button: Odrzuć
       success: Odrzucono uczestnika
+      confirm: Na pewno chcesz odrzucić tego uczestnika?
 
     delete:
+      confirm: Na pewno chcesz usunąć tego uczestnika?
       success: Usunięto uczestnika
 
   list:
+    many: Listy uczestników
     text: Lista uczestników
+    short: Lista
+    list_open: Lista otwarta
+    list_closed: Lista zamknięta
     choose: Wybierz listę uczestników
     my: Moje listy uczestników
     info: Twoje listy uczestników
     email_with_password: Hasło dostępu uczestnika
-
+    no_lists: Nie posiadasz jeszcze żadnej listy uczestników
+    empty: Lista jest pusta
     accept:
       success: Zaakceptowano listę uczestników
 
@@ -321,17 +426,20 @@ participants:
       text:
       info:
       help:
+      confirm: Na pewno chcesz otworzyć tą listę?
       success: Otwarto listę
 
     close:
       text:
       info:
       help:
+      confirm: Na pewno chcesz zamknąć tą listę
       success: Zamknięto listę
 
     new:
       help: xx
       info: ii
+      button: Stwórz nową listę użytkowników
       success: Stworzono nową listę uczestników
       text: Utwórz listę uczestników
 
@@ -382,6 +490,10 @@ session:
     button: Rozpocznij sesję
     success: Głosowanie sesyjne rozpoczęte
 
+  users_list: Lista użytkowników sesji
+  last_activity: Ostatnia data aktywności
+  address_ip: Adres IP
+
   manage: Zarządzanie sesją
   status: Status sesji
   waiting: Oczekuje na rozpoczęcie
@@ -401,6 +513,10 @@ session:
     edit:
       success: Zapisano ustawienia sesji
 
+    end:
+      help: Zakończenie sesji
+      button: Zakończ sesję
+      confirm: Na pewno chcesz zakończyć sesję?
 #Pozostałe
 name.form:
   label: Twoje imię
@@ -420,16 +536,29 @@ register.form:
 
   username:
     label: Nazwa użytkownika
+#głosowania
+votings:
+
+  delete:
+    confirm: Na pewno chcesz usunąć to głosowanie?
 
 #Walne zgromadzenia
 general_meeting:
   text: Walne zgromadzenie
+  text_with_name: Walne zgromadzenie %title% - lista głosowań
   date: Data zgromadzenia
+  date_start: Data rozpoczęcia
+  date_plannded: Planowana data zgromadzenia
   permission_denied: Nie możesz wziąć udziału w tym zgromadzeniu!
   votings_count: Ilość głosowań
-  hold_on_available: Dostępna opcja wstrzymuje się
+  hold_back_available: Dostępna opcja wstrzymuje się
   choose_type_weight: Wybierz typ wagi
   share_results_with_participants: Udostępnij wyniki dla uczestników
+  go_to_cockpit: Przejdź do zarządzania
+  course_voting: Przebieg głosowania
+  secret_voting: Tajne głosowanie
+  add_candidate: Dodaj kandydata
+  remove_candidate: Usuń kandydata
 
   bad_vote_settings:
     text: Błędne głosy
@@ -453,6 +582,12 @@ general_meeting:
     button: Zrestartuj
     confirm: Na pewno chcesz rozpocząć od nowa to zgromadzenie?
 
+  duplicate:
+    info: Duplikuj
+    help: Duplikuj
+    button: Duplikuj
+    confirm: Na pewno chcesz skopiować to głosowanie?
+
   begin_as_new:
     button: Rozpocznij na nowo
 
@@ -461,6 +596,7 @@ general_meeting:
     confirm: Na pewno chcesz zakończyć to zgromadzenie?
 
   voting:
+    no_votins: Brak głosowań
     list: Lista głosowań
     tochoose: Do wyboru
     choose_type: Wybierz typ głosowania
@@ -473,7 +609,14 @@ general_meeting:
       votes: głosów - co stanowi %per%%  całości %tot% głosów
       actions: akcji - co stanowi %per%% całości %tot% akcji
 
+    answers:
+      info: Treść odpowiedzi
+
+    candidates:
+      info: Imię i nazwisko kandydata
+
     add:
+      text: Dodaj głosowanie
       success: Dodano nowe głosowanie
       title: Dodaj głosowania
 
@@ -530,9 +673,19 @@ general_meeting:
 
 #pakiety
 packs:
+  name:
+    text: Nazwa pakietu
+    info: Info pak
+    help: Help pakiet
+  events_count: Limit wydarzeń
+  events_count.info: Limit wydarzeń
+  events_count.help: Limit wydarzeń
   single_text: Pakiet
+  single_text.help: Pakiet
+  single_text.info: Pakiet
   many_text: Pakiety
   new:
+    text: Dodaj pakiet
     success: Dodano nowy pakiet
     title: Dodaj nowy pakiet
   edit:

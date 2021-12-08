@@ -1,11 +1,13 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}{% trans %}Ustawienia sesji{% endtrans %}{% endblock %}
+{% block title %}{% trans %}session.settings.text{% endtrans %}{% endblock %}
 
 {% block body %}
     {{ form_start(form) }}
     <div class="row form-group">
         <div class="col-12 col-sm-3 col-form-label">
+            {{ 'session.active_question'|info_icon }}
+            {{ 'session.active_question'|help_icon }}
             {{form_label(form.active_question)}}
         </div>
         <div class="col-12 col-sm-9">
@@ -15,6 +17,8 @@
 
     <div class="row form-group">
         <div class="col-12 col-sm-3 col-form-label">
+            {{ 'session.time_for_answer'|info_icon }}
+            {{ 'session.time_for_answer'|help_icon }}
             {{form_label(form.timeForAnswer)}}
         </div>
         <div class="col-12 col-sm-9">
@@ -30,7 +34,7 @@
                 <div class="custom-control custom-switch">
                     <input type="checkbox" {% if form.begin.vars.checked %}checked{% endif%} name="{{ form.begin.vars.full_name }}"
                            class="custom-control-input" id="{{ form.begin.vars.id }}" value="{{ form.begin.vars.value }}">
-                    <label class="custom-control-label" for="{{ form.begin.vars.id }}">{{ form.begin.vars.label }}</label>
+                    <label class="custom-control-label" for="{{ form.begin.vars.id }}">{{ form.begin.vars.label|trans }}</label>
                 </div>
             </div>
         </div>

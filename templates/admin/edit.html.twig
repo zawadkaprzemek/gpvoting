@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}{% trans %}Edytuj profil użytkownika{% endtrans %} {{ user.username }}{% endblock %}
+{% block title %}{% trans %}admin.edit_user_profile{% endtrans %} {{ user.username }}{% endblock %}
 
 {% block body %}
 
@@ -8,51 +8,63 @@
     {{ form_start(form)}}
 
     <div class="form-group row">
-        <div class="col-12 pt-1 col-sm-3 col-form-label">
+        <div class="col-12 pt-1 col-sm-4 col-form-label">
+            {{ 'login.text'|info_icon }}
+            {{ 'login.text'|help_icon }}
             {{ form_label(form.username) }}
         </div>
-        <div class="col-12 col-sm-9">
+        <div class="col-12 col-sm-8">
             {{ form_widget(form.username) }}
         </div>
     </div>
     <div class="form-group row">
-        <div class="col-12 pt-1 col-sm-3 col-form-label">
+        <div class="col-12 pt-1 col-sm-4 col-form-label">
+            {{ 'firstName'|info_icon }}
+            {{ 'firstName'|help_icon }}
             {{ form_label(form.name) }}
         </div>
-        <div class="col-12 col-sm-9">
+        <div class="col-12 col-sm-8">
             {{ form_widget(form.name) }}
         </div>
     </div>
     <div class="form-group row">
-        <div class="col-12 pt-1 col-sm-3 col-form-label">
+        <div class="col-12 pt-1 col-sm-4 col-form-label">
+            {{ 'lastName'|info_icon }}
+            {{ 'lastName'|help_icon }}
             {{ form_label(form.surname) }}
         </div>
-        <div class="col-12 col-sm-9">
+        <div class="col-12 col-sm-8">
             {{ form_widget(form.surname) }}
         </div>
     </div>
     <div class="form-group row">
-        <div class="col-12 pt-1 col-sm-3 col-form-label">
+        <div class="col-12 pt-1 col-sm-4 col-form-label">
+            {{ 'email.address'|info_icon }}
+            {{ 'email.address'|help_icon }}
             {{ form_label(form.email) }}
         </div>
-        <div class="col-12 col-sm-9">
+        <div class="col-12 col-sm-8">
             {{ form_widget(form.email) }}
         </div>
     </div>
     <div class="form-group row">
-        <div class="col-12 pt-1 col-sm-3 col-form-label">
+        <div class="col-12 pt-1 col-sm-4 col-form-label">
+            {{ 'participants.limit_list'|info_icon }}
+            {{ 'participants.limit_list'|help_icon }}
             {{ form_label(form.participantListSize) }}
         </div>
-        <div class="col-12 col-sm-9">
+        <div class="col-12 col-sm-8">
             {{ form_widget(form.participantListSize) }}
         </div>
     </div>
 
     <div class="form-group row">
-        <div class="col-12 pt-1 col-sm-3 col-form-label">
+        <div class="col-12 pt-1 col-sm-4 col-form-label">
+            {{ 'packs.single_text'|info_icon }}
+            {{ 'packs.single_text'|help_icon }}
             {{ form_label(form.pack) }}
         </div>
-        <div class="col-12 col-sm-9">
+        <div class="col-12 col-sm-8">
             {{ form_widget(form.pack) }}
         </div>
     </div>

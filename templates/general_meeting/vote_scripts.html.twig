@@ -5,7 +5,7 @@
     const socketOpenListener = function (e){
         console.log("Connection established!");
     };
-    
+
     const socketMessageListener = function (e) {
         try
         {
@@ -17,7 +17,7 @@
             // Catch any errors
         }
     }
-    
+
     const socketCloseListener = function (e) {
         if (socket) {
             //console.error('Connection closed!');

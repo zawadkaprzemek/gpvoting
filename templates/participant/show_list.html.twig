@@ -1,23 +1,23 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}{% trans %}Lista uczestników{% endtrans %}: {{ list.name }}{% endblock %}
+{% block title %}{% trans %}participants.list.text{% endtrans %}: {{ list.name }}{% endblock %}
 
 {% block body %}
 <div>
     <h3>{{ list.name }}</h3>
     <p>
         {% if list.open %}
-            {% trans %}Lista otwarta{% endtrans %}
+            {% trans %}participants.list.list_open{% endtrans %}
         {% else %}
-            {% trans %}Lista zamknięta{% endtrans %}
+            {% trans %}participants.list.list_closed{% endtrans %}
         {% endif %}
         {{ include('participant/_open_form.html.twig',{list:list}) }}
     </p>
-    <p>{% trans %}Ilość uczestników{% endtrans%}: {{ list.participants|length }}</p>
-    <p><a href="{{ path('app_manage_participant_list_import',{id:list.id}) }}" class="btn btn-sm btn-outline-primary">{% trans %}Importuj listę uczestników{% endtrans %}</a></p>
-    <p><a href="javascript:void(0)" class="btn btn-sm btn-outline-primary show_link">{% trans %}Pokaż link do zapisów{% endtrans %}</a></p>
+    <p>{% trans %}participants.count{% endtrans%}: {{ list.participants|length }}</p>
+    <p><a href="{{ path('app_manage_participant_list_import',{id:list.id}) }}" class="btn btn-sm btn-outline-primary">{% trans %}participants.import.title{% endtrans %}</a></p>
+    <p><a href="javascript:void(0)" class="btn btn-sm btn-outline-primary show_link">{% trans %}participants.assign.show_link{% endtrans %}</a></p>
     <p id="assign_link" class="d-none">{{ url('app_participant_list_assign',{hashId:list.hashId}) }}</p>
-    <p><a href="{{ path('app_manage_participant_list_show_participants',{id:list.id}) }}" class="btn btn-sm btn-outline-primary">{% trans %}Pokaż uczestników{% endtrans %}</a></p>
+    <p><a href="{{ path('app_manage_participant_list_show_participants',{id:list.id}) }}" class="btn btn-sm btn-outline-primary">{% trans %}participants.show_participants{% endtrans %}</a></p>
 
 </div>
 {% endblock %}

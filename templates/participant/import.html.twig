@@ -1,10 +1,10 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}{% trans %}Importuj listę uczestników{% endtrans %}{% endblock %}
+{% block title %}{% trans %}participants.import.title{% endtrans %}{% endblock %}
 
 {% block body %}
 <div>
-    <h3>{% trans %}Importuj listę uczestników{% endtrans %}</h3>
+    <h3>{% trans %}participants.import.title{% endtrans %}</h3>
     {{ form_start(form) }}
         <div class="form-group row">
             <div class="col-12 col-sm-3 col-form-label">
@@ -28,17 +28,17 @@
     {% endif %}#}
     {{ form_end(form) }}
     {% if error is not null %}
-        <p class="alert alert-danger mt-3 font-weight-bold">{% trans %}Niewłaściwa kolejność kolumn w przesłanym pliku{% endtrans %}</p>
+        <p class="alert alert-danger mt-3 font-weight-bold">{% trans %}participants.import.error{% endtrans %}</p>
     {% endif %}
     <div class="alert alert-info mt-2">
-        <p class="font-weight-bold">{% trans %}Kolejność kolumn w pliku{% endtrans %}:</p>
+        <p class="font-weight-bold">{% trans %}participants.import.columns_order{% endtrans %}:</p>
         <ul>
-            <li>{% trans %}Imię{% endtrans %}</li>
-            <li>{% trans %}Nazwisko{% endtrans %}</li>
-            <li>{% trans %}Telefon{% endtrans %}</li>
-            <li>{% trans %}Adres e-mail{% endtrans %}</li>
-            <li>{% trans %}Ilość głosów{% endtrans %}</li>
-            <li>{% trans %}Ilość akcji{% endtrans %}</li>
+            <li>{% trans %}firstName{% endtrans %}</li>
+            <li>{% trans %}lastName{% endtrans %}</li>
+            <li>{% trans %}phone{% endtrans %}</li>
+            <li>{% trans %}email.address{% endtrans %}</li>
+            <li>{% trans %}votes_count{% endtrans %}</li>
+            <li>{% trans %}actions_count{% endtrans %}</li>
         </ul>
     </div>
 </div>

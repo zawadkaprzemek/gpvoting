@@ -1,36 +1,45 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}{% trans %}Zarządzanie kodami{% endtrans %}{% endblock %}
+{% block title %}{% trans %}manage.codes{% endtrans %}{% endblock %}
 
 {% block body %}
 
     <div class="">
         <h3>{{ event.name }}</h3>
-        <h4>{% trans %}Organizator{% endtrans %}: {{ event.organizer }}</h4>
+        <h4>{% trans %}event.organizer{% endtrans %}: {{ event.organizer }}</h4>
         <img src="{{ asset(event.logoPath) }}" class="img-fluid img-logo mb-3" alt="">
     </div>
 
-    <button class="btn btn-sm btn-secondary mb-3" data-toggle="modal" data-target="#newCodesModal">{% trans %}Generuj nowe kody{% endtrans %}</button>
+    <button class="btn btn-sm btn-secondary mb-3" data-toggle="modal" data-target="#newCodesModal">
+        {{ 'codes.manage.new_codes.generate_many'|info_icon }}
+        {{ 'codes.manage.new_codes.generate_many'|help_icon }}
+        {% trans %}codes.manage.new_codes.generate_many{% endtrans %}
+    </button>
 
-    <h3>{% trans %}Zarządzanie kodami{% endtrans %}</h3>
+    <h3>{% trans %}manage.codes{% endtrans %}</h3>
     <div class="row">
         <div class="col-12">
-            <p>{% trans %}Przypisane głosowania{% endtrans %}</p>
+            <p>{% trans %}codes.assigned_votings{% endtrans %}</p>
         </div>
 
         {% for code in codes %}
         <div class="col-12 mb-2 border-bottom">
-            <p class="font-weight-bold mb-2">{{ code.name }} <a href="{{ path('app_manage_code_edit',{id:code.id}) }}" class="btn btn-sm btn-outline-primary">{% trans %}Edytuj kod{% endtrans %}</a> </p>
+            <p class="font-weight-bold mb-2">{{ code.name }}
+                <a href="{{ path('app_manage_code_edit',{id:code.id}) }}" class="btn btn-sm btn-outline-primary">
+                    {{ 'codes.manage.edit.text'|info_icon }}
+                    {{ 'codes.manage.edit.text'|help_icon }}
+                    {% trans %}codes.manage.edit.text{% endtrans %}
+                </a> </p>
             <div class="row">
                 <div class="col-12">
                     {% for polling in code.pollings %}
                         {{ polling.name }}
                         <div class="btn-group btn-group-sm mb-2">
-                            <a href="{{ path('app_manage_polling_show',{slug:polling.slug}) }}" class="btn btn-primary">{% trans %}Podgląd{% endtrans %}</a>
-                            <a href="{{ path('app_polling_edit',{slug:polling.slug}) }}" class="btn btn-secondary">{% trans %}Edycja{% endtrans %}</a>
+                            <a href="{{ path('app_manage_polling_show',{slug:polling.slug}) }}" class="btn btn-primary">{% trans %}preview{% endtrans %}</a>
+                            <a href="{{ path('app_polling_edit',{slug:polling.slug}) }}" class="btn btn-secondary">{% trans %}edit{% endtrans %}</a>
                         </div>
                     {% else %}
-                        <p class="text-warning">{% trans %}Kod nie przypisany do żadnego głosowania{% endtrans %}</p>
+                        <p class="text-warning">{% trans %}codes.not_assigned{% endtrans %}</p>
                     {% endfor %}
                 </div>
             </div>
@@ -43,7 +52,7 @@
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="newCodesLabel">{% trans %}Generuj nowe kody{% endtrans %}</h5>
+                    <h5 class="modal-title" id="newCodesLabel">{% trans %}codes.manage.new_codes.generate_many{% endtrans %}</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -60,7 +69,7 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">{% trans %}Anuluj{% endtrans %}</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">{% trans %}cancel{% endtrans %}</button>
                     {{ form_row(form.submit) }}
                 </div>
                 {{ form_end(form) }}

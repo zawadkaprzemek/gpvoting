@@ -1,24 +1,24 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}{% trans %}Listy uczestników{% endtrans %}{% endblock %}
+{% block title %}{% trans %}participants.list.many{% endtrans %}{% endblock %}
 
 {% block body %}
 <div>
-    <h3>{% trans %}Moje listy uczestników{% endtrans %}</h3>
+    <h3>{% trans %}participants.list.my{% endtrans %}</h3>
     <div class="btn-group btn-group-sm mb-2">
-        <a href="{{ path('app_manage_participant_list_new') }}" class="btn btn-dark">{% trans %}Stwórz nową listę użytkowników{% endtrans %}</a>
+        <a href="{{ path('app_manage_participant_list_new') }}" class="btn btn-dark">{% trans %}participants.list.new.button{% endtrans %}</a>
     </div>
     <div class="list-group">
         {% for list in lists %}
             <li class="list-group-item">
                 {{ list.name }} <div class="ml-3 btn-group btn-group-sm">
-                    <a href="{{ path('app_manage_participant_list_show',{id:list.id}) }}" class="btn btn-primary">{% trans %}Podgląd{% endtrans %}</a>
-                    <a href="{{ path('app_manage_participant_list_edit',{id:list.id}) }}" class="btn btn-primary">{% trans %}Edycja{% endtrans %}</a>
+                    <a href="{{ path('app_manage_participant_list_show',{id:list.id}) }}" class="btn btn-primary">{% trans %}preview{% endtrans %}</a>
+                    <a href="{{ path('app_manage_participant_list_edit',{id:list.id}) }}" class="btn btn-primary">{% trans %}edit{% endtrans %}</a>
                 {{include('participant/_open_form.html.twig',{list:list})}}
                 </div>
             </li>
         {% else %}
-            <li class="list-group-item">{% trans %}Nie posiadasz jeszcze żadnej listy uczestników{% endtrans %}</li>
+            <li class="list-group-item">{% trans %}participants.list.no_lists{% endtrans %}</li>
         {% endfor %}
     </div>
 </div>

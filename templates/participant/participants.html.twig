@@ -1,23 +1,23 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}{% trans %}Lista uczestników{% endtrans %}{% endblock %}
+{% block title %}{% trans %}participants.list.text{% endtrans %}{% endblock %}
 
 {% block body %}
 <div>
-    <h3>{% trans %}Lista{% endtrans %}: {{ list.name }}</h3>
+    <h3>{% trans %}participants.list.short{% endtrans %}: {{ list.name }}</h3>
 
     <div class="table-responsive">
         <table class="table">
             <thead>
             <tr>
-                <th>{% trans %}ID{% endtrans %}</th>
-                <th>{% trans %}Imię{% endtrans %}</th>
-                <th>{% trans %}Nazwisko{% endtrans %}</th>
-                <th>{% trans %}Telefon{% endtrans %}</th>
-                <th>{% trans %}Email{% endtrans %}</th>
-                <th>{% trans %}Głosy{% endtrans %}</th>
-                <th>{% trans %}Akcje{% endtrans %}</th>
-                <th>{% trans %}Zaakceptowany{% endtrans %}</th>
+                <th>{% trans %}id{% endtrans %}</th>
+                <th>{% trans %}firstName{% endtrans %}</th>
+                <th>{% trans %}lastName{% endtrans %}</th>
+                <th>{% trans %}phone{% endtrans %}</th>
+                <th>{% trans %}email.address{% endtrans %}</th>
+                <th>{% trans %}votes{% endtrans %}</th>
+                <th>{% trans %}actions{% endtrans %}</th>
+                <th>{% trans %}participants.single.accept.text{% endtrans %}</th>
                 <th></th>
             </tr>
             </thead>
@@ -39,29 +39,31 @@
                         {% endif %}
                     <td>
                         <div class="btn-group">
-                        <a href="{{ path('app_manage_participant_edit',{id:participant.id}) }}" class="btn btn-sm btn-outline-primary">{% trans %}Edytuj{% endtrans %}</a>
+                        <a href="{{ path('app_manage_participant_edit',{id:participant.id}) }}" class="btn btn-sm btn-outline-primary">
+                            {% trans %}edit{% endtrans %}
+                        </a>
                         <form method="post" action="{{ path('app_manage_participant_delete', {'id': participant.id}) }}"
-                                    onsubmit="return confirm('{% trans %}Na pewno chcesz usunąć tego uczestnika?{% endtrans %}');">
+                                    onsubmit="return confirm('{% trans %}participants.single.delete.confirm{% endtrans %}');">
                             <input type="hidden" name="_method" value="DELETE">
                             <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ participant.id) }}">
                             <button class="btn btn-sm btn-outline-danger">
-                                {% trans %}Usuń{% endtrans %}
+                                {% trans %}delete{% endtrans %}
                             </button>
                         </form>
                         <form method="post" action="{{ path('app_manage_participant_accept', {'id': participant.id}) }}"
                               {% if participant.accepted %}
-                                  onsubmit="return confirm('{% trans %}Na pewno chcesz odrzucić tego uczestnika?{% endtrans %}');"
+                                  onsubmit="return confirm('{% trans %}participants.single.reject.confirm{% endtrans %}');"
                                 {% else %}
-                                    onsubmit="return confirm('{% trans %}Na pewno chcesz zaakceptować tego uczestnika?{% endtrans %}');"
+                                    onsubmit="return confirm('{% trans %}participants.single.reject.confirm{% endtrans %}');"
                                     {% endif %}
                         >
                             <input type="hidden" name="_method" value="PATCH">
                             <input type="hidden" name="_token" value="{{ csrf_token('patch' ~ participant.id) }}">
                             <button class="btn btn-sm btn-outline-dark">
                                 {% if participant.accepted %}
-                                    {% trans %}Odrzuć{% endtrans %}
+                                    {% trans %}participants.single.reject.button{% endtrans %}
                                 {% else %}
-                                    {% trans %}Akceptuj{% endtrans %}
+                                    {% trans %}participants.single.accept.button{% endtrans %}
                                     {% endif %}
 
                             </button>
@@ -72,7 +74,7 @@
                 {% else %}
                 <tr>
                     <td colspan="9">
-                        <div class="alert alert-info text-center">{% trans %}Lista jest pusta{% endtrans %}</div>
+                        <div class="alert alert-info text-center">{% trans %}participants.list.empty{% endtrans %}</div>
                     </td>
                 </tr>
             {% endfor %}
@@ -83,18 +85,22 @@
         {% if participants|length >0 %}
         <form method="post" action="{{ path('app_manage_participant_list_accept', {'id': list.id}) }}"
                 {% if list.accepted %}
-                    onsubmit="return confirm('{% trans %}Na pewno chcesz odrzucić wszystkich uczestników z tej listy?{% endtrans %}');"
+                    onsubmit="return confirm('{% trans %}participants.single.reject_all.confirm{% endtrans %}');"
                 {% else %}
-                    onsubmit="return confirm('{% trans %}Na pewno chcesz zaakceptować wszystkich uczestników z tej listy?{% endtrans %}');"
+                    onsubmit="return confirm('{% trans %}participants.single.accept_all.confirm{% endtrans %}');"
                 {% endif %}
         >
             <input type="hidden" name="_method" value="PATCH">
             <input type="hidden" name="_token" value="{{ csrf_token('patch' ~ list.id) }}">
             <button class="btn btn-sm btn-outline-dark">
                 {% if list.accepted %}
-                    {% trans %}Odrzuć wszystkich{% endtrans %}
+                    {{ 'participants.single.reject_all'|info_icon }}
+                    {{ 'participants.single.reject_all'|help_icon }}
+                    {% trans %}participants.single.reject_all.button{% endtrans %}
                 {% else %}
-                    {% trans %}Akceptuj wszystkich{% endtrans %}
+                    {{ 'participants.single.accept_all'|info_icon }}
+                    {{ 'participants.single.accept_all'|help_icon }}
+                    {% trans %}participants.single.accept_all.button{% endtrans %}
                 {% endif %}
 
             </button>

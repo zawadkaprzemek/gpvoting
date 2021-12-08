@@ -89,10 +89,14 @@ class PollingController extends AbstractController
      * @param Polling $polling
      * @return Response
      */
-    public function show(Polling $polling)
+    public function show(Polling $polling): Response
     {
+        $em=$this->getDoctrine()->getManager();
+        $settings=$em->getRepository('App:SessionSettings')->getSessionSettings($polling);
+        $polling->setSettings($settings);
         return $this->render('polling/index.html.twig',[
-            'polling'=>$polling
+            'polling'=>$polling,
+            'now'=>new \DateTime()
         ]);
     }
 

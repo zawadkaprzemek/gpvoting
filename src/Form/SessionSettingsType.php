@@ -23,15 +23,16 @@ class SessionSettingsType extends AbstractType
             ->add('active_question',ChoiceType::class,array(
                 'label'=>'session.active_question',
                 'choices'=>$questions,
+                'choice_translation_domain'=>false,
                 'placeholder'=>'session.choose_actiove_question'
             ))
             ->add('timeForAnswer',ChoiceType::class,array(
                 'label'=>'session.time_for_answer',
                 'choices'=>array(
-                    '30 sekund'=>30,
-                    '1 minuta'=>60,
-                    '1.5 minuty'=>90,
-                    '2 minuty'=>120
+                    '30_sek'=>30,
+                    '1_min'=>60,
+                    '1_5_min'=>90,
+                    '2_min'=>120
                 ),
                 'placeholder'=>'session.time_for_answer_choose'
             ))

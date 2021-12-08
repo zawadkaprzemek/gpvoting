@@ -1,16 +1,16 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}{% trans %}Lista użytkowników sesji{% endtrans %}{% endblock %}
+{% block title %}{% trans %}session.users_list{% endtrans %}{% endblock %}
 
 {% block body %}
-    <h4>{% trans %}Lista użytkowników sesji{% endtrans %}</h4>
+    <h4>{% trans %}session.users_list{% endtrans %}</h4>
     <div class="table-responsive">
     <table class="table table-striped">
         <thead>
         <tr>
-            <th>{% trans %}Nazwa{% endtrans %}</th>
-            <th>{% trans %}Ostatnia data aktywności{% endtrans %}</th>
-            <th>{% trans %}Adres IP{% endtrans %}</th>
+            <th>{% trans %}name{% endtrans %}</th>
+            <th>{% trans %}session.last_activity{% endtrans %}</th>
+            <th>{% trans %}session.address_ip{% endtrans %}</th>
         </tr>
         </thead>
         <tbody>

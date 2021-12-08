@@ -247,7 +247,7 @@ class GeneralMeetingController extends AbstractController
     }
 
     /**
-     * @Route("/manage/meeting/{slug}/vottings", name="app_manage_show_vottings")
+     * @Route("/manage/general_meeting/{slug}/vottings", name="app_manage_show_vottings")
      * @param GeneralMeeting $meeting
      * @return RedirectResponse|Response
      */
@@ -279,7 +279,7 @@ class GeneralMeetingController extends AbstractController
         }
 
         $votings=$meeting->getMeetingVotings();
-        return $this->render('polling/general_meeting_show.html.twig',[
+        return $this->render('general_meeting/general_meeting_show.html.twig',[
             'meeting'=>$meeting,
             'manage'=>true,
             'votings'=>$votings
@@ -573,7 +573,7 @@ class GeneralMeetingController extends AbstractController
                         $results['valid']['votes'][$i]=0;
                         $results['valid']['actions'][$i]=0;
                     }
-                    $results['invalid']=[];
+                    //$results['invalid']=[];
                     foreach ($voting->getVoteStatus() as $vote =>$status)
                     {
                         foreach ($status as $aid => $valid)
@@ -828,7 +828,7 @@ class GeneralMeetingController extends AbstractController
             }
         }
 
-        return $this->render('polling/general_meeting_login.html.twig',[
+        return $this->render('general_meeting/general_meeting_login.html.twig',[
             'form'=>$form->createView(),
             'meeting'=>$meeting
         ]);
@@ -874,7 +874,7 @@ class GeneralMeetingController extends AbstractController
             $last=null;
         }
 
-        return $this->render('polling/general_meeting_vote.html.twig',[
+        return $this->render('general_meeting/general_meeting_vote.html.twig',[
             'meeting'=>$meeting,
             'hash'=>$meeting->getHashId(),
             'active'=>$aStatus,

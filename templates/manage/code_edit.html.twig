@@ -1,11 +1,13 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}{% trans %}Edycja kodu{% endtrans %}{% endblock %}
+{% block title %}{% trans %}codes.manage.edit.title{% endtrans %}{% endblock %}
 
 {% block body %}
     {{ form_start(form) }}
     <div class="row form-group">
         <div class="col-12 col-sm-3 col-form-label">
+            {{ 'code.name'|info_icon }}
+            {{ 'code.name'|help_icon }}
             {{form_label(form.name)}}
         </div>
         <div class="col-12 col-sm-9">

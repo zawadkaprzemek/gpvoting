@@ -17,14 +17,14 @@
         </div>
         {% endif %}
         <div class="row">
-            {% for meeting in room.generalMeetings %}
+            {% for meeting in meetings %}
             <div class="col-12 mb-2">
                 <div class="row">
                     <div class="col-3 col-md-4">
                         {{ meeting.name }}
                     </div>
                     <div class="col-9 col-md-8">
-                        <span class="border-info border p-1 d-inline-block">{% trans %}Data rozpoczęcia{% endtrans %}: {{ meeting.date|date('d/m/Y H:i') }}</span>
+                        <span class="border-info border p-1 d-inline-block">{% trans %}general_meeting.date_start{% endtrans %}: {{ meeting.date|date('d/m/Y H:i') }}</span>
                         <div class="btn-group-sm btn-group">
                             {% if manage %}
                                 <a href="{{ path('app_manage_general_meeting_show',{slug:meeting.slug}) }}" class="btn btn-primary">{% trans %}Podgląd{% endtrans %}</a>
@@ -33,7 +33,7 @@
                                 {% endif %}
                                 {#<a href="{{ path('app_manage_show_vottings',{slug:meeting.slug}) }}" class="btn btn-info">{% trans %}Lista głosowań{% endtrans %}</a>
                         <a href="{{ path('app_manage_general_meeting_cockpit',{slug:meeting.slug}) }}" class="btn btn-outline-info">{% trans %}Przejdź do zarządzania{% endtrans %}</a>
-                        {{ include('polling/general_meeting_status.html.twig',{meeting:meeting}) }}
+                        {{ include('general_meeting/general_meeting_status.html.twig',{meeting:meeting}) }}
                         {{ include('general_meeting/_duplicate_form.html.twig',{meeting:meeting}) }}#}
                             {% else %}
                                 <a href="{{ path('app_general_meeting_join',{slug:meeting.slug}) }}" class="btn btn-primary">{% trans %}Dołącz do zgromadzenia{% endtrans %}</a>
@@ -72,7 +72,7 @@
                 </div>
             </div>
         {% endfor %}
-            {% if pollings|length==0 and room.generalMeetings|length==0 %}
+            {% if pollings|length==0 and meetings|length==0 %}
                 <div class="col-12">
                     <div class="alert-info alert">{% trans %}Brak głosowań{% endtrans %}</div>
                 </div>

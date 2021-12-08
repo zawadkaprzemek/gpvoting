@@ -1,41 +1,46 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}{% trans %}Walne zgromadzenie{% endtrans %}:{{ meeting.name }}{% endblock %}
+{% block title %}{% trans %}general_meeting.text{% endtrans %}: {{ meeting.name }}{% endblock %}
 
 {% block body %}
 
     <div>
         <h3>{{ meeting.name }}</h3>
-        <p>{% trans %}Planowana data zgromadzenia{% endtrans %}: {{ meeting.date|date('d/m/Y H:i') }}</p>
+        <p>{% trans %}general_meeting.date_plannded{% endtrans %}: {{ meeting.date|date('d/m/Y H:i') }}</p>
 
         {% if meeting.secret %}
-            <p>{% trans %}Głosowanie tajne{% endtrans %}</p>
+            <p>{% trans %}secret_voting{% endtrans %}</p>
         {% endif %}
         <div class="btn-group btn-group-sm mb-2">
             {% if meeting.status!=1 %}
-                <a href="{{ path('app_manage_general_meeting_edit',{slug:meeting.slug}) }}" class="btn btn-secondary">{% trans %}Edycja{% endtrans %}</a>
+                <a href="{{ path('app_manage_general_meeting_edit',{slug:meeting.slug}) }}" class="btn btn-secondary">{% trans %}edit{% endtrans %}</a>
             {% endif %}
-            <a href="{{ path('app_manage_general_meeting_cockpit',{slug:meeting.slug}) }}" class="btn btn-outline-info">{% trans %}Przejdź do zarządzania{% endtrans %}</a>
-            {{ include('polling/general_meeting_status.html.twig',{meeting:meeting}) }}
+            <a href="{{ path('app_manage_general_meeting_cockpit',{slug:meeting.slug}) }}" class="btn btn-outline-info">
+                {% trans %}general_meeting.go_to_cockpit{% endtrans %}
+            </a>
+            {{ include('general_meeting/general_meeting_status.html.twig',{meeting:meeting}) }}
             {{ include('general_meeting/_duplicate_form.html.twig',{meeting:meeting}) }}
         </div>
 
-        <h3>{% trans %}Lista głosowań{% endtrans %}</h3>
-
+        <h3>{% trans %}general_meeting.voting.list{% endtrans %}</h3>
+        <div class="row">
         <div class="col-12">
             {% if votings|length<meeting.count %}
-                <div><a class="btn btn-sm btn-primary" href="{{ path('app_manage_general_meeting_add_voting',{slug:meeting.slug}) }}">{% trans %}Dodaj głosowanie{% endtrans %}</a></div>
+                <div><a class="btn btn-sm btn-primary" href="{{ path('app_manage_general_meeting_add_voting',{slug:meeting.slug}) }}">{% trans %}general_meeting.voting.add.text{% endtrans %}</a></div>
             {% endif %}
             {% for voting in votings %}
                 <div>{{ voting.content }} - {{ voting|voting_type }}
                     <div class="btn-group btn-group-sm">
-                        <a href="{{ path('app_manage_general_meeting_edit_voting',{slug:meeting.slug,sort:voting.sort}) }}" class="btn btn-outline-primary">{% trans %}Edycja{% endtrans %}</a>
+                        <a href="{{ path('app_manage_general_meeting_edit_voting',{slug:meeting.slug,sort:voting.sort}) }}" class="btn btn-outline-primary">
+                            {% trans %}edit{% endtrans %}
+                        </a>
                         {{ include('general_meeting/_delete_form.html.twig',{voting:voting}) }}
                     </div>
                 </div>
             {% else %}
-                <p>{% trans %}Brak głosowań{% endtrans %}</p>
+                <p>{% trans %}general_meeting.voting.no_votings{% endtrans %}</p>
             {% endfor %}
+        </div>
         </div>
     </div>
 
@@ -43,12 +48,46 @@
 {% block javascripts %}
     {{ parent() }}
     <script>
+
         $(document).ready(function () {
+            let socket;
+
+
+            const socketOpenListener = function (){
+                console.log("Connection established!");
+            };
+
+            const socketMessageListener = function (e) {
+                try
+                {
+                    const message = JSON.parse(e.data);
+                    addMessage(message.name, message.message,message.type,message.votes,message.actions,message.valid);
+                }
+                catch(e)
+                {
+                    // Catch any errors
+                }
+            }
+
+            const socketCloseListener = function () {
+                if (socket) {
+                    //console.error('Connection closed!');
+                }
+                try{
+                    socket = new WebSocket("ws://{{app.request.getHost()}}:3100/meeting_{{ meeting.hashId }}");
+                    socket.addEventListener('open', socketOpenListener);
+                    socket.addEventListener('message', socketMessageListener);
+                    socket.addEventListener('close', socketCloseListener);
+                }catch (e) {
+
+                }
+
+            }
+            socketCloseListener();
             $('.btn-gm-begin').on('click touch',function () {
                 let href=$(this).data('href');
-                let hash=$(this).data('hash');
                 let url=$(this).data('url');
-                if(confirm('{% trans %}Na pewno chcesz rozpocząć to zgromadzenie?{% endtrans %}'))
+                if(confirm('{% trans %}general_meeting.begin.confirm{% endtrans %}'))
                 {
                     $.ajax({
                         type: 'PATCH',
@@ -63,13 +102,9 @@
                                 message: "meeting_start",
                                 type: 'gm_management'
                             }
-                            const socket = new WebSocket("ws://{{app.request.getHost()}}:3100/meeting_"+hash+"");
 
-                            socket.onopen = function(e) {
-                                console.log("Connection established!");
-                                socket.send(JSON.stringify(message));
-                                window.location.href=url;
-                            };
+                            socket.send(JSON.stringify(message));
+                            window.location.href=url;
                         }
                     });
                 }
@@ -77,9 +112,8 @@
 
             $('.btn-gm-end').on('click touch',function () {
                 let href=$(this).data('href');
-                let hash=$(this).data('hash');
                 let url=$(this).data('url');
-                if(confirm('{% trans %}Na pewno chcesz zakończyć to zgromadzenie?{% endtrans %}'))
+                if(confirm('{% trans %}general_meeting.end.confirm{% endtrans %}'))
                 {
                     $.ajax({
                         type: 'PATCH',
@@ -94,13 +128,8 @@
                                 message: "meeting_end",
                                 type: 'gm_management'
                             }
-                            const socket = new WebSocket("ws://{{app.request.getHost()}}:3100/meeting_"+hash+"");
-
-                            socket.onopen = function(e) {
-                                console.log("Connection established!");
-                                socket.send(JSON.stringify(message));
-                                window.location.href=url;
-                            };
+                            socket.send(JSON.stringify(message));
+                            window.location.href=url;
                         }
                     });
                 }
@@ -108,9 +137,8 @@
 
             $('.btn-gm-reset').on('click touch',function () {
                 let href=$(this).data('href');
-                let hash=$(this).data('hash');
                 let url=$(this).data('url');
-                if(confirm('{% trans %}Na pewno chcesz rozpocząć od nowa to zgromadzenie?{% endtrans %}'))
+                if(confirm('{% trans %}general_meeting.restart.confirm{% endtrans %}'))
                 {
                     $.ajax({
                         type: 'PATCH',
@@ -125,13 +153,9 @@
                                 message: "meeting_start",
                                 type: 'gm_management'
                             }
-                            const socket = new WebSocket("ws://{{app.request.getHost()}}:3100/meeting_"+hash+"");
 
-                            socket.onopen = function(e) {
-                                console.log("Connection established!");
-                                socket.send(JSON.stringify(message));
-                                window.location.href=url;
-                            };
+                            socket.send(JSON.stringify(message));
+                            window.location.href=url;
                         }
                     });
                 }

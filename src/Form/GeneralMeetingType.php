@@ -45,7 +45,7 @@ class GeneralMeetingType extends AbstractType
                     ]
                     ))
             ->add('holdBack',CheckboxType::class,array(
-                'label'=>'general_meeting.hold_on_available',
+                'label'=>'general_meeting.hold_back_available',
                 'required'=>false
                 ))
             ->add('weight',ChoiceType::class,array(
@@ -54,13 +54,13 @@ class GeneralMeetingType extends AbstractType
                     'weight.votes'=>1,
                     'weight.actions'=>2
                 ),
-                'placeholder'=>'Wybierz typ wagi'
+                'placeholder'=>'general_meeting.choose_type_weight'
             ))
             ->add('secret',CheckboxType::class,array(
-                'label'=>'general_meeting.choose_type_weight','required'=>false
+                'label'=>'general_meeting.secret_voting','required'=>false
             ))
             ->add('badVoteSettings',ChoiceType::class,array(
-                'label'=>'general_meeting.bad_vote_settings',
+                'label'=>'general_meeting.bad_vote_settings.text',
                 'choices'=>array(
                     'general_meeting.bad_vote_settings.allowed'=>1,
                     'general_meeting.bad_vote_settings.not_allowed'=>2,
@@ -96,7 +96,7 @@ class GeneralMeetingType extends AbstractType
             ->add('kworumType',ChoiceType::class,
                 array('label'=>'general_meeting.kworum.type',
                     'choices'=>array(
-                        'one_to_one'=>'1to1',
+                        'general_meeting.kworum.one_to_one'=>'1to1',
                         'weight.actions'=>'actions',
                         'weight.votes'=>'votes'
                     ),

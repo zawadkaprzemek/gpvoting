@@ -10,9 +10,11 @@
     <button class="btn btn-sm btn-outline-success rounded-0">
         {% if event.status==1 %}
             {{ 'event.hide'|info_icon }}
+            {{ 'event.hide'|help_icon }}
             {% trans %}hide{% endtrans %}
         {% elseif event.status==0 %}
             {{ 'event.open'|info_icon }}
+            {{ 'event.open'|help_icon }}
             {% trans %}activate{% endtrans %}
         {% endif %}
     </button>

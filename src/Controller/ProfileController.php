@@ -109,7 +109,10 @@ class ProfileController extends AbstractController
     public function createSubAccount(Request $request, UserPasswordHasherInterface $passwordEncoder): Response
     {
         $this->denyAccessUnlessGranted("ROLE_ORGANIZATOR");
+        /** @var User $parent */
+        $parent=$this->getUser();
         $user = new User();
+        $user->setParent($parent);
         $form = $this->createForm(RegistrationFormType::class, $user);
         $form->remove('agreeTerms');
         $form->handleRequest($request);
@@ -123,7 +126,6 @@ class ProfileController extends AbstractController
                 )
             )
                 ->setRoles(['ROLE_USER', 'ROLE_SUBACCOUNT']);
-            $user->setParent($user);
             $user->setIsVerified(true);
             $entityManager = $this->getDoctrine()->getManager();
             $user->setLastIP($request->getClientIp());

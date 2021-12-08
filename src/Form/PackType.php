@@ -17,7 +17,7 @@ class PackType extends AbstractType
         $builder
             ->add('name',TextType::class,array('label' => 'packs.name.text'))
             ->add('eventsCount',NumberType::class,array(
-                'label' => 'packs.eventsCount',
+                'label' => 'packs.events_count',
                 'attr'=>[
                     'min'=>1,
                     'step' =>1,

@@ -92,10 +92,10 @@
                 {% if participants is not empty %}
                     <a href="{{ path('app_manage_participant_list_show_participants',{id:meeting.participantList.id}) }}" class="btn btn-sm btn-primary">{% trans %}participants.list.text{% endtrans %} ({{ participants|length }})</a>
                 {% endif %}
-                {{ include('polling/general_meeting_status.html.twig',{meeting:meeting}) }}
+                {{ include('general_meeting/general_meeting_status.html.twig',{meeting:meeting}) }}
                 {% if meeting.status==1 %}
                     {% if active.active is defined and active.active is null %}
-                        {{ include('polling/general_meeting_start_test_vote_form.html.twig',{meeting:meeting}) }}
+                        {{ include('general_meeting/general_meeting_start_test_vote_form.html.twig',{meeting:meeting}) }}
                     {% endif %}
                     {% if active.active is defined and active.active is not null %}
                         <button class="btn btn-outline-primary" data-href="{{ path('app_ajax_general_meeting_end_vote',{slug:meeting.slug}) }}" id="gm-end-vote">{% trans %}general_meeting.voting.end_vote.button{% endtrans %}</button>

@@ -1,12 +1,12 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}{% trans %}Zapisałeś się do listy uczestników{% endtrans %}{% endblock %}
+{% block title %}{% trans %}participants.assign.complete.title{% endtrans %}{% endblock %}
 
 {% block body %}
 <div>
     <div class="alert alert-success">
-        <p>{% trans %}Zapis do listy uczestników zakończony sukcesem{% endtrans %}</p>
-        <p>{% trans %}Twój numer identyfikacyjny dla tej listy to{% endtrans %}: <strong>{{ aid }}</strong></p>
+        <p>{% trans %}participants.assign.complete.title{% endtrans %}</p>
+        <p>{% trans %}participants.assign.complete.your_id_number{% endtrans %}: <strong>{{ aid }}</strong></p>
     </div>
 </div>
 {% endblock %}

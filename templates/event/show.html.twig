@@ -16,10 +16,12 @@
         <div class="btn-group btn-group-sm">
             <a class="btn btn-outline-primary" href="{{ path('app_event_edit',{_locale:app.request.locale,slug:event.slug}) }}">
                 {{ 'event.edit'|info_icon }}
+                {{ 'event.edit'|help_icon }}
                 {% trans %}edit{% endtrans %}
             </a>
             <a class="btn btn-outline-primary" href="{{ path('app_event_codes_menage',{slug:event.slug}) }}">
                 {{ 'codes.manage'|info_icon }}
+                {{ 'codes.manage'|help_icon }}
                 {% trans %}codes.manage.text{% endtrans %}
             </a>
         </div>
@@ -28,6 +30,7 @@
     {% if manage %}
         <a href="{{ path('app_manage_add_room',{_locale:app.request.locale,slug:event.slug}) }}" class="btn btn-sm btn-outline-primary">
             {{ 'room.create'|info_icon }}
+            {{ 'room.create'|help_icon }}
             {% trans %}room.add.new{% endtrans %}
         </a>
     {% endif %}
@@ -37,19 +40,25 @@
                 {{ room.name }} :
                 <div class="btn-group btn-group-sm">
                     {% if manage %}
-                    <a href="{{ path('app_manage_room',{slug_parent:room.event.slug,slug_child:room.slug}) }}" class="btn btn-primary">{% trans %}preview{% endtrans %}</a>
-                    <a href="{{ path('app_manage_edit_room',{slug_parent:room.event.slug,slug_child:room.slug}) }}" class="btn btn-secondary">{% trans %}edit{% endtrans %}</a>
+                    <a href="{{ path('app_manage_room',{slug_parent:room.event.slug,slug_child:room.slug}) }}" class="btn btn-primary">
+                        {% trans %}preview{% endtrans %}
+                    </a>
+                    <a href="{{ path('app_manage_edit_room',{slug_parent:room.event.slug,slug_child:room.slug}) }}" class="btn btn-secondary">
+                        {% trans %}edit{% endtrans %}
+                    </a>
                     {{include('room/_visible_form.html.twig',{room:room})}}
                         {% if (room.pollings|length)==0 %}
                             {{ include('room/_delete_form.html.twig',{room:room}) }}
                             {% endif %}
                     {% else %}
-                        <a href="{{ path('app_room_enter',{slug_parent:room.event.slug,slug_child:room.slug}) }}" class="btn btn-primary">{% trans %}room.enter{% endtrans %}</a>
+                        <a href="{{ path('app_room_enter',{slug_parent:room.event.slug,slug_child:room.slug}) }}" class="btn btn-primary">
+                            {% trans %}room.enter{% endtrans %}
+                        </a>
                     {% endif %}
                 </div>
             </div>
         {% else %}
-            <div class="col-12"><p class="text-info">{% trans %}Brak pokoi{% endtrans %}</p></div>
+            <div class="col-12"><p class="text-info">{% trans %}event.no_rooms{% endtrans %}</p></div>
         {% endfor %}
     </div>
 {% endblock %}

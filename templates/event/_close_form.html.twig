@@ -5,6 +5,7 @@
     <input type="hidden" name="_token" value="{{ csrf_token('patch' ~ event.id) }}">
     <button class="btn btn-sm btn-outline-danger rounded-0">
         {{ 'event.close'|info_icon }}
+        {{ 'event.close'|help_icon }}
         {% trans %}close{% endtrans %}
     </button>
 </form>

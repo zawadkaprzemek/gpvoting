@@ -84,8 +84,10 @@ class ManageController extends AbstractController
             return $this->redirectToRoute('home');
         }
         $pollings=$room->getPollings();
+        $general_meetings=$room->getGeneralMeetings();
         return $this->render('room/index.html.twig',[
            'pollings'=>$pollings,
+           'meetings'=>$general_meetings,
            'manage'=>true,
             'room'=>$room
         ]);
@@ -290,26 +292,15 @@ class ManageController extends AbstractController
 
     /**
      * @Route("/pollings", name="app_pollings")
-     * @param Request $request
      * @param PollingRepository $repository
      * @param SessionSettingsRepository $settingsRepository
      * @return RedirectResponse|Response
      */
-    public function pollings(Request $request,PollingRepository $repository,SessionSettingsRepository $settingsRepository):Response
+    public function pollings(PollingRepository $repository,SessionSettingsRepository $settingsRepository):Response
     {
+        /** @var User $user */
         $user=$this->getUser();
-        /*if($polling->getRoom()->getEvent()->getUser()!==$user)
-        {
-            return $this->redirectToRoute('home');
-        }*/
-        $session=$request->getSession();
-        $pass=$session->get('manage_pass');
-
-        if(is_null($pass))
-        {
-            return $this->redirectToRoute('app_manage');
-        }
-        $pollingsArray=$repository->findByEventPassword($pass);
+        $pollingsArray=$repository->findByUser($user);
         $pollings=array();
         foreach ($pollingsArray as $polling)
         {

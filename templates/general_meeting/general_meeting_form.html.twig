@@ -5,120 +5,144 @@
 {% block body %}
     {{ form_start(form) }}
     <div class="row form-group">
-        <div class="col-12 col-sm-3 col-form-label">
+        <div class="col-12 col-sm-4 col-form-label">
+            {{ 'general_meeting.name'|info_icon }}
+            {{ 'general_meeting.name'|help_icon }}
             {{form_label(form.name)}}
         </div>
-        <div class="col-12 col-sm-9">
+        <div class="col-12 col-sm-8">
             {{ form_widget(form.name) }}
         </div>
     </div>
     <div class="row form-group">
-        <div class="col-12 col-sm-3 col-form-label">
+        <div class="col-12 col-sm-4 col-form-label">
+            {{ 'general_meeting.date'|info_icon }}
+            {{ 'general_meeting.date'|help_icon }}
             {{form_label(form.date)}}
         </div>
-        <div class="col-12 col-sm-9 d-flex">
+        <div class="col-12 col-sm-8 d-flex">
             {{ form_widget(form.date) }}
         </div>
     </div>
     <div class="row form-group">
-        <div class="col-12 col-sm-3 col-form-label">
+        <div class="col-12 col-sm-4 col-form-label">
+            {{ 'general_meeting.votings_count'|info_icon }}
+            {{ 'general_meeting.votings_count'|help_icon }}
             {{form_label(form.count)}}
         </div>
-        <div class="col-12 col-sm-9 d-flex">
+        <div class="col-12 col-sm-8 d-flex">
             {{ form_widget(form.count) }}
             <span id="questionsCountSpan" class="font-weight-bold text-primary ml-2 mt-1 valueSpan">20</span>
         </div>
     </div>
     <div class="row form-group">
-        <div class="col-12 col-sm-3 col-form-label">
+        <div class="col-12 col-sm-4 col-form-label">
+            {{ 'general_meeting.hold_back_available'|info_icon }}
+            {{ 'general_meeting.hold_back_available'|help_icon }}
             {{form_label(form.holdBack)}}
         </div>
-        <div class="col-12 col-sm-9">
+        <div class="col-12 col-sm-8">
             <div class="custom-control custom-switch">
                 <input type="checkbox" {% if form.holdBack.vars.checked %}checked{% endif%} name="{{ form.holdBack.vars.full_name }}"
                        class="custom-control-input" id="{{ form.holdBack.vars.id }}" value="{{ form.holdBack.vars.value }}">
-                <label class="custom-control-label" for="{{ form.holdBack.vars.id }}">{{ form.holdBack.vars.label }}</label>
+                <label class="custom-control-label" for="{{ form.holdBack.vars.id }}">{{ form.holdBack.vars.label|trans }}</label>
             </div>
         </div>
     </div>
     <div class="row form-group">
-        <div class="col-12 col-sm-3 col-form-label">
+        <div class="col-12 col-sm-4 col-form-label">
+            {{ 'general_meeting.choose_type_weight'|info_icon }}
+            {{ 'general_meeting.choose_type_weight'|help_icon }}
             {{form_label(form.weight)}}
         </div>
-        <div class="col-12 col-sm-9 d-flex">
+        <div class="col-12 col-sm-8 d-flex">
             {{ form_widget(form.weight) }}
         </div>
     </div>
     <div class="row form-group">
-        <div class="col-12 col-sm-3 col-form-label">
+        <div class="col-12 col-sm-4 col-form-label">
+            {{ 'general_meeting.secret_voting'|info_icon }}
+            {{ 'general_meeting.secret_voting'|help_icon }}
             {{form_label(form.secret)}}
         </div>
-        <div class="col-12 col-sm-9">
+        <div class="col-12 col-sm-8">
             <div class="custom-control custom-switch">
                 <input type="checkbox" {% if form.secret.vars.checked %}checked{% endif%} name="{{ form.secret.vars.full_name }}"
                        class="custom-control-input" id="{{ form.secret.vars.id }}" value="{{ form.secret.vars.value }}">
-                <label class="custom-control-label" for="{{ form.secret.vars.id }}">{{ form.secret.vars.label }}</label>
+                <label class="custom-control-label" for="{{ form.secret.vars.id }}">{{ form.secret.vars.label|trans }}</label>
             </div>
         </div>
     </div>
 
     <div class="row form-group">
-        <div class="col-12 col-sm-3 col-form-label">
+        <div class="col-12 col-sm-4 col-form-label">
+            {{ 'general_meeting.bad_vote_settings'|info_icon }}
+            {{ 'general_meeting.bad_vote_settings'|help_icon }}
             {{form_label(form.badVoteSettings)}}
         </div>
-        <div class="col-12 col-sm-9 d-flex">
+        <div class="col-12 col-sm-8 d-flex">
             {{ form_widget(form.badVoteSettings) }}
         </div>
     </div>
 
     <div class="row form-group ">
-        <div class="col-12 col-sm-3 col-form-label">
+        <div class="col-12 col-sm-4 col-form-label">
+            {{ 'general_meeting.participants'|info_icon }}
+            {{ 'general_meeting.participants'|help_icon }}
             {{form_label(form.participantList)}}
         </div>
-        <div class="col-12 col-sm-9 d-flex">
+        <div class="col-12 col-sm-8 d-flex">
             {{ form_widget(form.participantList) }}
         </div>
     </div>
     <div class="row form-group">
-        <div class="col-12 col-sm-3 col-form-label">
+        <div class="col-12 col-sm-4 col-form-label">
+            {{ 'general_meeting.kworum'|info_icon }}
+            {{ 'general_meeting.kworum'|help_icon }}
             {{form_label(form.kworum)}}
         </div>
-        <div class="col-12 col-sm-9">
+        <div class="col-12 col-sm-8">
             <div class="custom-control custom-switch">
                 <input type="checkbox" {% if form.kworum.vars.checked %}checked{% endif%} name="{{ form.kworum.vars.full_name }}"
                        class="custom-control-input" id="{{ form.kworum.vars.id }}" value="{{ form.kworum.vars.value }}">
-                <label class="custom-control-label" for="{{ form.kworum.vars.id }}">{{ form.kworum.vars.label }}</label>
+                <label class="custom-control-label" for="{{ form.kworum.vars.id }}">{{ form.kworum.vars.label|trans }}</label>
             </div>
         </div>
     </div>
     <div class="row form-group kworum d-none">
-        <div class="col-12 col-sm-3 col-form-label">
+        <div class="col-12 col-sm-4 col-form-label">
+            {{ 'general_meeting.kworum.required_percent'|info_icon }}
+            {{ 'general_meeting.kworum.required_percent'|help_icon }}
             {{form_label(form.kworumRequiredValue)}}
         </div>
-        <div class="col-12 col-sm-9 d-flex">
+        <div class="col-12 col-sm-8 d-flex">
             {{ form_widget(form.kworumRequiredValue) }}
             <span id="kworumValueSpan" class="font-weight-bold text-primary ml-2 mt-1 valueSpan">1%</span>
         </div>
     </div>
 
     <div class="row form-group kworum d-none">
-        <div class="col-12 col-sm-3 col-form-label">
+        <div class="col-12 col-sm-4 col-form-label">
+            {{ 'general_meeting.kworum.type'|info_icon }}
+            {{ 'general_meeting.kworum.type'|help_icon }}
             {{form_label(form.kworumType)}}
         </div>
-        <div class="col-12 col-sm-9 d-flex">
+        <div class="col-12 col-sm-8 d-flex">
             {{ form_widget(form.kworumType) }}
         </div>
     </div>
 
     <div class="row form-group">
-        <div class="col-12 col-sm-3 col-form-label">
+        <div class="col-12 col-sm-4 col-form-label">
+            {{ 'general_meeting.share_results_with_participants'|info_icon }}
+            {{ 'general_meeting.share_results_with_participants'|help_icon }}
             {{form_label(form.resultsForParticipants)}}
         </div>
-        <div class="col-12 col-sm-9">
+        <div class="col-12 col-sm-8">
             <div class="custom-control custom-switch">
                 <input type="checkbox" {% if form.resultsForParticipants.vars.checked %}checked{% endif%} name="{{ form.resultsForParticipants.vars.full_name }}"
                        class="custom-control-input" id="{{ form.resultsForParticipants.vars.id }}" value="{{ form.resultsForParticipants.vars.value }}">
-                <label class="custom-control-label" for="{{ form.resultsForParticipants.vars.id }}">{{ form.resultsForParticipants.vars.label }}</label>
+                <label class="custom-control-label" for="{{ form.resultsForParticipants.vars.id }}">{{ form.resultsForParticipants.vars.label|trans }}</label>
             </div>
         </div>
     </div>

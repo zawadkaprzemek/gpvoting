@@ -1,13 +1,13 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}{% trans %}Podgląd pytania{% endtrans %}{% endblock %}
+{% block title %}{% trans %}question.preview{% endtrans %}{% endblock %}
 
 {% block body %}
     <div>
         <h4>{{ question.questionContent }}</h4>
         <p>
             {% if question.multiChoice %}
-                {% trans %}Pytanie wielokrotnego wyboru{% endtrans %}
+                {% trans %}question.multi_choice{% endtrans %}
                 {% else %}
                     {{ question.questionType.name }}
             {% endif %}
@@ -24,10 +24,14 @@
         </div>
         <div class="d-flex justify-content-between">
         {% if question.sort > 1 %}
-        <a href="{{ path('app_question_show',{slug:question.polling.slug,sort:(question.sort-1)}) }}" class="btn btn-secondary btn-sm">{% trans %}Poprzednie pytanie{% endtrans %}</a>
+        <a href="{{ path('app_question_show',{slug:question.polling.slug,sort:(question.sort-1)}) }}" class="btn btn-secondary btn-sm">
+            {% trans %}question.previous{% endtrans %}
+        </a>
         {% endif %}
         {% if question.polling.questions|length>question.sort %}
-        <a href="{{ path('app_question_show',{slug:question.polling.slug,sort:(question.sort+1)}) }}" class="btn btn-secondary btn-sm">{% trans %}Następne pytanie{% endtrans %}</a>
+        <a href="{{ path('app_question_show',{slug:question.polling.slug,sort:(question.sort+1)}) }}" class="btn btn-secondary btn-sm">
+            {% trans %}question.next{% endtrans %}
+        </a>
         {% endif %}
         </div>
     </div>

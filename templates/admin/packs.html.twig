@@ -1,17 +1,17 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}admin.packs.list{% endblock %}
+{% block title %}{% trans %}admin.packs_list{% endtrans %}{% endblock %}
 
 {% block body %}
 
-    <h3>{% trans %}admin.packs.list{% endtrans %}</h3>
+    <h3>{% trans %}admin.packs_list{% endtrans %}</h3>
 
-    <a href="{{ path('admin_packs_new') }}" class="btn btn-primary">{% trans %}admin.packs.new.title{% endtrans %}</a>
+    <a href="{{ path('admin_packs_new') }}" class="btn btn-primary">{% trans %}packs.new.text{% endtrans %}</a>
     <div class="table-responsive">
         <table id="usersTable" class="table table-striped">
             <thead>
             <tr>
-                <th>{% trans %}identifier{% endtrans %}</th>
+                <th>{% trans %}id{% endtrans %}</th>
                 <th>{% trans %}name{% endtrans %}</th>
                 <th>{% trans %}event_limit{% endtrans %}</th>
                 <th></th>

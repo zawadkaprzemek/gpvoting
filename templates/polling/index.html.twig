@@ -47,7 +47,7 @@
             {% endif %}
             <div class="btn-group btn-group-sm">
                 <a href="{{ path('app_manage_session_users',{slug:polling.slug}) }}" class="btn btn-outline-success">{% trans %}Lista użytkowników{% endtrans %}</a>
-                {% if polling.settings is null or polling.settings.status==0 %}
+                {% if (polling.settings is null or polling.settings.status==0) and (polling.questions|length) >0 %}
                     <a href="{{ path('app_manage_begin_session',{slug:polling.slug}) }}" class="btn btn-success">{% trans %}Rozpocznij sesję{% endtrans %}</a>
                 {% endif %}
                 {% if polling.settings is not null and polling.settings.status==1 %}
@@ -68,9 +68,9 @@
     </div>
     <div class="row mt-2">
         <div class="col-12">
-            <p>{% trans %}Pytania{% endtrans%} ({{ polling.questions|length }}/{{ polling.questionsCount }})</p>
+            <p>{% trans %}question.many{% endtrans%} ({{ polling.questions|length }}/{{ polling.questionsCount }})</p>
             {% if (polling.questions|length)<polling.questionsCount %}
-                <a href="{{ path('app_questions_add',{slug:polling.slug}) }}" class="btn btn-sm btn-primary mb-2">{% trans %}Dodaj nowe pytanie{% endtrans %}</a>
+                <a href="{{ path('app_questions_add',{slug:polling.slug}) }}" class="btn btn-sm btn-primary mb-2">{% trans %}question.add.text{% endtrans %}</a>
             {% endif %}
         </div>
         {% for question in polling.questions %}
@@ -84,7 +84,9 @@
                             <a href="{{ path('app_question_show',{slug:question.polling.slug,sort:question.sort}) }}" class="btn btn-primary">{% trans %}Podgląd{% endtrans %}</a>
                             <a href="{{ path('app_question_edit',{slug:question.polling.slug,sort:question.sort}) }}" class="btn btn-secondary">{% trans %}Edycja{% endtrans %}</a>
                             <a href="{{ path('app_question_results',{sort:question.sort,slug:question.polling.slug}) }}" class="btn btn-info">{% trans %}Wyniki{% endtrans %}</a>
+                            {% if polling.session ==false or (polling.settings is not null and polling.settings.status ==0 ) %}
                             {{include('question/_delete_form.html.twig',{ question:question }) }}
+                            {% endif %}
                         </div>
                     </div>
 
@@ -92,7 +94,7 @@
 
             </div>
         {% else %}
-            <div class="col-12"><p class="text-info">{% trans %}Brak pytań{% endtrans %}</p></div>
+            <div class="col-12"><p class="text-info">{% trans %}question.no_questions{% endtrans %}</p></div>
         {% endfor %}
     </div>
 {% endblock %}

@@ -35,11 +35,9 @@ class RegistrationController extends AbstractController
      * @Route("/register", name="app_register")
      * @param Request $request
      * @param UserPasswordHasherInterface $passwordEncoder
-     * @param GuardAuthenticatorHandler $guardHandler
-     * @param LoginFormAuthenticator $authenticator
      * @return Response
      */
-    public function register(Request $request, UserPasswordHasherInterface $passwordEncoder, GuardAuthenticatorHandler $guardHandler, LoginFormAuthenticator $authenticator): Response
+    public function register(Request $request, UserPasswordHasherInterface $passwordEncoder): Response
     {
         if($this->isGranted("ROLE_USER"))
         {
@@ -74,14 +72,6 @@ class RegistrationController extends AbstractController
                     ->subject($this->translator->trans('register.form.verify_email.text'))
                     ->htmlTemplate('registration/confirmation_email.html.twig')
             );
-            // do anything else you need here, like send an email
-
-            /*return $guardHandler->authenticateUserAndHandleSuccess(
-                $user,
-                $request,
-                $authenticator,
-                'main' // firewall name in security.yaml
-            );*/
             return $this->redirectToRoute('app_login');
         }
 

@@ -1,13 +1,13 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}{% trans %}Walne zgromadzenie{% endtrans %}: {{ meeting.name }}{% endblock %}
+{% block title %}{% trans %}general_meeting.text{% endtrans %}: {{ meeting.name }}{% endblock %}
 
 {% block body %}
 
     <div class="row">
         <div class="col-12">
             <h3>{{ meeting.name }}</h3>
-            <p>{% trans %}Przebieg głosowania{% endtrans %}</p>
+            <p>{% trans %}general_meeting.course_voting{% endtrans %}</p>
         </div>
 
         <div class="col-12">
@@ -32,7 +32,7 @@
                             <table class="table">
                                 <thead>
                                 <tr>
-                                <th>{% trans %}Głosowanie{% endtrans %}</th>
+                                <th>{% trans %}voting{% endtrans %}</th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -69,8 +69,8 @@
                             <table class="table">
                                 <thead>
                                 <tr>
-                                <th>{% trans %}Nr{% endtrans %}</th>
-                                <th>{% trans %}Imię i nazwisko{% endtrans %}</th>
+                                <th>{% trans %}nr{% endtrans %}</th>
+                                <th>{% trans %}full_name{% endtrans %}</th>
 
                                 {% for i in 1..answers%}
                                     <th>{{ i }}</th>

@@ -1,30 +1,30 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}{% trans %}Profil użytkownika{% endtrans %} {{ user.username }}{% endblock %}
+{% block title %}{% trans %}profile.user{% endtrans %} {{ user.username }}{% endblock %}
 
 {% block body %}
 
 <div>
-    <p>{% trans %}Login{% endtrans %}: {{ user.username }}</p>
-    <p>{% trans %}Email{% endtrans %}: {{ user.email }}</p>
-    <p>{% trans %}Imię{% endtrans %}: {{ user.name }}</p>
-    <p>{% trans %}Nazwisko{% endtrans %}: {{ user.surname }}</p>
-    <p>{% trans %}Data rejestacji{% endtrans %}: {{ user.createdAt|date('Y-m-d H:i') }}</p>
-    <p>{% trans %}Ostatnie logowanie{% endtrans %}: {{ user.lastVisit|date('Y-m-d H:i') }}</p>
-    <p>{% trans %}Limit wielkości listy uczestników{% endtrans %}: {{ user.participantListSize }}</p>
-    <p>{% trans %}Ilość wydarzeń{% endtrans %}: {{ user.events|length }}</p>
-    <p>{% trans %}Ilość list uczestników{% endtrans %}: {{ user.participantLists|length }}</p>
-    <p>{% trans %}pack.name{% endtrans %}: {{ user.pack is null ? '-' : user.pack.name }}</p>
-    <a href="{{ path('app_admin_profile_edit',{id:user.id}) }}" class="btn btn-sm btn-primary">{% trans %}Edytuj dane użytkownika{% endtrans %}</a>
+    <p>{% trans %}login.text{% endtrans %}: {{ user.username }}</p>
+    <p>{% trans %}email.address{% endtrans %}: {{ user.email }}</p>
+    <p>{% trans %}firstName{% endtrans %}: {{ user.name }}</p>
+    <p>{% trans %}lastName{% endtrans %}: {{ user.surname }}</p>
+    <p>{% trans %}register_date{% endtrans %}: {{ user.createdAt|date('Y-m-d H:i') }}</p>
+    <p>{% trans %}last_login{% endtrans %}: {{ user.lastVisit|date('Y-m-d H:i') }}</p>
+    <p>{% trans %}participants.limit_list{% endtrans %}: {{ user.participantListSize }}</p>
+    <p>{% trans %}events_count{% endtrans %}: {{ user.events|length }}</p>
+    <p>{% trans %}participants_list_count{% endtrans %}: {{ user.participantLists|length }}</p>
+    <p>{% trans %}packs.single_text{% endtrans %}: {{ user.pack is null ? '-' : user.pack.name }}</p>
+    <a href="{{ path('app_admin_profile_edit',{id:user.id}) }}" class="btn btn-sm btn-primary">{% trans %}admin.edit_user_data{% endtrans %}</a>
 
         <div class="mt-2">
-        <h5 class="my-3">{% trans %}Podkonta:{% endtrans %}</h5>
+        <h5 class="my-3">{% trans %}subaccounts{% endtrans %}:</h5>
             <div class="my-2">
                 <ul class="list-group">
         {% for subaccount in app.user.subaccounts %}
             <li class="list-group-item">{{ subaccount.username }}</li>
             {% else %}
-            <p class="alert alert-info">{% trans %}Użytkownik nie posiada żadnych podkont{% endtrans %}</p>
+            <p class="alert alert-info">{% trans %}no_subaccounts{% endtrans %}</p>
         {% endfor %}
                 </ul>
             </div>

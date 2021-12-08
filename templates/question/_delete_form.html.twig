@@ -1,6 +1,10 @@
 <form method="post" action="{{ path('app_question_delete', {'id':question.id,'slug':question.polling.slug}) }}"
-      onsubmit="return confirm('{% trans %}Na pewno chcesz usunąć to pytanie?{% endtrans %}');">
+      onsubmit="return confirm('{% trans %}question.delete.confirm{% endtrans %}');">
     <input type="hidden" name="_method" value="DELETE">
     <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ question.id) }}">
-    <button class="btn btn-sm btn-dark rounded-left-0">{% trans %}Usuń{% endtrans %}</button>
+    <button class="btn btn-sm btn-dark rounded-left-0">
+        {{ 'question.delete'|info_icon }}
+        {{ 'question.delete'|help_icon }}
+        {% trans %}delete{% endtrans %}
+    </button>
 </form>

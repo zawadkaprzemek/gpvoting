@@ -13,7 +13,7 @@
         </div>
     </div>
 
-    <h5>{% trans %}Odpowiedzi{% endtrans %}:</h5>
+    <h5>{% trans %}answers{% endtrans %}:</h5>
     <div class="answers">
     {% for key,answer in form.answers %}
     <div class="row form-group answer">
@@ -27,7 +27,7 @@
                 {% if child.vars.label=="Poprawna" %}
                     <div class="custom-control custom-switch">
                         <input type="checkbox" {% if child.vars.checked %}checked{% endif%} name="{{ child.vars.full_name }}" class="custom-control-input" id="{{ child.vars.id }}" value="{{ child.vars.value }}">
-                        <label class="custom-control-label" for="{{ child.vars.id }}">{{ child.vars.label }}</label>
+                        <label class="custom-control-label" for="{{ child.vars.id }}">{{ child.vars.label|trans }}</label>
                     </div>
                 {% else %}
                     {{ form_widget(child) }}
@@ -46,7 +46,7 @@
         <div class="col-12 col-sm-9">
             <div class="custom-control custom-switch">
                 <input type="checkbox" {% if(form.next.vars.attr.checked)%}checked{% endif %} name="{{ form.next.vars.full_name }}" class="custom-control-input" id="{{ form.next.vars.id }}" value="{{ form.next.vars.value }}">
-                <label class="custom-control-label" for="{{ form.next.vars.id }}">{{ form.next.vars.label }}</label>
+                <label class="custom-control-label" for="{{ form.next.vars.id }}">{{ form.next.vars.label|trans }}</label>
             </div>
         </div>
     </div>
@@ -60,7 +60,7 @@
     {{ parent() }}
     <script>
         var $collectionHolder;
-        var $addQuestionButton = $('<button type="button" class="add_answer_link btn btn-light">{% trans %}Dodaj odpowiedź{% endtrans %}</button>');
+        var $addQuestionButton = $('<button type="button" class="add_answer_link btn btn-light">{% trans %}add_answer{% endtrans %}</button>');
         var $newLinkLi = $('<div></div>').append($addQuestionButton);
 
         jQuery(document).ready(function() {
@@ -105,7 +105,7 @@
             }
 
             function addQuestionFormDeleteLink($tagFormLi) {
-                var $removeFormButton = $('<button class="btn btn-dark removeQuestionButton" type="button" title="{% trans %}Usuń odpowiedź{% endtrans %}">&times;</button>');
+                var $removeFormButton = $('<button class="btn btn-dark removeQuestionButton" type="button" title="{% trans %}remove_answer{% endtrans %}">&times;</button>');
                 $tagFormLi.append($removeFormButton);
 
                 $('body').on('click','.removeQuestionButton', function(e) {
@@ -123,7 +123,7 @@
     <style>
         .answer{
             position: relative;
-            padding: 10px 10px 10px 0;
+            padding: 10px 25px 10px 0;
         }
         .removeQuestionButton{
             position: absolute;
