@@ -68,7 +68,7 @@ class ExcelCourseGenerator
                 $sheet=new Worksheet();
                 $excell->addSheet($sheet);
             }
-            $sheet->setTitle("Głosowanie ".($key+1));
+            $sheet->setTitle($this->translator->trans('voting').($key+1));
             $sheet->getDefaultColumnDimension()->setWidth(15);
             /*foreach(range('A','Z') as $columnID) {
                 $sheet->getColumnDimension($columnID)
@@ -138,7 +138,7 @@ class ExcelCourseGenerator
             {
                 $sheet
                     ->setCellValue('A5',3)
-                    ->setCellValue('B5',$this->translator->trans('vote.hold_on'))
+                    ->setCellValue('B5',$this->translator->trans('vote.hold_off'))
                     ;
                 $size=3;
             }
@@ -150,8 +150,8 @@ class ExcelCourseGenerator
     {
         $letters=['F','G','H','I','J','K','L','M','N','O','P','R','S','T','W'];
         $sheet
-            ->setCellValue('D1','Nr')
-            ->setCellValue('E1','Imię i nazwisko')
+            ->setCellValue('D1',$this->translator->trans('nr'))
+            ->setCellValue('E1',$this->translator->trans('full_name'))
             ;
         for($i=0;$i<$votes_count;$i++)
         {

@@ -12,8 +12,16 @@
         <p>{% trans %}polling.many{% endtrans %}</p>
         {% if manage %}
         <div class="btn-group btn-group-sm mb-2">
-            <a class="btn btn-primary" href="{{ path('app_manage_create_polling',{slug_parent:room.event.slug,slug_child:room.slug}) }}">{% trans %}Dodaj głosowanie{% endtrans %}</a>
-            <a class="btn btn-primary" href="{{ path('app_manage_create_general_meeting',{slug_parent:room.event.slug,slug_child:room.slug}) }}">{% trans %}Dodaj Walne zgromadzenie{% endtrans %}</a>
+            <a class="btn btn-primary" href="{{ path('app_manage_create_polling',{slug_parent:room.event.slug,slug_child:room.slug}) }}">
+                {{ 'polling.add'|info_icon }}
+                {{ 'polling.add'|help_icon }}
+                {% trans %}general_meeting.voting.add.text{% endtrans %}
+            </a>
+            <a class="btn btn-primary" href="{{ path('app_manage_create_general_meeting',{slug_parent:room.event.slug,slug_child:room.slug}) }}">
+                {{ 'general_meeting.new'|info_icon }}
+                {{ 'general_meeting.new'|help_icon }}
+                {% trans %}general_meeting.new.text{% endtrans %}
+            </a>
         </div>
         {% endif %}
         <div class="row">

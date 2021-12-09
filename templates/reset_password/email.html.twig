@@ -1,11 +1,11 @@
 <h1>{% trans %}hello{% endtrans %}</h1>
 
 <p>
-    {% trans %}Aby zresetować hasło prosimy kliknąć{% endtrans %}
-    <a href="{{ url('app_reset_password', {token: resetToken.token}) }}">{% trans %}tutaj{% endtrans %}</a>
-    {% trans with { '%hours%':tokenLifetime|date('g')} %}Link wygaśnie w ciągu %hours% godzin..{% endtrans %}
+    {% trans %}reset.to_reset_click{% endtrans %}
+    <a href="{{ url('app_reset_password', {token: resetToken.token}) }}">{% trans %}here{% endtrans %}</a>
+    {% trans with { '%hours%':tokenLifetime|date('g')} %}link_expires{% endtrans %}
 </p>
 
 <p>
-    {% trans %}Pozdrowienia{% endtrans %}
+    {% trans %}best_regards{% endtrans %}
 </p>

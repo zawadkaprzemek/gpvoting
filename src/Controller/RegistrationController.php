@@ -136,7 +136,7 @@ class RegistrationController extends AbstractController
                 (new TemplatedEmail())
                     ->from(new Address('kontakt@gpvoting.pl', 'GpVoting'))
                     ->to($user->getEmail())
-                    ->subject($this->translator->trans('Zostało założone konto w GPVoting'))
+                    ->subject($this->translator->trans('register.form.email.account_created.subject'))
                     ->htmlTemplate('registration/create_account_email.html.twig')
                     ->context(['password' => $form->get('plainPassword')->getData()])
             );

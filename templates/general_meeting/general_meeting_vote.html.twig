@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}{% trans %}Walne zgromadzenie{% endtrans %}: {{ meeting.name }}{% endblock %}
+{% block title %}{% trans %}general_meeting.text{% endtrans %}: {{ meeting.name }}{% endblock %}
 
 {% block body %}
 
@@ -8,60 +8,60 @@
         <div class="row">
             <div class="col-md-6">
                 <div class="alert alert-info">
-                    <h4>{% trans %}Twoje dane{% endtrans %}:</h4>
-                    <p class="mb-0">{% trans %}ID{% endtrans %}: <strong>{{ participant.aid }}</strong></p>
-                    <p class="mb-0">{% trans %}Imię i nazwisko{% endtrans %}: <strong>{{ participant.name~' '~participant.surname }}</strong></p>
-                    <p class="mb-0">{% trans %}Adres e-mail{% endtrans %}: <strong>{{ participant.email }}</strong></p>
-                    <p class="mb-0">{% trans %}Liczba głosów{% endtrans %}: <strong>{{ participant.votes }}</strong></p>
-                    <p class="mb-0">{% trans %}Liczba akcji{% endtrans %}: <strong>{{ participant.actions }}</strong></p>
+                    <h4>{% trans %}profile.your_data{% endtrans %}:</h4>
+                    <p class="mb-0">{% trans %}id{% endtrans %}: <strong>{{ participant.aid }}</strong></p>
+                    <p class="mb-0">{% trans %}full_name{% endtrans %}: <strong>{{ participant.name~' '~participant.surname }}</strong></p>
+                    <p class="mb-0">{% trans %}email.address{% endtrans %}: <strong>{{ participant.email }}</strong></p>
+                    <p class="mb-0">{% trans %}votes_count{% endtrans %}: <strong>{{ participant.votes }}</strong></p>
+                    <p class="mb-0">{% trans %}actions_count{% endtrans %}: <strong>{{ participant.actions }}</strong></p>
                 </div>
             </div>
         </div>
         {% if meeting.status==0 %}
-            <h3 class="text-center">{% trans %}Oczekiwanie na rozpoczęcie Walnego zgromadzenia{% endtrans %}</h3>
+            <h3 class="text-center">{% trans %}general_meeting.waiting_for_start{% endtrans %}</h3>
 
             {% elseif meeting.status==1 %}
                 {% if meeting.kworum and active.last==0 and active.kworum is not null %}
                     {% if active.kworum %}
                     <div class="alert alert-success">
-                        <p class="font-weight-bold mb-0">{% trans %}Kworum zostało osiągnięte{% endtrans %}</p>
+                        <p class="font-weight-bold mb-0">{% trans %}general_meeting.kworum.reached{% endtrans %}</p>
                     </div>
                     {% else %}
                         <div class="alert alert-danger">
-                            <p class="font-weight-bold mb-0">{% trans %}Kworum nie zostało osiągnięte{% endtrans %}</p>
+                            <p class="font-weight-bold mb-0">{% trans %}general_meeting.kworum.not_reached{% endtrans %}</p>
                         </div>
                     {% endif %}
                 {% endif %}
 
 
                 {% if active.active is null %}
-                    <h3 class="text-center">{% trans %}Oczekiwanie na aktywowanie głosowania przez ogranizatora{% endtrans %}</h3>
+                    <h3 class="text-center">{% trans %}general_meeting.waiting_for_voting{% endtrans %}</h3>
 
                     {% if last is not null %}
                     <div class="last-voting-results mt-3">
-                        <p class="text-center mb-2">{% trans %}Wynik poprzedniego głosowania{% endtrans %}</p>
+                        <p class="text-center mb-2">{% trans %}general_meeting.last_voting_result{% endtrans %}</p>
                         <h4 class="text-center">{{ last.content }} </h4>
 
                         {% if last.type==1 %}
                             <p class="mb-0 font-weight-bold text-center">
                                 {% if last.weight==1 %}
                                     {% if last.votesSummary['votes']['accepted'] %}
-                                        {% trans %}Zaakceptowane{% endtrans %}
+                                        {% trans %}accepted{% endtrans %}
                                     {% else %}
-                                        {% trans %}Odrzucone{% endtrans %}
+                                        {% trans %}rejected{% endtrans %}
                                     {% endif %}
                                 {% else %}
                                     {% if last.votesSummary['actions']['accepted'] %}
-                                        {% trans %}Zaakceptowane{% endtrans %}
+                                        {% trans %}accepted{% endtrans %}
                                     {% else %}
-                                        {% trans %}Odrzucone{% endtrans %}
+                                        {% trans %}rejected{% endtrans %}
                                     {% endif %}
                                 {% endif %}
                             </p>
-                            <p class="mb-0">{% trans %}Za{% endtrans %}: {% if last.weight==1 %}{{ last.votesSummary['votes'][1] }}{% else %}{{ last.votesSummary['actions'][1] }}{% endif %}%</p>
-                            <p class="mb-0">{% trans %}Przeciw{% endtrans %}: {% if last.weight==1 %}{{ last.votesSummary['votes'][0] }}{% else %}{{ last.votesSummary['actions'][0] }}{% endif %}%</p>
+                            <p class="mb-0">{% trans %}on{% endtrans %}: {% if last.weight==1 %}{{ last.votesSummary['votes'][1] }}{% else %}{{ last.votesSummary['actions'][1] }}{% endif %}%</p>
+                            <p class="mb-0">{% trans %}against{% endtrans %}: {% if last.weight==1 %}{{ last.votesSummary['votes'][0] }}{% else %}{{ last.votesSummary['actions'][0] }}{% endif %}%</p>
                             {% if meeting.holdBack %}
-                                <p class="mb-0">{% trans %}Wstrzymało się{% endtrans %}: {% if last.weight==1 %}{{ last.votesSummary['votes'][2] }}{% else %}{{ last.votesSummary['actions'][2] }}{% endif %}%</p>
+                                <p class="mb-0">{% trans %}hold_off{% endtrans %}: {% if last.weight==1 %}{{ last.votesSummary['votes'][2] }}{% else %}{{ last.votesSummary['actions'][2] }}{% endif %}%</p>
                             {% endif %}
                         {% elseif last.type==2 %}
                             {% if last.votesSummary['valid'] is defined %}
@@ -83,7 +83,7 @@
                                     {% endfor %}
                                     {% set lp=lp+1 %}
                                 {% endif %}
-                                    <p class="small">{% trans %}Ilość głosów nie ważnych{% endtrans %}: {{ last.votesSummary['invalid'] }} </p>
+                                    <p class="small">{% trans %}general_meeting.voting.invalid_votes_count{% endtrans %}: {{ last.votesSummary['invalid'] }} </p>
                             {% endif %}
                             {% else %}
                                     {% for key,vote in last.votesSummary %}
@@ -135,19 +135,19 @@
                     </div>
                     <div class="col-12 col-md-6 order-2 order-md-0">
                     {% if meeting.activeStatusArray.active==0 %}
-                        <h2>{% trans %}Sprawdzanie obecności{% endtrans %}</h2>
+                        <h2>{% trans %}general_meeting.voting.presence.text{% endtrans %}</h2>
                     {% if meeting.kworum %}
-                    <p>{% trans %}Prosimy o potwierdzenie obecności{% endtrans %}</p>
+                    <p>{% trans %}general_meeting.voting.presence.please_confirm{% endtrans %}</p>
                     <div class="btn-group btn-group-lg w-100">
-                        <button class="btn btn-success btn-vote btn-block" {% if active.votes[participant.aid] is defined%}disabled{% endif%} data-vote="1">{% trans %}Potwierdzam obecność{% endtrans %}</button>
+                        <button class="btn btn-success btn-vote btn-block" {% if active.votes[participant.aid] is defined%}disabled{% endif%} data-vote="1">{% trans %}general_meeting.voting.presence.confirm{% endtrans %}</button>
                     </div>
                         {% else %}
-                        <p>{% trans %}Aby potwierdzić swoją obecność kliknij dowolny przycisk{% endtrans %}</p>
+                        <p>{% trans %}general_meeting.voting.presence.click_to_confirm{% endtrans %}</p>
                         <div class="btn-group btn-group-lg">
-                            <button class="btn btn-success btn-vote" {% if active.votes[participant.aid] is defined%}disabled{% endif%} data-vote="1">{% trans %}Za{% endtrans %}</button>
-                            <button class="btn btn-danger btn-vote" {% if active.votes[participant.aid] is defined%}disabled{% endif%} data-vote="0">{% trans %}Przeciw{% endtrans %}</button>
+                            <button class="btn btn-success btn-vote" {% if active.votes[participant.aid] is defined%}disabled{% endif%} data-vote="1">{% trans %}on{% endtrans %}</button>
+                            <button class="btn btn-danger btn-vote" {% if active.votes[participant.aid] is defined%}disabled{% endif%} data-vote="0">{% trans %}against{% endtrans %}</button>
                             {% if meeting.holdBack %}
-                                <button class="btn btn-warning btn-vote" {% if active.votes[participant.aid] is defined%}disabled{% endif%} data-vote="2">{% trans %}Wstrzymuje się{% endtrans %}</button>
+                                <button class="btn btn-warning btn-vote" {% if active.votes[participant.aid] is defined%}disabled{% endif%} data-vote="2">{% trans %}hold_off{% endtrans %}</button>
                             {% endif %}
                         </div>
                         {% endif %}
@@ -155,15 +155,15 @@
                         <h2>{{ voting.content }}</h2>
                             {% if voting.type==1 %}
                                     <div class="btn-group btn-group-lg">
-                                        <button class="btn btn-success btn-vote" {% if voting.voteStatus[participant.aid] is defined%}disabled{% endif%} data-vote="1">{% trans %}Za{% endtrans %}</button>
-                                        <button class="btn btn-danger btn-vote" {% if voting.voteStatus[participant.aid] is defined%}disabled{% endif%} data-vote="0">{% trans %}Przeciw{% endtrans %}</button>
+                                        <button class="btn btn-success btn-vote" {% if voting.voteStatus[participant.aid] is defined%}disabled{% endif%} data-vote="1">{% trans %}on{% endtrans %}</button>
+                                        <button class="btn btn-danger btn-vote" {% if voting.voteStatus[participant.aid] is defined%}disabled{% endif%} data-vote="0">{% trans %}against{% endtrans %}</button>
                                         {% if meeting.holdBack %}
-                                            <button class="btn btn-warning btn-vote" {% if voting.voteStatus[participant.aid] is defined%}disabled{% endif%} data-vote="2">{% trans %}Wstrzymuje się{% endtrans %}</button>
+                                            <button class="btn btn-warning btn-vote" {% if voting.voteStatus[participant.aid] is defined%}disabled{% endif%} data-vote="2">{% trans %}hold_off{% endtrans %}</button>
                                         {% endif %}
                                     </div>
                                 {% elseif voting.type==2 %}
-                                    <p>{% trans with { '%count%': voting.toChoose, '%all%': voting.candidates|length} %}Możesz oddać głos na %count% z %all% kandydatów{% endtrans %}</p>
-                                    <form id="voteCandidateForm" data-warned="false" data-warning="{% trans with { '%count%':voting.toChoose} %}Aby oddać poprawny głos możesz wybrać maksymalnie %count% kandydatów{% endtrans %}">
+                                    <p>{% trans with { '%count%': voting.toChoose, '%all%': voting.candidates|length} %}general_meeting.voting.available_choices_count{% endtrans %}</p>
+                                    <form id="voteCandidateForm" data-warned="false" data-warning="{% trans with { '%count%':voting.toChoose} %}general_meeting.voting.available_choices_count_to_valid{% endtrans %}">
                                         <ul class="list-group mb-2 vote-ul">
                                             {% set voted=false %}
                                             {% for key,candidate in voting.candidates %}
@@ -177,7 +177,7 @@
                                                 <label class="list-group-item list-group-item-action mb-0" for="candidate_{{ (key+1) }}">{{ candidate.name }}</label>
                                             {% endfor %}
                                         </ul>
-                                        <button type="submit" class="btn btn-outline-primary" {% if voted %}disabled{% endif %}>{% trans %}Głosuj{% endtrans %}</button>
+                                        <button type="submit" class="btn btn-outline-primary" {% if voted %}disabled{% endif %}>{% trans %}vote.text{% endtrans %}</button>
                                     </form>
                                     <script>
                                     {% if voted %}
@@ -188,7 +188,7 @@
                                     </script>
                                 {% else %}
                                     {% if voting.multiChoose %}
-                                        <p>{% trans %}Głosowanie wielokrotnego wyboru{% endtrans %}</p>
+                                        <p>{% trans %}general_meeting.voting.multi_choice{% endtrans %}</p>
                                     {% endif %}
                                     <form id="voteAnswerForm">
                                         <ul class="list-group mb-2 vote-ul">
@@ -204,7 +204,7 @@
                                                 <label class="list-group-item list-group-item-action mb-0" for="answer_{{ (key+1) }}">{{ answer.content }}</label>
                                             {% endfor %}
                                         </ul>
-                                        <button type="submit" class="btn btn-outline-primary" {% if voted %}disabled{% endif %}>{% trans %}Głosuj{% endtrans %}</button>
+                                        <button type="submit" class="btn btn-outline-primary" {% if voted %}disabled{% endif %}>{% trans %}vote.text{% endtrans %}</button>
                                     </form>
                                     <script>
                                     {% if voted %}
@@ -220,21 +220,21 @@
                 </div>
                 {% else %}
                     <div class="alert alert-info">
-                        <h4>{% trans %}Zgromadzenie zakończone{% endtrans %}</h4>
-                        <p>{% trans %}Serdecznie dziękujemy za udział w głosowaniu!{% endtrans %}</p>
+                        <h4>{% trans %}general_meeting.ended{% endtrans %}</h4>
+                        <p>{% trans %}general_meeting.thanks_for_participation{% endtrans %}</p>
                     </div>
                     <div class="row">
-                        <div class="col-6"><h4>{% trans %}Wyniki głosowań{% endtrans %}</h4></div>
+                        <div class="col-6"><h4>{% trans %}general_meeting.voting_results{% endtrans %}</h4></div>
                         <div class="col-6 text-right">
                             {% if meeting.resultsForParticipants %}
-                            <a class="btn btn-outline-dark btn-sm" href="{{ path('general_meeting_results_pdf',{slug:meeting.slug})}}">{% trans %}Pobierz wyniki głosowań{% endtrans %}</a>
+                            <a class="btn btn-outline-dark btn-sm" href="{{ path('general_meeting_results_pdf',{slug:meeting.slug})}}">{% trans %}general_meeting.voting.get_votes.button{% endtrans %}</a>
                             {% endif %}
                         </div>
                     </div>
                     <div class="voting-list mb-2">
                         <div class="row text-center font-weight-bold border align-items-center h-60px">
-                            <div class="col-6 pt-3 border-right h-100">{% trans %}Głosowanie{% endtrans %}:</div>
-                            <div class="col-6 pt-3 border-right h-100">{% trans %}Wynik{% endtrans %}:</div>
+                            <div class="col-6 pt-3 border-right h-100">{% trans %}voting{% endtrans %}:</div>
+                            <div class="col-6 pt-3 border-right h-100">{% trans %}result{% endtrans %}:</div>
                         </div>
                         {% for voting in meeting.meetingVotings %}
                             <div class="row border-bottom border-left">
@@ -245,22 +245,22 @@
                                             <p class="mb-0 font-weight-bold text-center">
                                                 {% if voting.weight==1 %}
                                                     {% if voting.votesSummary['votes']['accepted'] %}
-                                                        {% trans %}Zaakceptowane{% endtrans %}
+                                                        {% trans %}accepted{% endtrans %}
                                                     {% else %}
-                                                        {% trans %}Odrzucone{% endtrans %}
+                                                        {% trans %}rejected{% endtrans %}
                                                     {% endif %}
                                                 {% else %}
                                                     {% if voting.votesSummary['actions']['accepted'] %}
-                                                        {% trans %}Zaakceptowane{% endtrans %}
+                                                        {% trans %}accepted{% endtrans %}
                                                     {% else %}
-                                                        {% trans %}Odrzucone{% endtrans %}
+                                                        {% trans %}rejected{% endtrans %}
                                                     {% endif %}
                                                 {% endif %}
                                             </p>
-                                            <p class="mb-0">{% trans %}Za{% endtrans %}: {% if voting.weight==1 %}{{ voting.votesSummary['votes'][1] }}{% else %}{{ voting.votesSummary['actions'][1] }}{% endif %}%</p>
-                                            <p class="mb-0">{% trans %}Przeciw{% endtrans %}: {% if voting.weight==1 %}{{ voting.votesSummary['votes'][0] }}{% else %}{{ voting.votesSummary['actions'][0] }}{% endif %}%</p>
+                                            <p class="mb-0">{% trans %}on{% endtrans %}: {% if voting.weight==1 %}{{ voting.votesSummary['votes'][1] }}{% else %}{{ voting.votesSummary['actions'][1] }}{% endif %}%</p>
+                                            <p class="mb-0">{% trans %}against{% endtrans %}: {% if voting.weight==1 %}{{ voting.votesSummary['votes'][0] }}{% else %}{{ voting.votesSummary['actions'][0] }}{% endif %}%</p>
                                             {% if meeting.holdBack %}
-                                                <p class="mb-0">{% trans %}Wstrzymało się{% endtrans %}: {% if voting.weight==1 %}{{ voting.votesSummary['votes'][2] }}{% else %}{{ voting.votesSummary['actions'][2] }}{% endif %}%</p>
+                                                <p class="mb-0">{% trans %}hold_off{% endtrans %}: {% if voting.weight==1 %}{{ voting.votesSummary['votes'][2] }}{% else %}{{ voting.votesSummary['actions'][2] }}{% endif %}%</p>
                                             {% endif %}
                                         {% elseif voting.type==2 %}
                                             {% if voting.votesSummary['valid'] is defined %}
@@ -269,7 +269,7 @@
                                                     {% for key,vote in voting.votesSummary['valid']['votes'] %}
                                                         <p class="mb-2">
                                                             {{ voting.candidates[key].name }} -
-                                                            <span class="{% if lp < voting.toChoose and vote>0 %}bg-success {% endif %}votes-span" title="{% trans %}Głosy ważne{% endtrans %}">{{ vote|number_format(2) ~ '%'}}</span>
+                                                            <span class="{% if lp < voting.toChoose and vote>0 %}bg-success {% endif %}votes-span" title="{% trans %}general_meeting.voting.valid_votes{% endtrans %}">{{ vote|number_format(2) ~ '%'}}</span>
                                                         </p>
                                                         {% set lp=lp+1 %}
                                                     {% endfor %}
@@ -277,13 +277,13 @@
                                                     {% for key,vote in voting.votesSummary['valid']['actions'] %}
                                                         <p class="mb-2">
                                                             {{ voting.candidates[key].name }} -
-                                                            <span class="{% if lp < voting.toChoose and vote>0 %}bg-success {% endif %}votes-span" title="{% trans %}Głosy ważne{% endtrans %}">{{ vote|number_format(2) ~ '%'}}</span>
+                                                            <span class="{% if lp < voting.toChoose and vote>0 %}bg-success {% endif %}votes-span" title="{% trans %}general_meeting.voting.valid_votes{% endtrans %}">{{ vote|number_format(2) ~ '%'}}</span>
                                                         </p>
                                                         {% set lp=lp+1 %}
                                                     {% endfor %}
                                                 {% endif %}
                                             {% endif %}
-                                                <p class="small">{% trans %}Ilość głosów nie ważnych{% endtrans %}: {{ voting.votesSummary['invalid'] }} </p>
+                                                <p class="small">{% trans %}general_meeting.voting.invalid_votes_count{% endtrans %}: {{ voting.votesSummary['invalid'] }} </p>
                                         {% else %}
                                                 {% for key,vote in voting.votesSummary %}
                                                     <p class="mb-0 {% if voting.answers[key].valid %}text-success font-weight-bold{% endif %}">{{ voting.answers[key].content ~' - '~ vote ~ '%' }}</p>

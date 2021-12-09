@@ -48,7 +48,7 @@
                                     <p class="mb-0">{% trans %}on{% endtrans %}: {% if meeting.weight==1 %}{{ voting.votesSummary['votes'][1] }}{% else %}{{ voting.votesSummary['actions'][1] }}{% endif %}%</p>
                                     <p class="mb-0">{% trans %}against{% endtrans %}: {% if meeting.weight==1 %}{{ voting.votesSummary['votes'][0] }}{% else %}{{ voting.votesSummary['actions'][0] }}{% endif %}%</p>
                                     {% if meeting.holdBack %}
-                                        <p class="mb-0">{% trans %}hold_on{% endtrans %}: {% if meeting.weight==1 %}{{ voting.votesSummary['votes'][2] }}{% else %}{{ voting.votesSummary['actions'][2] }}{% endif %}%</p>
+                                        <p class="mb-0">{% trans %}hold_off{% endtrans %}: {% if meeting.weight==1 %}{{ voting.votesSummary['votes'][2] }}{% else %}{{ voting.votesSummary['actions'][2] }}{% endif %}%</p>
                                     {% endif %}
                                 {% elseif voting.type==2 %}
                                     {% if voting.votesSummary['valid'] is defined %}

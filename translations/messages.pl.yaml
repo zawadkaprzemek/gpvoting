@@ -76,7 +76,7 @@ vote:
   text: Zagłosuj
   on: Głos za
   against: Głos przeciw
-  hold_on: Głos wstrzymany
+  hold_off: Głos wstrzymany
 
 #Pytania
 question:
@@ -181,9 +181,11 @@ begin: Rozpocznij
 voted: Zagłosowało
 accepted: Zaakceptowane
 declined: Odrzucone
+rejected: Odrzucone
+nr: Nr
 on: Za
 against: Przeciw
-hold_on: Wstrzymało się
+hold_off: Wstrzymało się
 active_voting: Aktualne głosowanie
 candidates: Kandydaci
 answers: Odpowiedzi
@@ -224,6 +226,7 @@ position: Pozycja
 fastest_ranking: Ranking najszybciej głosujących
 yes: Tak
 no: Nie
+here: tutja
 #Zarządzanie
 
 manage:
@@ -380,6 +383,7 @@ participants:
     error: Niewłaściwa kolejność kolumn w przesłanym pliku
   assign:
     show_link: Pokaż link do zapisów
+    closed: Zapisy do listy są zamknięte
     form:
       title: Zapisz się do listy uczestników
       text: Wprowadź swoje dane aby się zapisać
@@ -475,6 +479,7 @@ form:
 
 #Resetowanie hasła:
 reset:
+  to_reset_click: Aby zresetować hasło prosimy kliknąć
   title: Zresetuj hasło
   header: Zresetuj swoje hasło
   token_not_found: Nie znaleziono tokenu w adresie URL
@@ -566,7 +571,8 @@ register.form:
 
   email:
     account_created:
-      title: Witaj! Zostało stworzone dla Ciebie hasło w serwisie GPVoting
+      subject: Zostało założone konto w GPVoting
+      title: Witaj! Zostało stworzone dla Ciebie konto w serwisie GPVoting
       your_password: Twoje hasło to
     confirm:
       title: Witaj! Prosimy o potwierdzenie adresu email
@@ -600,6 +606,8 @@ general_meeting:
   text: Walne zgromadzenie
   text_with_name: Walne zgromadzenie %title% - lista głosowań
   date: Data zgromadzenia
+  ended: Zgromadzenie zakończone
+  thanks_for_participation: Serdecznie dziękujemy za udział w głosowaniu!
   date_start: Data rozpoczęcia
   date_plannded: Planowana data zgromadzenia
   permission_denied: Nie możesz wziąć udziału w tym zgromadzeniu!
@@ -614,12 +622,16 @@ general_meeting:
   add_candidate: Dodaj kandydata
   remove_candidate: Usuń kandydata
   join: Dołącz do zgromadzenia
+  waiting_for_start: Oczekiwanie na rozpoczęcie Walnego zgromadzenia
+  waiting_for_voting: Oczekiwanie na aktywowanie głosowania przez ogranizatora
+  last_voting_result: Wynik poprzedniego głosowania
   bad_vote_settings:
     text: Błędne głosy
     not_allowed: Nie pozwól, blokuj
     allowed: Pozwól, nie ostrzegaj
     allow_with_alert: Ostrzegaj ale pozwól
   new:
+    text: Dodaj Walne zgromadzenie
     success: Dodano nowe Walne zgromadzenie
     title: Utwórz Walne zgromadzenie
 
@@ -658,7 +670,11 @@ general_meeting:
     poll: Głosowanie sondażowe
     resolution: Głosowanie nad uchwałą
     resolution_content: Treść uchwały
+    valid_votes: Głosy ważne
     invalid_votes_count: Ilość głosów nie ważnych
+    multi_choice: Głosowanie wielokrotnego wyboru
+    available_choices_count: Możesz oddać głos na %count% z %all% kandydatów
+    available_choices_count_to_valid: Aby oddać poprawny głos możesz wybrać maksymalnie %count% kandydatów
     actual_status:
       votes: głosów - co stanowi %per%%  całości %tot% głosów
       actions: akcji - co stanowi %per%% całości %tot% akcji
@@ -691,9 +707,15 @@ general_meeting:
       confirm: Na pewno chcesz rozpocząć testowe głosowanie?
 
     presence:
-      confirm:
+      text: Sprawdzanie obecności
+      please_confirm: Prosimy o potwierdzenie obecności
+      click_to_confirm: Aby potwierdzić swoją obecność kliknij dowolny przycisk
+      confirm: Potwierdzam obecność
       button: Rozpocznij sprawdzanie obecności
       checking: Trwa sprawdzanie obecności uczestników
+
+    test_vote:
+      button: Rozpocznij testowe głosowanie
 
     activate:
       confirm: Na pewno chcesz aktywować to głosowanie?
@@ -723,6 +745,8 @@ general_meeting:
     one_to_one: 1 do 1
     required_percent: Procent obecnych uczestników niezbędny do osiągnięcia kworum
     success: Udało się osiągnąć kworum
+    reached: Kworum zostało osiągnięte
+    not_reached: Kworum nie zostało osiągnięte
     fail: Nie udało się osiągnąć kworum
 
 #pakiety
