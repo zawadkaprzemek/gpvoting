@@ -19,6 +19,9 @@
             {% trans %}votings.thanks_for_voting{% endtrans %}
         </div>
         <p>Tutaj będzie jakieś podsumowanie oddanych głosów</p>
-        <p class="text-info">{% trans %}votings.your_voting_time{% endtrans %}: {{ diff }}</p>
+        <p class="text-info">{% trans %}votings.your_voting_time{% endtrans %}:
+            {{ diff.i }} {% trans %}minute.many{% endtrans %}
+            {{ diff.s }} {% trans %}seconds{% endtrans %}
+        </p>
     </div>
 {% endblock %}

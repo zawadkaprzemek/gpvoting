@@ -161,13 +161,8 @@ class VoteController extends AbstractController
      * @param VoteRepository $repository
      * @return Response
      */
-    public function voteEnd(Polling $polling,Request $request,VoteRepository $repository)
+    public function voteEnd(Polling $polling,Request $request): Response
     {
-        $user=$this->getUser();
-        if($polling->getRoom()->getEvent()->getUser()!==$user)
-        {
-            return $this->redirectToRoute('home');
-        }
         $session=$request->getSession();
         $test=$session->get('polling_'.$polling->getId().'_test');
         $test=(is_null($test)? false : $test=== true);
@@ -180,7 +175,10 @@ class VoteController extends AbstractController
         $diff=$end->diff($start);
         return $this->render('vote/end.html.twig',[
             'polling'=>$polling,
-            'diff'=>$diff->format("%i minut %s.%f sekund")
+            'diff'=>[
+                'i'=>$diff->format('%i'),
+                's'=>$diff->format('%s'),
+                ]
         ]);
     }
 
@@ -193,7 +191,7 @@ class VoteController extends AbstractController
     public function deleteVote(Vote $vote,Request $request)
     {
         $user=$this->getUser();
-        if($vote->getQuestion()->getPolling()->getRoom()->getEvent()->getUser!==$user)
+        if($vote->getQuestion()->getPolling()->getRoom()->getEvent()->getUser()!==$user)
         {
             return $this->redirectToRoute('home');
         }

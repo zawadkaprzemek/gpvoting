@@ -158,6 +158,7 @@ send: Wyślij
 2_min: 2 minuty
 minute: minuta
 minutes: minuty
+minute.many: minut
 seconds: sekund
 second: sekunda
 greatings: Pozrawiamy
@@ -216,6 +217,13 @@ duplicate: Duplikuj
 percent: Procent
 link_expires: Link wygaśnie w ciągu %hours% godzin.
 best_regards: Pozdrowienia
+who: Kto
+answer_time: Czas odpowiedzi
+test: Test
+position: Pozycja
+fastest_ranking: Ranking najszybciej głosujących
+yes: Tak
+no: Nie
 #Zarządzanie
 
 manage:
@@ -583,6 +591,8 @@ votings:
 
   vote:
     delete:
+      info: Usunięcie odpowiedzi
+      help: Usunięcie odpowiedzi
       confirm: Na pewno chcesz usunąć tą odpowiedź?
 
 #Walne zgromadzenia

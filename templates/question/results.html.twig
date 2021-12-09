@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}{% trans %}Wyniki do pytania{% endtrans %}: {{ question.questionContent}} {% endblock %}
+{% block title %}{% trans %}question.results{% endtrans %}: {{ question.questionContent}} {% endblock %}
 {% block js_top %}
     {{ parent() }}
     <script src="{{ asset('assets/js/Chart.min.js') }}"></script>
@@ -16,7 +16,7 @@
             var myChart = new Chart(ctx, {
                 type: '{{ (question.polling.resultsGraph==1 ? 'bar' : 'horizontalBar') }}',
                 data: {
-                    labels: ['{% trans %}Procent{% endtrans %}'],
+                    labels: ['{% trans %}percent{% endtrans %}'],
                     datasets: [
                         {% for result in results %}
                         {
@@ -50,14 +50,14 @@
             <div class="col-6 text-left">
                 {% if(question.sort>1) %}
                     <a class="btn btn-secondary btn-sm" href="{{ path('app_question_results',{slug:question.polling.slug,sort:(question.sort-1)}) }}">
-                        {% trans %}Poprzednie pytanie{% endtrans %}
+                        {% trans %}question.previous{% endtrans %}
                     </a>
                 {% endif %}
             </div>
             <div class="col-6 text-right">
                 {% if(question.sort<(question.polling.questions|length)) %}
                     <a class="btn btn-secondary btn-sm" href="{{ path('app_question_results',{slug:question.polling.slug,sort:(question.sort+1)}) }}">
-                        {% trans %}Następne pytanie{% endtrans %}
+                        {% trans %}question.next{% endtrans %}
                     </a>
                 {% endif %}
             </div>
@@ -67,11 +67,11 @@
             <table class="table table-bordered">
                 <thead>
                     <tr>
-                        <th>{% trans %}Kto{% endtrans %}</th>
-                        <th>{% trans %}Odpowiedź{% endtrans %}</th>
-                        <th>{% trans %}Czas odpowiedzi{% endtrans %}</th>
-                        <th>{% trans %}Test{% endtrans %}</th>
-                        <th>{% trans %}Akcje{% endtrans %}</th>
+                        <th>{% trans %}who{% endtrans %}</th>
+                        <th>{% trans %}answer{% endtrans %}</th>
+                        <th>{% trans %}answer_time{% endtrans %}</th>
+                        <th>{% trans %}test{% endtrans %}</th>
+                        <th>{% trans %}actions{% endtrans %}</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -79,27 +79,27 @@
                     <tr>
                         <td>{{ vote.who }}</td>
                         <td>{{ vote.answers|join(", ") }}</td>
-                        <td>{{ vote.answerTime|number_format(2,".","") }} {% trans %}sekund{% endtrans %}</td>
+                        <td>{{ vote.answerTime|number_format(2,".","") }} {% trans %}seconds{% endtrans %}</td>
                         <td>{% if vote.test %}
-                                {% trans %}Tak{% endtrans %}
+                                {% trans %}yes{% endtrans %}
                             {% else %}
-                                {% trans %}Nie{% endtrans %}
+                                {% trans %}no{% endtrans %}
                             {% endif %}
                         </td>
-                        <td>{{ include('question/_delete_form.html.twig',{vote:vote})}}</td>
+                        <td>{{ include('vote/_delete_form.html.twig',{vote:vote})}}</td>
                     </tr>
                 {% endfor %}
                 </tbody>
             </table>
         </div>
 
-        <h4>{% trans %}Ranking najszybciej głosujących{% endtrans %}</h4>
+        <h4>{% trans %}fastest_ranking{% endtrans %}</h4>
         <table class="table table-borderless">
             <thead>
             <tr>
-                <th>{% trans %}Pozycja{% endtrans %}</th>
-                <th>{% trans %}Kto{% endtrans %}</th>
-                <th>{% trans %}Czas odpowiedzi{% endtrans %}</th>
+                <th>{% trans %}position{% endtrans %}</th>
+                <th>{% trans %}who{% endtrans %}</th>
+                <th>{% trans %}answer_time{% endtrans %}</th>
             </tr>
             </thead>
             <tbody>
@@ -109,7 +109,7 @@
                 <tr>
                     <td>{{ poz }}</td>
                     <td>{{ result.who }}</td>
-                    <td>{{ result.answerTime|number_format(2,".","") }} {% trans %}sekund{% endtrans %}</td>
+                    <td>{{ result.answerTime|number_format(2,".","") }} {% trans %}seconds{% endtrans %}</td>
                 </tr>
             {% endfor %}
             </tbody>

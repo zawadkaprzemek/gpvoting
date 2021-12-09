@@ -1,10 +1,10 @@
 <form method="post" action="{{ path('app_vote_delete', {'id': vote.id}) }}"
-      onsubmit="return confirm('{% trans %}voting.vote.delete.confirm{% endtrans %}');">
+      onsubmit="return confirm('{% trans %}votings.vote.delete.confirm{% endtrans %}');">
     <input type="hidden" name="_method" value="DELETE">
     <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ vote.id) }}">
     <button class="btn btn-sm btn-dark">
-        {{ 'voting.vote.delete'|info_icon }}
-        {{ 'voting.vote.delete'|help_icon }}
+        {{ 'votings.vote.delete'|info_icon }}
+        {{ 'votings.vote.delete'|help_icon }}
         {% trans %}delete{% endtrans %}
     </button>
 </form>
