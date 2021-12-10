@@ -22,6 +22,9 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
+/**
+ * @Route("/manage")
+ */
 class ManageController extends AbstractController
 {
     private TranslatorInterface $translator;
@@ -32,7 +35,7 @@ class ManageController extends AbstractController
     }
 
     /**
-     * @Route("/manage", name="app_manage")
+     * @Route("/", name="app_manage")
      * @param Request $request
      * @param EventRepository $repository
      * @return Response
@@ -49,7 +52,7 @@ class ManageController extends AbstractController
     }
 
     /**
-     * @Route("/manage/{slug}", name="app_manage_event_show")
+     * @Route("/event/{slug}", name="app_manage_event_show")
      * @param Event $event
      * @return Response
      */
@@ -69,7 +72,7 @@ class ManageController extends AbstractController
     }
 
     /**
-     * @Route("/manage/{slug_parent}/room/{slug_child}/show", name="app_manage_room")
+     * @Route("/event/{slug_parent}/room/{slug_child}/show", name="app_manage_room")
      * @ParamConverter("event", options={"mapping": {"slug_parent": "slug"}})
      * @ParamConverter("room", options={"mapping": {"slug_child": "slug"}})
      * @param Event $event
@@ -94,7 +97,7 @@ class ManageController extends AbstractController
     }
 
     /**
-     * @Route("/manage/polling/{slug}/show", name="app_manage_polling_show")
+     * @Route("/polling/{slug}/show", name="app_manage_polling_show")
      * @param Polling $polling
      * @return Response
      */
@@ -118,7 +121,7 @@ class ManageController extends AbstractController
     }
 
     /**
-     * @Route("/manage/event_code/{id}/edit", name="app_manage_code_edit")
+     * @Route("/event_code/{id}/edit", name="app_manage_code_edit")
      * @param EventCode $code
      * @param Request $request
      * @return RedirectResponse|Response
@@ -147,7 +150,7 @@ class ManageController extends AbstractController
     }
 
     /**
-     * @Route("/manage/polling/{slug}/session_settings", name="app_manage_session_settings")
+     * @Route("/polling/{slug}/session_settings", name="app_manage_session_settings")
      * @param Polling $polling
      * @param Request $request
      * @param SessionSettingsRepository $repository
@@ -204,7 +207,7 @@ class ManageController extends AbstractController
     }
 
     /**
-     * @Route("/manage/polling/{slug}/session_users", name="app_manage_session_users")
+     * @Route("/polling/{slug}/session_users", name="app_manage_session_users")
      * @param Polling $polling
      * @param SessionUsersRepository $repository
      * @return Response
@@ -224,7 +227,7 @@ class ManageController extends AbstractController
     }
 
     /**
-     * @Route("/manage/polling/{slug}/begin_session",name="app_manage_begin_session")
+     * @Route("/polling/{slug}/begin_session",name="app_manage_begin_session")
      * @param Polling $polling
      * @param SessionSettingsRepository $repository
      * @param Request $request
@@ -264,7 +267,7 @@ class ManageController extends AbstractController
     }
 
     /**
-     * @Route("/manage/polling/{slug}/end_session", name="app_manage_end_session", methods={"PATCH"})
+     * @Route("/polling/{slug}/end_session", name="app_manage_end_session", methods={"PATCH"})
      * @param Polling $polling
      * @param Request $request
      * @param SessionSettingsRepository $repository

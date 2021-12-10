@@ -31,7 +31,7 @@ class EventController extends AbstractController
     }
 
     /**
-     * @Route("/manage/create_event", name="app_event_create")
+     * @Route("/manage/event/new", name="app_event_create")
      * @param Request $request
      * @return RedirectResponse|Response
      */
@@ -80,7 +80,7 @@ class EventController extends AbstractController
     }
 
     /**
-     * @Route("/manage/{slug}/edit", name="app_event_edit")
+     * @Route("/manage/event/{slug}/edit", name="app_event_edit")
      * @param Event $event
      * @param Request $request
      * @return RedirectResponse|Response
@@ -195,7 +195,7 @@ class EventController extends AbstractController
     }
 
     /**
-     * @Route("/manage/{slug}/open", name="app_event_open", methods={"PATCH"})
+     * @Route("/manage/event/{slug}/open", name="app_event_open", methods={"PATCH"})
      * @param Event $event
      * @return RedirectResponse
      */
@@ -216,7 +216,7 @@ class EventController extends AbstractController
     }
 
     /**
-     * @Route("/manage/event{slug}/close", name="app_manage_close_event", methods={"PATCH"})
+     * @Route("/manage/event/{slug}/close", name="app_manage_close_event", methods={"PATCH"})
      * @param Event $event
      * @return RedirectResponse
      */
@@ -237,7 +237,7 @@ class EventController extends AbstractController
     }
 
     /**
-     * @Route("manage/event/{slug}/codes", name="app_event_codes_menage")
+     * @Route("/manage/event/{slug}/codes", name="app_event_codes_menage")
      * @param Event $event
      * @param Request $request
      * @return Response
