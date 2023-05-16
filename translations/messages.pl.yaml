@@ -370,12 +370,16 @@ room:
 
 #Lista uczestników
 participants:
+  name: Nazwa udziałowca
   limit_list: Limit wielkości listy uczestników
   limit_list.info: Limit wielkości listy uczestników
   limit_list.help: Limit wielkości listy uczestników
   assign_to_list.text: Zapis do listy uczestników
   count: Ilość uczestników
   show_participants: Pokaż uczestników
+  verified:
+    success: Weryfikacja zakończona powodzeniem
+    error: Weryfikacja zakończona niepowodzeniem
 
   import:
     title: Importuj listę uczestników
@@ -421,6 +425,9 @@ participants:
     delete:
       confirm: Na pewno chcesz usunąć tego uczestnika?
       success: Usunięto uczestnika
+
+    verified:
+      text: Zweryfikowany
 
   list:
     many: Listy uczestników
@@ -776,3 +783,6 @@ email:
     header: Witaj! Na Twój adres email zostało stworzone konto uczestnika w GPVoting Online!
     text1: Przesyłamy Ci automatycznie wygenerowane hasło, którego możesz użyć do zalogowania aby móc wziąć udział w Walnym zgromadzeniu
     text2: Link do Walnego zgromadzenia oraz jego termin, zostanie przesłany przez organizatora
+
+  participant_verify:
+    text: Prosimy zweryfikować swój adres email, aby wziąć udział w głosowaniu. Wystarczy kliknąć poniższy link

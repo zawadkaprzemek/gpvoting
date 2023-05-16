@@ -11,13 +11,13 @@
             <thead>
             <tr>
                 <th>{% trans %}id{% endtrans %}</th>
-                <th>{% trans %}firstName{% endtrans %}</th>
-                <th>{% trans %}lastName{% endtrans %}</th>
+                <th>{% trans %}participant.name{% endtrans %}</th>
                 <th>{% trans %}phone{% endtrans %}</th>
                 <th>{% trans %}email.address{% endtrans %}</th>
                 <th>{% trans %}votes{% endtrans %}</th>
                 <th>{% trans %}actions{% endtrans %}</th>
                 <th>{% trans %}participants.single.accept.text{% endtrans %}</th>
+                <th>{% trans %}participants.single.verified.text{% endtrans %}</th>
                 <th></th>
             </tr>
             </thead>
@@ -26,7 +26,6 @@
                 <tr>
                     <td>{{ participant.aid }}</td>
                     <td>{{ participant.name }}</td>
-                    <td>{{ participant.surname }}</td>
                     <td>{{ participant.phone }}</td>
                     <td>{{ participant.email }}</td>
                     <td>{{ participant.votes }}</td>
@@ -37,6 +36,14 @@
                         {% else %}
                             <i class="fas fa-square"></i>
                         {% endif %}
+                    </td>
+                    <td class="text-center">
+                        {% if participant.verified %}
+                            <i class="fas fa-check-square"></i>
+                        {% else %}
+                            <i class="fas fa-square"></i>
+                        {% endif %}
+                    </td>
                     <td>
                         <div class="btn-group">
                         <a href="{{ path('app_manage_participant_edit',{id:participant.id}) }}" class="btn btn-sm btn-outline-primary">

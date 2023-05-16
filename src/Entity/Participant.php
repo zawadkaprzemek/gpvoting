@@ -28,10 +28,6 @@ class Participant
      */
     private $name;
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
-    private $surname;
 
     /**
      * @ORM\Column(type="string", length=255)
@@ -79,6 +75,16 @@ class Participant
      */
     private $accepted=false;
 
+    /**
+     * @ORM\Column(type="boolean")
+     */
+    private $verified=false;
+
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $hash;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -92,18 +98,6 @@ class Participant
     public function setName(string $name): self
     {
         $this->name = $name;
-
-        return $this;
-    }
-
-    public function getSurname(): ?string
-    {
-        return $this->surname;
-    }
-
-    public function setSurname(string $surname): self
-    {
-        $this->surname = $surname;
 
         return $this;
     }
@@ -214,5 +208,40 @@ class Participant
         $this->accepted = $accepted;
 
         return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function getVerified(): bool
+    {
+        return $this->verified;
+    }
+
+    /**
+     * @param bool $verified
+     * @return Participant
+     */
+    public function setVerified(bool $verified): self
+    {
+        $this->verified = $verified;
+
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getHash()
+    {
+        return $this->hash;
+    }
+
+    /**
+     * @param mixed $hash
+     */
+    public function setHash($hash): void
+    {
+        $this->hash = $hash;
     }
 }

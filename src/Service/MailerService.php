@@ -22,10 +22,14 @@ class MailerService
         $this->translator = $translator;
     }
 
-    public function sendEmailWithPassword($email, $password)
+    public function sendEmailWithPassword($email, $password, $hash)
     {
         $body=$this->renderView(
-                'email/participant_password_email.html.twig',['password'=>$password]
+                'email/participant_password_email.html.twig',
+                [
+                    'password'=>$password,
+                    'hash' => $hash
+                    ]
             );
         $title=$this->translator->trans('participants.list.email_with_password');
         $this->sendMail($email,$title,$body);
@@ -38,7 +42,6 @@ class MailerService
 
     private function sendMail(string $recipent,string $title,string $body,array $attachments=[])
     {
-        dump($title);
         $mail = (new Email())
             ->from(self::sender)
             ->priority(Email::PRIORITY_HIGH)

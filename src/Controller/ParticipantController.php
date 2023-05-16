@@ -197,14 +197,15 @@ class ParticipantController extends AbstractController
                         $participant=new Participant();
                         $participant
                             ->setName($row[0])
-                            ->setSurname($row[1])
-                            ->setPhone($row[2])
-                            ->setEmail(trim($row[3]))
-                            ->setVotes($row[4])
-                            ->setActions($row[5])
+                            ->setPhone($row[1])
+                            ->setEmail(trim($row[2]))
+                            ->setVotes($row[3])
+                            ->setActions($row[4])
                             ->setList($list)
                             ->setAid("A".++$number)
                             ->setAccepted(true)
+                            ->setVerified(false)
+                            ->setHash(md5($participant->getName().$participant->getEmail()))
                         ;
                         $participant->setPlainPass($this->generateRandomString(12))->setPassword(md5($participant->getPlainPass()));
                         $em->persist($participant);
@@ -266,8 +267,11 @@ class ParticipantController extends AbstractController
 
             $participant->setPlainPass($participant->getPassword())
                 ->setPassword(md5($participant->getPlainPass()))
-                ->setAid("A".++$number);
+                ->setAid("A".++$number)
+                ->setVerified(true)
+                ->setHash(md5($participant->getName().$participant->getEmail()))
             ;
+
             $em->persist($participant);
             $list->setCount($number);
             $em->persist($list);
@@ -456,5 +460,29 @@ class ParticipantController extends AbstractController
                 'email/participant_password_email.html.twig',['password'=>$password]
             ));
         $this->mailer->send($mail);
+    }
+
+    /**
+     * @Route("/verify_participant/{hash}/accept", name="app_participant_verify")
+     * @param string $hash
+     * @return Response
+     */
+    public function verifyParticipant(string $hash): Response
+    {
+        $em=$this->getDoctrine()->getManager();
+        $participant = $em->getRepository(Participant::class)->getParticipantByHash($hash);
+
+        if($participant){
+            $participant->setVerified(true);
+            $em->persist($participant);
+            $em->flush();
+            $message = 'participants.verified.success';
+        }else{
+            $message = 'participants.verified.error';
+        }
+
+        return $this->render('participant/verified.html.twig',[
+            'message' => $message
+        ]);
     }
 }

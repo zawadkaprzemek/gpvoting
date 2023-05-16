@@ -88,6 +88,17 @@ class ParticipantRepository extends ServiceEntityRepository
             ;
     }
 
+    public function getParticipantByHash(string $hash)
+    {
+        return $this->createQueryBuilder('p')
+            ->andWhere('p.hash = :hash')
+            ->setParameter('email',$hash)
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getOneOrNullResult()
+            ;
+    }
+
     /**
      * @return Criteria
      */

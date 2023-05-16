@@ -81,7 +81,7 @@
                                 {% for participant in meeting.participantList.participants %}
                                     <tr>
                                         <td>{{ participant.aid }}</td>
-                                        <td>{{ participant.name~' '~participant.surname }}</td>
+                                        <td>{{ participant.name }}</td>
                                         {% if voting.type in [2,3] %}
                                             {% for i in 1..answers %}
                                         {% if voting.voteStatus[i] is defined %}

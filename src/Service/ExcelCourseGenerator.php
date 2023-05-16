@@ -220,7 +220,7 @@ class ExcelCourseGenerator
         {
             $sheet
                 ->setCellValue('D'.$number,$participant->getAid())
-                ->setCellValue('E'.$number,$participant->getName()." ".$participant->getSurname())
+                ->setCellValue('E'.$number,$participant->getName())
                 ;
             $status = $voting->getVoteStatus();
             if($voting->getType()==2)
