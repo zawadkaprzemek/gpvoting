@@ -21,6 +21,6 @@ final class EmailMessageHandler implements MessageHandlerInterface
     public function __invoke(EmailMessage $message)
     {
         $participant=$message->getParticipant();
-        $this->mailerService->sendEmailWithPassword($participant->getEmail(),$participant->getPlainPass());
+        $this->mailerService->sendEmailWithPassword($participant->getEmail(),$participant->getPlainPass(),$participant->getHash());
     }
 }
