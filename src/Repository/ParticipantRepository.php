@@ -92,7 +92,7 @@ class ParticipantRepository extends ServiceEntityRepository
     {
         return $this->createQueryBuilder('p')
             ->andWhere('p.hash = :hash')
-            ->setParameter('email',$hash)
+            ->setParameter('hash',$hash)
             ->setMaxResults(1)
             ->getQuery()
             ->getOneOrNullResult()
