@@ -482,7 +482,8 @@ class ParticipantController extends AbstractController
         }
 
         return $this->render('participant/verified.html.twig',[
-            'message' => $message
+            'message' => $message,
+            'aid' => $participant->getAid()
         ]);
     }
 }
