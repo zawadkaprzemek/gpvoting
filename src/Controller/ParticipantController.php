@@ -268,7 +268,6 @@ class ParticipantController extends AbstractController
             $participant->setPlainPass($participant->getPassword())
                 ->setPassword(md5($participant->getPlainPass()))
                 ->setAid("A".++$number)
-                ->setVerified(true)
                 ->setHash(md5($participant->getName().$participant->getEmail()))
             ;
 
@@ -276,7 +275,11 @@ class ParticipantController extends AbstractController
             $list->setCount($number);
             $em->persist($list);
             $em->flush();
+            $this->messageBus->dispatch(
+                new EmailMessage($participant,'participant_verify_mail')
+            );
             $session=$request->getSession();
+
             $session->set("assign_".$list->getHashId(),$participant->getAid());
             return $this->redirectToRoute('app_participant_list_assign_complete',['hashId'=>$list->getHashId()]);
         }

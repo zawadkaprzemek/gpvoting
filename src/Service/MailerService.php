@@ -35,6 +35,18 @@ class MailerService
         $this->sendMail($email,$title,$body);
     }
 
+    public function sendVerifyEmail(string $email, string $hash)
+    {
+        $body=$this->renderView(
+            'email/participant_verify_email.html.twig',
+            [
+                'hash' => $hash
+            ]
+        );
+        $title=$this->translator->trans('participants.list.email_with_verification');
+        $this->sendMail($email,$title,$body);
+    }
+
     private function renderView(string $template,array $params=[]): string
     {
         return $this->twig->render($template,$params);

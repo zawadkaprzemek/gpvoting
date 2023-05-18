@@ -395,6 +395,8 @@ participants:
       title: Zapisz się do listy uczestników
       text: Wprowadź swoje dane aby się zapisać
 
+    verify.text: 'Sprawdź swoją skrzynkę pocztową i potwierdź adres email aby wziąć udział w głosowaniu'
+
     complete:
       title: Zapisałeś się do listy uczestników
       text: Zapis do listy uczestników zakończony sukcesem
@@ -442,6 +444,7 @@ participants:
     my: Moje listy uczestników
     info: Twoje listy uczestników
     email_with_password: Hasło dostępu uczestnika
+    email_with_verification: 'Weryfikacja adresu email'
     no_lists: Nie posiadasz jeszcze żadnej listy uczestników
     empty: Lista jest pusta
     accept:
@@ -781,6 +784,8 @@ packs:
     title: Edytuj pakiet
 
 #emails
+
+email.participant_verification.header: 'Weryfikacja adresu email'
 email:
   participant_password:
     header: Witaj! Na Twój adres email zostało stworzone konto uczestnika w GPVoting Online!
