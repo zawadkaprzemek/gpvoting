@@ -1,0 +1,12 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{% trans %}participants.verify.complete.title{% endtrans %}{% endblock %}
+
+{% block body %}
+<div>
+    <div class="alert alert-success">
+        <p>{% trans %}participants.verify.complete.title{% endtrans %}</p>
+        <p>{% trans %}participants.assign.complete.your_id_number{% endtrans %}: <strong>{{ aid }}</strong></p>
+    </div>
+</div>
+{% endblock %}

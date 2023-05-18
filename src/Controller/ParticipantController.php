@@ -463,7 +463,7 @@ class ParticipantController extends AbstractController
     }
 
     /**
-     * @Route("/verify_participant/{hash}/accept", name="app_participant_verify")
+     * @Route("/verify_participant/{hash}", name="app_participant_verify")
      * @param string $hash
      * @return Response
      */

@@ -369,6 +369,9 @@ room:
     confirm: Na pewno chcesz zamknąć to wydarzenie?
 
 #Lista uczestników
+
+
+participants.verify.complete.title: 'Twój adres e-mail został zweryfikowany'
 participants:
   name: Nazwa udziałowca
   limit_list: Limit wielkości listy uczestników
