@@ -88,6 +88,11 @@ class MeetingVoting
      */
     private $weight;
 
+    /**
+     * @ORM\Column(type="boolean")
+     */
+    private $secret;
+
     public function __construct()
     {
         $this->candidates = new ArrayCollection();
@@ -319,6 +324,18 @@ class MeetingVoting
     public function setWeight(int $weight): self
     {
         $this->weight = $weight;
+
+        return $this;
+    }
+
+    public function getSecret(): ?bool
+    {
+        return $this->secret;
+    }
+
+    public function setSecret(bool $secret): self
+    {
+        $this->secret = $secret;
 
         return $this;
     }
