@@ -46,6 +46,11 @@ class MeetingVotingType extends AbstractType
                 ),
                 'placeholder'=>'general_meeting.choose_type_weight'
             ))
+            ->add('secret',CheckboxType::class,array(
+                'label'=>'general_meeting.secret_voting',
+                'required'=>false,
+                'disabled' => $meeting->getSecret()
+            ))
             ->add('multiChoose',CheckboxType::class,array('label'=>'multiple_choise','required'=>false))
             ->add('submit',SubmitType::class,array('label'=>'save'))
             ->add('candidates',CollectionType::class,[

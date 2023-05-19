@@ -62,6 +62,22 @@
         {% endfor %}
     </div>
 
+    <div class="row form-group">
+        {{ dump(form.secret.vars) }}
+        <div class="col-12 col-sm-4 col-form-label">
+            {{ 'general_meeting.secret_voting'|info_icon }}
+            {{ 'general_meeting.secret_voting'|help_icon }}
+            {{form_label(form.secret)}}
+        </div>
+        <div class="col-12 col-sm-8">
+            <div class="custom-control custom-switch">
+                <input type="checkbox" {% if form.secret.vars.checked %}checked{% endif%} name="{{ form.secret.vars.full_name }}"
+                       class="custom-control-input" id="{{ form.secret.vars.id }}" value="{{ form.secret.vars.value }}">
+                <label class="custom-control-label" for="{{ form.secret.vars.id }}">{{ form.secret.vars.label|trans }}</label>
+            </div>
+        </div>
+    </div>
+
     <div class="row form-group answers">
             <div class="col-12 col-sm-4 col-form-label">
                 {{ 'general_meeting.voting.multiple_choise'|info_icon}}
