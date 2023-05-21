@@ -813,6 +813,14 @@ class GeneralMeetingController extends AbstractController
                 $form->get('password')->addError(new FormError($this->translator->trans("form.error.wrong_credentials")));
             }
 
+            if(!$participant->getAccepted()){
+                $form->get('name')->addError(new FormError($this->translator->trans("participant.not-accepted")));
+            }
+
+            if(!$participant->getVerified()){
+                $form->get('email')->addError(new FormError($this->translator->trans("participant.not-verified")));
+            }
+
             if($form->isValid())
             {
                 $session->set("user_gm_".$meeting->getSlug(), array(

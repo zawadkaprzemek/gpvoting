@@ -33,5 +33,7 @@ reset:
 form:
   error:
     wrong_credentials: Wprowadzono nie aprawidłowe dane dostępowe
+    participant.not-accepted: Nie posiadasz dostępu do tego głosowania
+    participant.not-verified: Potwierdź swój email aby móc dołączyć do głosowania
     enter_password: Prosze wprowadzić hasło
     enter_email: Proszę wprowadzić swój adres email
