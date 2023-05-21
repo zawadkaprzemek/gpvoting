@@ -818,7 +818,6 @@ class GeneralMeetingController extends AbstractController
                 $session->set("user_gm_".$meeting->getSlug(), array(
                         'id'=>$participant->getId(),
                         'name' => $participant->getName(),
-                        'surname' => $participant->getSurname(),
                         'votes' => $participant->getVotes(),
                         'actions' => $participant->getActions(),
                         'aid' => $participant->getAid()
