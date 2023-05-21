@@ -153,7 +153,7 @@
                         {% endif %}
                         {% else %}
 
-                    {% if meeting.secreet or voting.secret %}
+                    {% if meeting.secret or voting.secret %}
                         <p class="font-weight-bold">{{ 'general_meeting.secret_voting'|trans }}</p>
                         {% endif %}
                     <p>
