@@ -887,7 +887,8 @@ class GeneralMeetingController extends AbstractController
             'active'=>$aStatus,
             'participant'=>$participant,
             'voting'=>$voting,
-            'last'=>$last
+            'last'=>$last,
+            'hideHeader'=> true
         ]);
     }
 

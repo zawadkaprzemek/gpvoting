@@ -152,6 +152,19 @@
                         </div>
                         {% endif %}
                         {% else %}
+
+                    {% if meeting.secreet or voting.secret %}
+                        <p class="font-weight-bold">{{ 'general_meeting.secret_voting'|trans }}</p>
+                        {% endif %}
+                    <p>
+                        {% if voting.weight == 1 %}
+                            {{ 'weight.actions'|trans }}
+                        {% else %}
+                            {{ 'weight.votes'|trans }}
+                        {% endif %}
+                    </p>
+
+
                         <h2>{{ voting.content }}</h2>
                             {% if voting.type==1 %}
                                     <div class="btn-group btn-group-lg">
