@@ -152,17 +152,18 @@
                         </div>
                         {% endif %}
                         {% else %}
-
+                    <div class="pt-2">
                     {% if meeting.secret or voting.secret %}
-                        <p class="font-weight-bold">{{ 'general_meeting.secret_voting'|trans }}</p>
+                        <p class="font-weight-bold p-0">{{ 'general_meeting.secret_voting'|trans }}</p>
                         {% endif %}
-                    <p>
+                    <p class="p-0">
                         {% if voting.weight == 1 %}
                             {{ 'weight.actions'|trans }}
                         {% else %}
                             {{ 'weight.votes'|trans }}
                         {% endif %}
                     </p>
+                    </div>
 
 
                         <h2>{{ voting.content }}</h2>
