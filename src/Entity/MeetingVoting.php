@@ -91,7 +91,7 @@ class MeetingVoting
     /**
      * @ORM\Column(type="boolean")
      */
-    private $secret;
+    private $secret=false;
 
     public function __construct()
     {
