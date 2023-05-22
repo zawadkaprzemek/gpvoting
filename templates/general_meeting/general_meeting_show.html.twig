@@ -33,22 +33,22 @@
                 {% endif %}
                 <div class="row">
                     {% for voting in votings %}
-                    <div class="col-7">{{ voting.content }} - {{ voting|voting_type }}</div>
-                    <div class="col">
-                        <div class="btn-group btn-group-sm">
-                            <a href="{{ path('app_manage_general_meeting_edit_voting',{slug:meeting.slug,sort:voting.sort}) }}"
-                               class="btn btn-outline-primary">
-                                {% trans %}edit{% endtrans %}
-                            </a>
-                            {{ include('general_meeting/_delete_form.html.twig',{voting:voting}) }}
+                        <div class="col-7">{{ voting.content }} - {{ voting|voting_type }}</div>
+                        <div class="col">
+                            <div class="btn-group btn-group-sm">
+                                <a href="{{ path('app_manage_general_meeting_edit_voting',{slug:meeting.slug,sort:voting.sort}) }}"
+                                   class="btn btn-outline-primary">
+                                    {% trans %}edit{% endtrans %}
+                                </a>
+                                {{ include('general_meeting/_delete_form.html.twig',{voting:voting}) }}
+                            </div>
                         </div>
-                    </div>
+                    {% else %}
+                        <div class="col">
+                            <p>{% trans %}general_meeting.voting.no_votings{% endtrans %}</p>
+                        </div>
+                    {% endfor %}
                 </div>
-            {% else %}
-                <div class="col">
-                    <p>{% trans %}general_meeting.voting.no_votings{% endtrans %}</p>
-                </div>
-                {% endfor %}
             </div>
         </div>
     </div>
