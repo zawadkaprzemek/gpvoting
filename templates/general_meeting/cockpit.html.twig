@@ -176,7 +176,7 @@
                 <div class="votes my-3">
 
                     <div class="vote-row">
-                        <div class="vote-box {% if meeting.secret and active.active >0 %}d-none{% endif %}"></div>
+                        <div class="vote-box {% if meeting.secret or (voting is defined and voting.secret|default(false) ) and active.active >0 %}d-none{% endif %}"></div>
                         {% if active.active==0 or voting is null %}
                             <div class="vote-box">
                                 T
@@ -207,7 +207,7 @@
                             </div>
                         {% endfor %}
                     {% endif %}
-                    {% if meeting.secret %}
+                    {% if meeting.secret or (voting is defined and voting.secret|default(false) ) %}
                         {% if voting is not null %}
                             <div class="vote_progress">
                                 {% set count=1 %}
