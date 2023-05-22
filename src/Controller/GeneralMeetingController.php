@@ -692,16 +692,6 @@ class GeneralMeetingController extends AbstractController
             $last = $repository->getVotingBySort($meeting, $aStatus['last']);
         }
 
-dump([
-    'meeting' => $meeting,
-    'active' => $aStatus,
-    'hash' => $meeting->getHashId(),
-    'actions' => $actions,
-    'votes' => $votes,
-    'voting' => $voting,
-    'participants' => $participants,
-    'last' => $last,
-]);
         return $this->render('general_meeting/cockpit.html.twig', [
             'meeting' => $meeting,
             'active' => $aStatus,

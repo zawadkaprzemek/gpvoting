@@ -61,22 +61,23 @@ class ExcelCourseGenerator
          */
         foreach ($meeting->getMeetingVotings() as $key => $voting)
         {
-            if($key ==0)
-            {
-                $sheet=$excell->getActiveSheet();
-            }else{
-                $sheet=new Worksheet();
-                $excell->addSheet($sheet);
+            if(!$voting->getSecret()){
+                if($key ==0)
+                {
+                    $sheet=$excell->getActiveSheet();
+                }else{
+                    $sheet=new Worksheet();
+                    $excell->addSheet($sheet);
+                }
+                $sheet->setTitle($this->translator->trans('voting').($key+1));
+                $sheet->getDefaultColumnDimension()->setWidth(15);
+                /*foreach(range('A','Z') as $columnID) {
+                    $sheet->getColumnDimension($columnID)
+                        ->setAutoSize(true);
+                }*/
+                $sheet=$this->printVotingTitle($sheet,$voting,$meeting->getHoldBack());
+                $sheet=$this->printParticipantsVotes($sheet,$voting,$meeting->getParticipantList()->getAcceptedParticipants(),$meeting->getHoldBack());
             }
-            $sheet->setTitle($this->translator->trans('voting').($key+1));
-            $sheet->getDefaultColumnDimension()->setWidth(15);
-            /*foreach(range('A','Z') as $columnID) {
-                $sheet->getColumnDimension($columnID)
-                    ->setAutoSize(true);
-            }*/
-            $sheet=$this->printVotingTitle($sheet,$voting,$meeting->getHoldBack());
-            $sheet=$this->printParticipantsVotes($sheet,$voting,$meeting->getParticipantList()->getAcceptedParticipants(),$meeting->getHoldBack());
-
         }
         $excell->setActiveSheetIndex(0);
 
