@@ -881,6 +881,11 @@ class GeneralMeetingController extends AbstractController
      */
     public function courseVoting(GeneralMeeting $meeting, MeetingVoting $voting): Response
     {
+        if($meeting->getSecret() || $voting->getSecret())
+        {
+            return $this->redirectToRoute('app_manage_general_meeting_cockpit', ['slug' => $voting->getMeeting()->getSlug()]);
+        }
+
         return $this->render('general_meeting/course_voting.html.twig', [
             'meeting' => $meeting,
             'voting' => $voting
