@@ -431,6 +431,21 @@
             $(theCheckboxes).prop('disabled',true);
         }
     });
+
+
+    $('#resolutionForm').on('submit',function (e){
+        e.preventDefault();
+        let theCheckboxes = $(this).find("input[type='radio']");
+        let checked=theCheckboxes.filter(":checked");
+        let data=candidatesVoteData($(this).serializeArray());
+        if(checked.length===0)
+        {
+            alert("{% trans %}general_meeting.voting.choose_answers_to_vote{% endtrans %}")
+        }else{
+            answersVoteSend(data,true);
+            $(theCheckboxes).prop('disabled',true);
+        }
+    });
     {% endif %}
 
     function candidatesVoteSend(votes,valid)
