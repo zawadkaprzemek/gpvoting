@@ -79,7 +79,7 @@
                                         </button>
                                         <a class="btn-outline-secondary btn"
                                            href="{{ path('app_manage_general_meeting_edit_voting',{slug:meeting.slug,sort:voting.sort}) }}">{% trans %}edit{% endtrans %}</a>
-                                        {% if meeting.secret == false and voting.secret == false %}
+                                        {% if meeting.secret == false and voting.secret|default(false) == false %}
                                             <a class="btn-secondary btn"
                                                href="{{ path('app_manage_general_meeting_course_voting',{slug:meeting.slug,sort:voting.sort}) }}">{% trans %}course{% endtrans %}</a>
                                         {% endif %}
@@ -131,7 +131,7 @@
                     {% else %}
                         <p class="mb-0">{% trans %}active_voting{% endtrans %}</p>
                         <h3>{{ voting.content }}</h3>
-                        {% if meeting.secret or voting.secret %}
+                        {% if meeting.secret or voting.secret|default(false) %}
                             <p class="font-weight-bold mb-1">{{ 'general_meeting.secret_voting'|trans }}</p>
                         {% endif %}
                         {% if voting.type==2 %}
@@ -176,7 +176,7 @@
                 <div class="votes my-3">
 
                     <div class="vote-row">
-                        <div class="vote-box {% if meeting.secret or (voting is defined and voting.secret) and active.active >0 %}d-none{% endif %}"></div>
+                        <div class="vote-box {% if meeting.secret or (voting is defined and voting.secret|default(false)) and active.active >0 %}d-none{% endif %}"></div>
                         {% if active.active==0 or voting is null %}
                             <div class="vote-box">
                                 T
@@ -188,7 +188,7 @@
                             {% elseif voting.type==3 %}
                                 {% set count=voting.answers|length %}
                             {% endif %}
-                            {% if not meeting.secret and not voting.secret %}
+                            {% if not meeting.secret and not voting.secret|default(false) %}
                                 {% for i in 1..count %}
                                     <div class="vote-box">{{ i }}</div>
                                 {% endfor %}
@@ -207,7 +207,7 @@
                             </div>
                         {% endfor %}
                     {% endif %}
-                    {% if meeting.secret or (voting is defined and voting.secret) %}
+                    {% if meeting.secret or (voting is defined and voting.secret|default(false)) %}
                         {% if voting is not null %}
                             <div class="vote_progress">
                                 {% set count=1 %}
