@@ -207,13 +207,13 @@
                         $('#resolutionForm input').prop('checked',false);
                         {% endif %}
                     </script>
-                                    <div class="btn-group btn-group-lg">
+                                    {#<div class="btn-group btn-group-lg">
                                         <button class="btn btn-success btn-vote" {% if voting.voteStatus[participant.aid] is defined%}disabled{% endif%} data-vote="1">{% trans %}on{% endtrans %}</button>
                                         <button class="btn btn-danger btn-vote" {% if voting.voteStatus[participant.aid] is defined%}disabled{% endif%} data-vote="0">{% trans %}against{% endtrans %}</button>
                                         {% if meeting.holdBack %}
                                             <button class="btn btn-warning btn-vote" {% if voting.voteStatus[participant.aid] is defined%}disabled{% endif%} data-vote="2">{% trans %}general_meeting.voting.hold_off{% endtrans %}</button>
                                         {% endif %}
-                                    </div>
+                                    </div>#}
                                 {% elseif voting.type==2 %}
                                     <p>{% trans with { '%count%': voting.toChoose, '%all%': voting.candidates|length} %}general_meeting.voting.available_choices_count{% endtrans %}</p>
                                     <form id="voteCandidateForm" data-warned="false" data-warning="{% trans with { '%count%':voting.toChoose} %}general_meeting.voting.available_choices_count_to_valid{% endtrans %}">
