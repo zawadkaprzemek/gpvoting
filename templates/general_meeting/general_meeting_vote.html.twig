@@ -173,7 +173,7 @@
                                     <ul class="list-group mb-2 vote-ul">
                                         {% set voted=false %}
                                         <input name="vote[]" type="radio"
-                                                {% if voting.voteStatus[participant.aid] is defined%}
+                                                {% if voting.voteStatus[participant.aid]|default(null) == 1%}
                                                     {% set voted=true %}
                                                     checked
                                                 {% endif %}
@@ -181,7 +181,7 @@
                                         <label class="list-group-item list-group-item-action mb-0 bg-success bg-white" for="vote_01">{% trans %}on{% endtrans %}</label>
 
                                         <input name="vote[]" type="radio"
-                                                {% if voting.voteStatus[participant.aid] is defined%}
+                                                {% if voting.voteStatus[participant.aid]|default(null) == 0%}
                                                     {% set voted=true %}
                                                     checked
                                                 {% endif %}
@@ -190,7 +190,7 @@
 
                                         {% if meeting.holdBack %}
                                             <input name="vote[]" type="radio"
-                                                    {% if voting.voteStatus[participant.aid] is defined%}
+                                                    {% if voting.voteStatus[participant.aid]|default(null) == 2%}
                                                         {% set voted=true %}
                                                         checked
                                                     {% endif %}
