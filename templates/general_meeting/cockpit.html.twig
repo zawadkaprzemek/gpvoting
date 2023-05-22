@@ -72,7 +72,7 @@
                                         {% endif %}
                                     </button>
                                     <a class="btn-outline-secondary btn" href="{{ path('app_manage_general_meeting_edit_voting',{slug:meeting.slug,sort:voting.sort}) }}">{% trans %}edit{% endtrans %}</a>
-                                    {% if meeting.secret == false %}
+                                    {% if meeting.secret == false and voting.secret == false %}
                                         <a class="btn-secondary btn" href="{{ path('app_manage_general_meeting_course_voting',{slug:meeting.slug,sort:voting.sort}) }}">{% trans %}course{% endtrans %}</a>
                                     {% endif %}
                                 </div>
