@@ -675,6 +675,7 @@ general_meeting:
     confirm: Na pewno chcesz zakończyć to zgromadzenie?
 
   voting:
+    hold_off: Wstrzymuje się
     no_votings: Brak głosowań
     list: Lista głosowań
     tochoose: Do wyboru

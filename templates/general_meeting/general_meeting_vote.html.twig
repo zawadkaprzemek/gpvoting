@@ -147,7 +147,7 @@
                             <button class="btn btn-success btn-vote" {% if active.votes[participant.aid] is defined%}disabled{% endif%} data-vote="1">{% trans %}on{% endtrans %}</button>
                             <button class="btn btn-danger btn-vote" {% if active.votes[participant.aid] is defined%}disabled{% endif%} data-vote="0">{% trans %}against{% endtrans %}</button>
                             {% if meeting.holdBack %}
-                                <button class="btn btn-warning btn-vote" {% if active.votes[participant.aid] is defined%}disabled{% endif%} data-vote="2">{% trans %}hold_off{% endtrans %}</button>
+                                <button class="btn btn-warning btn-vote" {% if active.votes[participant.aid] is defined%}disabled{% endif%} data-vote="2">{% trans %}general_meeting.voting.hold_off{% endtrans %}</button>
                             {% endif %}
                         </div>
                         {% endif %}
@@ -172,7 +172,7 @@
                                         <button class="btn btn-success btn-vote" {% if voting.voteStatus[participant.aid] is defined%}disabled{% endif%} data-vote="1">{% trans %}on{% endtrans %}</button>
                                         <button class="btn btn-danger btn-vote" {% if voting.voteStatus[participant.aid] is defined%}disabled{% endif%} data-vote="0">{% trans %}against{% endtrans %}</button>
                                         {% if meeting.holdBack %}
-                                            <button class="btn btn-warning btn-vote" {% if voting.voteStatus[participant.aid] is defined%}disabled{% endif%} data-vote="2">{% trans %}hold_off{% endtrans %}</button>
+                                            <button class="btn btn-warning btn-vote" {% if voting.voteStatus[participant.aid] is defined%}disabled{% endif%} data-vote="2">{% trans %}general_meeting.voting.hold_off{% endtrans %}</button>
                                         {% endif %}
                                     </div>
                                 {% elseif voting.type==2 %}
