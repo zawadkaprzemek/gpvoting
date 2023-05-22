@@ -59,16 +59,18 @@ class ExcelCourseGenerator
          * @var int $key
          * @var MeetingVoting $voting
          */
+        $count = 0;
         foreach ($meeting->getMeetingVotings() as $key => $voting)
         {
             if(!$voting->getSecret()){
-                if($key ==0)
+                if($key ==0 or $count===0)
                 {
                     $sheet=$excell->getActiveSheet();
                 }else{
                     $sheet=new Worksheet();
                     $excell->addSheet($sheet);
                 }
+                $count++;
                 $sheet->setTitle($this->translator->trans('voting').($key+1));
                 $sheet->getDefaultColumnDimension()->setWidth(15);
                 /*foreach(range('A','Z') as $columnID) {
