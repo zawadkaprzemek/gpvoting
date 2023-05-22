@@ -33,8 +33,8 @@
                 {% endif %}
                 <div class="row">
                     {% for voting in votings %}
-                        <div class="col-7">{{ voting.content }} - {{ voting|voting_type }}</div>
-                        <div class="col">
+                        <div class="col-7 mb-1">{{ voting.content }} - {{ voting|voting_type }}</div>
+                        <div class="col mb-1">
                             <div class="btn-group btn-group-sm">
                                 <a href="{{ path('app_manage_general_meeting_edit_voting',{slug:meeting.slug,sort:voting.sort}) }}"
                                    class="btn btn-outline-primary">
