@@ -56,7 +56,7 @@
                 $('#vot_span_total').text(v_p);
             }
 
-            {% if meeting.secret or (voting is defined and voting.secret) %}
+            {% if meeting.secret or (voting is defined and voting.secret|default(false)) %}
             let votes_count;
             let actions_count;
             let percent;
@@ -121,7 +121,7 @@
 
         }else if(type ==="vote_turn"){
             $.each(message,function (k,vote){
-                {% if meeting.secret or (voting is defined and voting.secret) %}
+                {% if meeting.secret or (voting is defined and voting.secret|default(false)) %}
                 let votes_count;
                 let actions_count;
                 let percent;
