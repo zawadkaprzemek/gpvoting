@@ -199,6 +199,7 @@
                                         {% endif %}
 
                                     </ul>
+                        {{ dump(voted) }}
                         <button type="submit" class="btn btn-outline-primary" {% if voted %}disabled{% endif %}>{% trans %}vote.text{% endtrans %}</button>
                     </form>
                     <script>
