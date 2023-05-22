@@ -177,7 +177,7 @@
                                                     checked
                                                 {% endif %}
                                                value="1" class="d-none" id="vote_1">
-                                        <label class="list-group-item list-group-item-action mb-0 bg-success" for="vote_1">{% trans %}on{% endtrans %}</label>
+                                        <label class="list-group-item list-group-item-action mb-0 border-success" for="vote_1">{% trans %}on{% endtrans %}</label>
 
                                         <input name="vote[]" type="checkbox"
                                                 {% if voting.voteStatus[participant.aid] is defined%}
@@ -185,7 +185,7 @@
                                                     checked
                                                 {% endif %}
                                                value="0" class="d-none" id="vote_0">
-                                        <label class="list-group-item list-group-item-action mb-0 bg-danger" for="vote_0">{% trans %}against{% endtrans %}</label>
+                                        <label class="list-group-item list-group-item-action mb-0 border-danger" for="vote_0">{% trans %}against{% endtrans %}</label>
 
                                         {% if meeting.holdBack %}
                                             <input name="vote[]" type="checkbox"
@@ -194,7 +194,7 @@
                                                         checked
                                                     {% endif %}
                                                    value="2" class="d-none" id="vote_2">
-                                            <label class="list-group-item list-group-item-action mb-0 bg-danger" for="vote_2">{% trans %}general_meeting.voting.hold_off{% endtrans %}</label>
+                                            <label class="list-group-item list-group-item-action mb-0 border-warning" for="vote_2">{% trans %}general_meeting.voting.hold_off{% endtrans %}</label>
                                         {% endif %}
 
                                     </ul>
