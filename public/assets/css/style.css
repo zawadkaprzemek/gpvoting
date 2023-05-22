@@ -24,17 +24,17 @@ input:checked+label.list-group-item{
     color: #fff;
 }
 
-#resolutionForm input:checked+label.list-group-item.bg-success{
+input:checked+label.list-group-item.bg-success{
     background: #28a745 !important;
     color: #fff;
 }
 
-#resolutionForm input:checked+label.list-group-item.bg-warning{
+input:checked+label.list-group-item.bg-warning{
     background: #ffc107 !important;
     color: #fff;
 }
 
-#resolutionForm input:checked+label.list-group-item.bg-danger{
+input:checked+label.list-group-item.bg-danger{
     background: #dc3545 !important;
     color: #fff;
 }
