@@ -167,6 +167,7 @@
 
 
                         <h2>{{ voting.content }}</h2>
+                    {{ dump(voting.type) }}
                             {% if voting.type==1 %}
                                     <ul class="list-group mb-2 vote-ul">
                                         {% set voted=false %}
