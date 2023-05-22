@@ -170,7 +170,7 @@
                         {% elseif voting.type==3 %}
                             {% set count=voting.answers|length %}
                         {% endif %}
-                        {% if meeting.secret ==false  %}
+                        {% if not meeting.secret and not voting.secret   %}
                         {% for i in 1..count %}
                             <div class="vote-box">{{ i }}</div>
                         {% endfor %}
