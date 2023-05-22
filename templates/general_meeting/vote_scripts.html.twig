@@ -177,9 +177,9 @@
     }
 
     function getVoteColor(vote){
-        console.log(vote)
+        console.log(vote, typeof vote)
         let _class="bg-";
-        switch (vote) {
+        switch (parseInt(vote)) {
             case 1:
             case true:
                 _class+="success";
