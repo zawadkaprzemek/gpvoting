@@ -682,11 +682,16 @@ class GeneralMeetingController extends AbstractController
             $actions = $actions + $participant->getActions();
             $votes = $votes + $participant->getVotes();
         }
+        $voting = null;
+        $last = null;
         if (isset($aStatus['active']) and !is_null($aStatus['active'])) {
             $voting = $repository->getVotingBySort($meeting, $aStatus['active']);
-        } else {
-            $voting = null;
         }
+
+        if (isset($aStatus['last']) and !is_null($aStatus['last'])) {
+            $last = $repository->getVotingBySort($meeting, $aStatus['last']);
+        }
+
 dump([
     'meeting' => $meeting,
     'active' => $aStatus,
@@ -694,7 +699,8 @@ dump([
     'actions' => $actions,
     'votes' => $votes,
     'voting' => $voting,
-    'participants' => $participants
+    'participants' => $participants,
+    'last' => $last,
 ]);
         return $this->render('general_meeting/cockpit.html.twig', [
             'meeting' => $meeting,
@@ -703,7 +709,8 @@ dump([
             'actions' => $actions,
             'votes' => $votes,
             'voting' => $voting,
-            'participants' => $participants
+            'participants' => $participants,
+            'last' => $last,
         ]);
     }
 
