@@ -13,7 +13,8 @@
         {% endif %}
         <div class="btn-group btn-group-sm mb-2">
             {% if meeting.status!=1 %}
-                <a href="{{ path('app_manage_general_meeting_edit',{slug:meeting.slug}) }}" class="btn btn-secondary">{% trans %}edit{% endtrans %}</a>
+                <a href="{{ path('app_manage_general_meeting_edit',{slug:meeting.slug}) }}"
+                   class="btn btn-secondary">{% trans %}edit{% endtrans %}</a>
             {% endif %}
             <a href="{{ path('app_manage_general_meeting_cockpit',{slug:meeting.slug}) }}" class="btn btn-outline-info">
                 {% trans %}general_meeting.go_to_cockpit{% endtrans %}
@@ -24,24 +25,33 @@
 
         <h3>{% trans %}general_meeting.voting.list{% endtrans %}</h3>
         <div class="row">
-        <div class="col-12">
-            {% if votings|length<meeting.count %}
-                <div><a class="btn btn-sm btn-primary" href="{{ path('app_manage_general_meeting_add_voting',{slug:meeting.slug}) }}">{% trans %}general_meeting.voting.add.text{% endtrans %}</a></div>
-            {% endif %}
-            {% for voting in votings %}
-                <div>{{ voting.content }} - {{ voting|voting_type }}
-                    <div class="btn-group btn-group-sm">
-                        <a href="{{ path('app_manage_general_meeting_edit_voting',{slug:meeting.slug,sort:voting.sort}) }}" class="btn btn-outline-primary">
-                            {% trans %}edit{% endtrans %}
-                        </a>
-                        {{ include('general_meeting/_delete_form.html.twig',{voting:voting}) }}
+            <div class="col-12">
+                {% if votings|length<meeting.count %}
+                    <div><a class="btn btn-sm btn-primary"
+                            href="{{ path('app_manage_general_meeting_add_voting',{slug:meeting.slug}) }}">{% trans %}general_meeting.voting.add.text{% endtrans %}</a>
+                    </div>
+                {% endif %}
+                <div class="row">
+                    {% for voting in votings %}
+                    <div class="col-7">{{ voting.content }} - {{ voting|voting_type }}</div>
+                    <div class="col">
+                        <div class="btn-group btn-group-sm">
+                            <a href="{{ path('app_manage_general_meeting_edit_voting',{slug:meeting.slug,sort:voting.sort}) }}"
+                               class="btn btn-outline-primary">
+                                {% trans %}edit{% endtrans %}
+                            </a>
+                            {{ include('general_meeting/_delete_form.html.twig',{voting:voting}) }}
+                        </div>
                     </div>
                 </div>
             {% else %}
-                <p>{% trans %}general_meeting.voting.no_votings{% endtrans %}</p>
-            {% endfor %}
+                <div class="col">
+                    <p>{% trans %}general_meeting.voting.no_votings{% endtrans %}</p>
+                </div>
+                {% endfor %}
+            </div>
         </div>
-        </div>
+    </div>
     </div>
 
 {% endblock %}
@@ -53,18 +63,15 @@
             let socket;
 
 
-            const socketOpenListener = function (){
+            const socketOpenListener = function () {
                 console.log("Connection established!");
             };
 
             const socketMessageListener = function (e) {
-                try
-                {
+                try {
                     const message = JSON.parse(e.data);
-                    addMessage(message.name, message.message,message.type,message.votes,message.actions,message.valid);
-                }
-                catch(e)
-                {
+                    addMessage(message.name, message.message, message.type, message.votes, message.actions, message.valid);
+                } catch (e) {
                     // Catch any errors
                 }
             }
@@ -73,89 +80,83 @@
                 if (socket) {
                     //console.error('Connection closed!');
                 }
-                try{
-                    socket = new WebSocket("ws://{{app.request.getHost()}}:3100/meeting_{{ meeting.hashId }}");
+                try {
+                    socket = new WebSocket("ws://{{ app.request.getHost() }}:3100/meeting_{{ meeting.hashId }}");
                     socket.addEventListener('open', socketOpenListener);
                     socket.addEventListener('message', socketMessageListener);
                     socket.addEventListener('close', socketCloseListener);
-                }catch (e) {
+                } catch (e) {
 
                 }
 
             }
             socketCloseListener();
-            $('.btn-gm-begin').on('click touch',function () {
-                let href=$(this).data('href');
-                let url=$(this).data('url');
-                if(confirm('{% trans %}general_meeting.begin.confirm{% endtrans %}'))
-                {
+            $('.btn-gm-begin').on('click touch', function () {
+                let href = $(this).data('href');
+                let url = $(this).data('url');
+                if (confirm('{% trans %}general_meeting.begin.confirm{% endtrans %}')) {
                     $.ajax({
                         type: 'PATCH',
                         url: href,
                         processData: false,
                         contentType: 'application/merge-patch+json',
                     }).done(function (result) {
-                        if(result.status==="success")
-                        {
+                        if (result.status === "success") {
                             const message = {
-                                name:"organizator",
+                                name: "organizator",
                                 message: "meeting_start",
                                 type: 'gm_management'
                             }
 
                             socket.send(JSON.stringify(message));
-                            window.location.href=url;
+                            window.location.href = url;
                         }
                     });
                 }
             })
 
-            $('.btn-gm-end').on('click touch',function () {
-                let href=$(this).data('href');
-                let url=$(this).data('url');
-                if(confirm('{% trans %}general_meeting.end.confirm{% endtrans %}'))
-                {
+            $('.btn-gm-end').on('click touch', function () {
+                let href = $(this).data('href');
+                let url = $(this).data('url');
+                if (confirm('{% trans %}general_meeting.end.confirm{% endtrans %}')) {
                     $.ajax({
                         type: 'PATCH',
                         url: href,
                         processData: false,
                         contentType: 'application/merge-patch+json',
                     }).done(function (result) {
-                        if(result.status==="success")
-                        {
+                        if (result.status === "success") {
                             const message = {
-                                name:"organizator",
+                                name: "organizator",
                                 message: "meeting_end",
                                 type: 'gm_management'
                             }
                             socket.send(JSON.stringify(message));
-                            window.location.href=url;
+                            window.location.href = url;
                         }
                     });
                 }
             })
 
-            $('.btn-gm-reset').on('click touch',function () {
-                let href=$(this).data('href');
-                let url=$(this).data('url');
-                if(confirm('{% trans %}general_meeting.restart.confirm{% endtrans %}'))
-                {
+            $('.btn-gm-reset').on('click touch', function () {
+                let href = $(this).data('href');
+                let url = $(this).data('url');
+                if (confirm('{% trans %}general_meeting.restart.confirm{% endtrans %}')) {
                     $.ajax({
                         type: 'PATCH',
                         url: href,
                         processData: false,
                         contentType: 'application/merge-patch+json',
                     }).done(function (result) {
-                        if(result.status==="success")
-                        {
+                        if (result.status === "success") {
                             const message = {
-                                name:"organizator",
+                                name: "organizator",
                                 message: "meeting_start",
                                 type: 'gm_management'
                             }
 
                             socket.send(JSON.stringify(message));
-                            window.location.href=url;
+                            window.location.href = url;
                         }
                     });
                 }
