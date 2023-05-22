@@ -176,16 +176,16 @@
                                                     {% set voted=true %}
                                                     checked
                                                 {% endif %}
-                                               value="1" class="d-none" id="vote_1">
-                                        <label class="list-group-item list-group-item-action mb-0 border-success" for="vote_1">{% trans %}on{% endtrans %}</label>
+                                               value="1" class="d-none" id="vote_01">
+                                        <label class="list-group-item list-group-item-action mb-0 bg-success bg-white" for="vote_01">{% trans %}on{% endtrans %}</label>
 
                                         <input name="vote[]" type="checkbox"
                                                 {% if voting.voteStatus[participant.aid] is defined%}
                                                     {% set voted=true %}
                                                     checked
                                                 {% endif %}
-                                               value="0" class="d-none" id="vote_0">
-                                        <label class="list-group-item list-group-item-action mb-0 border-danger" for="vote_0">{% trans %}against{% endtrans %}</label>
+                                               value="0" class="d-none" id="vote_00">
+                                        <label class="list-group-item list-group-item-action mb-0 bg-danger bg-white" for="vote_00">{% trans %}against{% endtrans %}</label>
 
                                         {% if meeting.holdBack %}
                                             <input name="vote[]" type="checkbox"
@@ -193,8 +193,8 @@
                                                         {% set voted=true %}
                                                         checked
                                                     {% endif %}
-                                                   value="2" class="d-none" id="vote_2">
-                                            <label class="list-group-item list-group-item-action mb-0 border-warning" for="vote_2">{% trans %}general_meeting.voting.hold_off{% endtrans %}</label>
+                                                   value="2" class="d-none" id="vote_02">
+                                            <label class="list-group-item list-group-item-action mb-0 bg-warning bg-white" for="vote_02">{% trans %}general_meeting.voting.hold_off{% endtrans %}</label>
                                         {% endif %}
 
                                     </ul>
