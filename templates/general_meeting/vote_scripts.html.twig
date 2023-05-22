@@ -433,7 +433,7 @@
     });
 
 
-    $('#resolutionForm').on('submit',function (e){
+    /*$('#resolutionForm').on('submit',function (e){
         e.preventDefault();
         let theCheckboxes = $(this).find("input[type='radio']");
         let checked=theCheckboxes.filter(":checked");
@@ -445,6 +445,35 @@
             answersVoteSend(data,true);
             $(theCheckboxes).prop('disabled',true);
         }
+    });*/
+
+    $('#resolutionForm').on('submit',function (e){
+        e.preventDefault();
+        let $this = $(this);
+        let url='{{ path('app_ajax_general_meeting_save',{slug:meeting.slug}) }}';
+        let vote=$this.find("input[type='radio']:checked").val();
+        let aid='{% if participant is defined %}{{ participant.aid }}{% else %}A0{% endif %}'
+        const message = {
+            name: aid+'_{{ (voting is not null ? '1' : '0') }}',
+            message: vote,
+            type:'vote',
+            votes: '{% if participant is defined %}{{ participant.votes }}{% else %}0{% endif %}',
+            actions: '{% if participant is defined %}{{ participant.actions }}{% else %}0{% endif %}'
+        };
+        $.ajax({
+            type: 'PATCH',
+            url: url,
+            data: JSON.stringify({user:aid,vote:vote}),
+            processData: true,
+            contentType: 'application/merge-patch+json',
+        }).done(function (result) {
+            if(result.status==="success")
+            {
+                socket.send(JSON.stringify(message));
+                addMessage(message.name, message.message,message.type,message.votes,message.actions);
+                $this.find('input').prop('disabled',true);
+            }
+        });
     });
     {% endif %}
 
