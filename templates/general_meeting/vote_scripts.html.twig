@@ -56,7 +56,7 @@
                 $('#vot_span_total').text(v_p);
             }
 
-            {% if meeting.secret or (voting is defined and voting.secret|default(false)) %}
+            {% if meeting.secret or voting.secret|default(false) %}
             let votes_count;
             let actions_count;
             let percent;

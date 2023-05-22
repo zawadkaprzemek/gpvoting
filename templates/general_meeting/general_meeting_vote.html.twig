@@ -169,7 +169,6 @@
                         <h2>{{ voting.content }}</h2>
                             {% if voting.type==1 %}
                     <form id="resolutionForm">
-                        {{ dump(voting.voteStatus[participant.aid]|default(99)) }}
                                     <ul class="list-group mb-2 vote-ul">
                                         {% set voted=false %}
                                         <input name="vote[]" type="radio"
@@ -199,7 +198,6 @@
                                         {% endif %}
 
                                     </ul>
-                        {{ dump(voted) }}
                         <button type="submit" class="btn btn-outline-primary" {% if voted %}disabled{% endif %}>{% trans %}vote.text{% endtrans %}</button>
                     </form>
                     <script>
