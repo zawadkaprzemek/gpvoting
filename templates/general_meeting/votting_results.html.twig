@@ -24,7 +24,7 @@
         {% set lp=0 %}
         {% if voting.weight==1 %}
             {% for key,vote in votesSummary['valid']['votes'] %}
-                <p class="mb-2">
+                <p class="mb-1">
                     {{ voting.candidates[key].name }} -
                     <span class="{% if lp < voting.toChoose and vote>0 %}bg-success {% endif %}votes-span">{{ vote|number_format(2) ~ '%'}}</span>
                 </p>
@@ -32,7 +32,7 @@
             {% endfor %}
         {% else %}
             {% for key,vote in votesSummary['valid']['actions'] %}
-                <p class="mb-2">
+                <p class="mb-1">
                     {{ voting.candidates[key].name }} -
                     <span class="{% if lp < voting.toChoose and vote>0 %}bg-success {% endif %}votes-span">{{ vote|number_format(2) ~ '%'}}</span>
                 </p>
