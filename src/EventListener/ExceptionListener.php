@@ -42,6 +42,7 @@ class ExceptionListener
               'line'=>$exception->getLine()
           ]
         );
+        dump($exception);
 
         $this->em->persist($log);
         $this->em->flush();
