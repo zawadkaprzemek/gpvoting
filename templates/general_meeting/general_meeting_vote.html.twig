@@ -169,6 +169,7 @@
                         <h2>{{ voting.content }}</h2>
                             {% if voting.type==1 %}
                     <form id="resolutionForm">
+                        {{ dump(voting.voteStatus[participant.aid]|default(3)) }}
                                     <ul class="list-group mb-2 vote-ul">
                                         {% set voted=false %}
                                         <input name="vote[]" type="radio"
