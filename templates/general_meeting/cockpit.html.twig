@@ -207,7 +207,7 @@
                             </div>
                         {% endfor %}
                     {% endif %}
-                    {% if meeting.secret %}
+                    {% if meeting.secret or (voting is defined and voting.secret) %}
                         {% if voting is not null %}
                             <div class="vote_progress">
                                 {% set count=1 %}

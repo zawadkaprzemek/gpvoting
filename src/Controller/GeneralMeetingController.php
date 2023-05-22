@@ -687,7 +687,15 @@ class GeneralMeetingController extends AbstractController
         } else {
             $voting = null;
         }
-
+dump([
+    'meeting' => $meeting,
+    'active' => $aStatus,
+    'hash' => $meeting->getHashId(),
+    'actions' => $actions,
+    'votes' => $votes,
+    'voting' => $voting,
+    'participants' => $participants
+]);
         return $this->render('general_meeting/cockpit.html.twig', [
             'meeting' => $meeting,
             'active' => $aStatus,
