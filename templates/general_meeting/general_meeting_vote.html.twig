@@ -202,9 +202,9 @@
                     </form>
                     <script>
                         {% if voted %}
-                        $('#resolutionForm input').prop('disabled',true);
+                        $('#resolutionForm button').prop('disabled',true);
                         {% else %}
-                        $('#resolutionForm input').prop('checked',false);
+                        $('#resolutionForm button').prop('checked',false);
                         {% endif %}
                     </script>
                                     {#<div class="btn-group btn-group-lg">

@@ -60,7 +60,7 @@
             let votes_count;
             let actions_count;
             let percent;
-            switch (message) {
+            switch (parseInt(message)) {
                 case 1:
                     votes_count = $('#progressOn_' + res[(res.length - 1)]).data('votes');
                     actions_count = $('#progressOn_' + res[(res.length - 1)]).data('actions');
@@ -177,7 +177,6 @@
     }
 
     function getVoteColor(vote){
-        console.log(vote, typeof vote)
         let _class="bg-";
         switch (parseInt(vote)) {
             case 1:
@@ -457,7 +456,7 @@
             {
                 socket.send(JSON.stringify(message));
                 addMessage(message.name, message.message,message.type,message.votes,message.actions);
-                $this.find("input[type='radio']").prop('disabled',true);
+                $this.find("button").prop('disabled',true);
             }
         });
     });
