@@ -474,9 +474,9 @@ class ParticipantController extends AbstractController
     {
         $em=$this->getDoctrine()->getManager();
         $participant = $em->getRepository(Participant::class)->getParticipantByHash($hash);
-
+dump($participant);
         if($participant){
-            $participant->setVerified(true);
+            $participant->setVerified(1);
             $em->persist($participant);
             $em->flush();
             $message = 'participants.verified.success';
