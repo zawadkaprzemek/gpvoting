@@ -121,7 +121,7 @@
 
         }else if(type ==="vote_turn"){
             $.each(message,function (k,vote){
-                {% if meeting.secret or (voting is defined and voting.secret|default(false)) %}
+                {% if meeting.secret or voting.secret|default(false) %}
                 let votes_count;
                 let actions_count;
                 let percent;
@@ -178,6 +178,7 @@
 
     function getVoteColor(vote){
         let _class="bg-";
+        console.log(vote, typeof vote)
         switch (parseInt(vote)) {
             case 1:
             case true:
