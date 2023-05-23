@@ -60,7 +60,7 @@
             let votes_count;
             let actions_count;
             let percent;
-            switch (parseInt(message)) {
+            switch (message) {
                 case 1:
                     votes_count = $('#progressOn_' + res[(res.length - 1)]).data('votes');
                     actions_count = $('#progressOn_' + res[(res.length - 1)]).data('actions');
@@ -178,8 +178,10 @@
 
     function getVoteColor(vote){
         let _class="bg-";
-        console.log(vote, typeof vote)
-        switch (parseInt(vote)) {
+        if(typeof vote == 'string'){
+            vote = parseInt(vote);
+        }
+        switch (vote) {
             case 1:
             case true:
                 _class+="success";
