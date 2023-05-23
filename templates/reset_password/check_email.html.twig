@@ -4,5 +4,5 @@
 
 {% block body %}
     <p>{% trans with { '%hours%':tokenLifetime|date('g')} %}reset.request_send.text1{% endtrans %}</p>
-    <p>{% trans %}reset.request_send.text2{% endtrans%} <a href="{{ path('app_forgot_password_request') }}">{% trans %}reset.request_send.link{% endtrans %}</a>.</p>
+    <p>{% trans %}reset.request_send.text2{% endtrans%} <a href="{{ url('app_forgot_password_request') }}">{% trans %}reset.request_send.link{% endtrans %}</a>.</p>
 {% endblock %}
