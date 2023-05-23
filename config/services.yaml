@@ -9,6 +9,7 @@ parameters:
     front_url: 'http://gpvoting.gpedulife.pl/gpvoting-front/'
     app_locales: pl|en
     default_locale: pl
+    domain: 'http://bolprzewlekly.pl/pl'
 
 services:
     # default configuration for services in *this* file

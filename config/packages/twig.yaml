@@ -6,3 +6,4 @@ twig:
     exception_controller: null
     globals:
         upload_image_directory: '/assets/uploads/images/'
+        domain: '%domain%'
