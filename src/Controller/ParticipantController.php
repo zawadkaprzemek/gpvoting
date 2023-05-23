@@ -205,7 +205,7 @@ class ParticipantController extends AbstractController
                             ->setAid("A".++$number)
                             ->setAccepted(true)
                             ->setVerified(false)
-                            ->setHash(md5($participant->getName().$participant->getEmail()))
+                            ->setHash(md5($participant->getName().$participant->getEmail().(new \DateTime())->format('Y-m-d H:i:s')))
                         ;
                         $participant->setPlainPass($this->generateRandomString(12))->setPassword(md5($participant->getPlainPass()));
                         $em->persist($participant);
@@ -268,7 +268,7 @@ class ParticipantController extends AbstractController
             $participant->setPlainPass($participant->getPassword())
                 ->setPassword(md5($participant->getPlainPass()))
                 ->setAid("A".++$number)
-                ->setHash(md5($participant->getName().$participant->getEmail()))
+                ->setHash(md5($participant->getName().$participant->getEmail().(new \DateTime())->format('Y-m-d H:i:s')))
             ;
 
             $em->persist($participant);
@@ -474,9 +474,8 @@ class ParticipantController extends AbstractController
     {
         $em=$this->getDoctrine()->getManager();
         $participant = $em->getRepository(Participant::class)->getParticipantByHash($hash);
-dump($participant);
         if($participant){
-            $participant->setVerified(1);
+            $participant->setVerified(true);
             $em->persist($participant);
             $em->flush();
             $message = 'participants.verified.success';
