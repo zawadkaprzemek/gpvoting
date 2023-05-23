@@ -204,7 +204,8 @@
                         {% if voted %}
                         $('#resolutionForm button').prop('disabled',true);
                         {% else %}
-                        $('#resolutionForm button').prop('checked',false);
+                        $('#resolutionForm input').prop('checked',false);
+                        $('#resolutionForm button').prop('disabled',false);
                         {% endif %}
                     </script>
                                     {#<div class="btn-group btn-group-lg">
