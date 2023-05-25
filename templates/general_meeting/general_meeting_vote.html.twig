@@ -203,6 +203,7 @@
                     <script>
                         {% if voted %}
                         $('#resolutionForm button').prop('disabled',true);
+                        $('#resolutionForm input').prop('disabled',true);
                         {% else %}
                         $('#resolutionForm input').prop('checked',false);
                         $('#resolutionForm button').prop('disabled',false);
