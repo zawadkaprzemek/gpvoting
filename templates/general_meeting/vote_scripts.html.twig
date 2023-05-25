@@ -380,11 +380,11 @@
     {% if voting is not null %}
     $('#voteCandidateForm').on('submit',function (e){
        e.preventDefault();
-
-        let theCheckboxes =$(this).find("input[type='checkbox']");
+        let $this = $(this);
+        let theCheckboxes =$this.find("input[type='checkbox']");
         let max={{ voting.toChoose }};
         let checked=theCheckboxes.filter(":checked");
-        let data=candidatesVoteData($(this).serializeArray());
+        let data=candidatesVoteData($this.serializeArray());
         if(checked.length===0)
         {
             alert("{% trans %}general_meeting.voting.choose_candidates_to_vote{% endtrans %}")
@@ -396,20 +396,21 @@
                 $(theCheckboxes).prop('disabled', true);
             }
             {% else %}
-                let warned=$(this).data('warned');
-                let warning=$(this).data('warning');
+                let warned=$this.data('warned');
+                let warning=$this.data('warning');
                 {% if meeting.badVoteSettings==2 %}
                     alert(warning)
                 {% else %}
                     if(!warned)
                     {
                         alert(warning);
-                        $(this).data('warned',true);
+                        $this.data('warned',true);
                     }else{
                         if(confirm('{% trans %}general_meeting.voting.invalid_vote.confirm{% endtrans %}'))
                         {
                             candidatesVoteSend(data,false);
                             $(theCheckboxes).prop('disabled',true);
+                            $this.find('button').prop('disabled',true).hide();
                         }
                     }
                 {% endif %}
@@ -417,6 +418,7 @@
         }else{
             candidatesVoteSend(data,true);
             $(theCheckboxes).prop('disabled',true);
+            $this.find('button').prop('disabled',true).hide();
         }
     });
 

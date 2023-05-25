@@ -237,6 +237,7 @@
                                     <script>
                                     {% if voted %}
                                     $('#voteCandidateForm input').prop('disabled',true);
+                                    $('#voteCandidateForm button').prop('disabled',true).hide();
                                     {% else %}
                                     $('#voteCandidateForm input').prop('checked',false);
                                     {% endif %}
