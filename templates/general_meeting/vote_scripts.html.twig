@@ -459,7 +459,8 @@
             {
                 socket.send(JSON.stringify(message));
                 addMessage(message.name, message.message,message.type,message.votes,message.actions);
-                $this.find("button, input").prop('disabled',true);
+                $this.find("input,button").prop('disabled',true);
+                $this.find("button").hide();
             }
         });
     });

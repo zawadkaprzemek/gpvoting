@@ -79,6 +79,7 @@ class MeetingVotingType extends AbstractType
                     'label'=>'add_next',
                     'mapped'=>false,
                     'required'=>false,
+                    'data' =>true,
                     'disabled'=>(sizeof($meeting->getMeetingVotings())+1)==$meeting->getCount()
                 ));
         }
