@@ -733,11 +733,11 @@ class GeneralMeetingController extends AbstractController
                 $form->get('password')->addError(new FormError($this->translator->trans("form.error.wrong_credentials")));
             } else {
                 if (!$participant->getAccepted()) {
-                    $form->get('name')->addError(new FormError($this->translator->trans("participant.not-accepted")));
+                    $form->get('name')->addError(new FormError($this->translator->trans("participants.not-accepted")));
                 }
 
                 if (!$participant->getVerified()) {
-                    $form->get('email')->addError(new FormError($this->translator->trans("participant.not-verified")));
+                    $form->get('email')->addError(new FormError($this->translator->trans("participants.not-verified")));
                 }
             }
 
@@ -778,7 +778,7 @@ class GeneralMeetingController extends AbstractController
             return $this->redirectToRoute('app_general_meeting_join', ['slug' => $meeting->getSlug()]);
         }
         $participant = $participantRepository->find($participant['id']);
-        if (!$participant->getAccepted()) {
+        if (is_null($participant) or !$participant->getAccepted()) {
             return $this->render('general_meeting/permission_denied.html.twig', array(
                 'participant' => $participant,
                 'meeting' => $meeting

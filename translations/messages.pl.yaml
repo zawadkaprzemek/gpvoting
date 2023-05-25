@@ -372,6 +372,8 @@ room:
 
 
 participants.verify.complete.title: 'Twój adres e-mail został zweryfikowany'
+participants.not-verified: 'Twój adres email nie został jeszcze zweryfikowany'
+participants.not-accepted: 'Nie zostałeś zaakceptowany przez prowadzącego zgromadzenie'
 participants:
   name: Nazwa udziałowca
   limit_list: Limit wielkości listy uczestników
