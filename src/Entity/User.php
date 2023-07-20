@@ -110,6 +110,11 @@ class User implements UserInterface,PasswordAuthenticatedUserInterface
      */
     private $pack;
 
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $clientName;
+
     public function __construct()
     {
         $this->subaccounts = new ArrayCollection();
@@ -416,6 +421,18 @@ class User implements UserInterface,PasswordAuthenticatedUserInterface
     public function setPack(?Pack $pack): self
     {
         $this->pack = $pack;
+
+        return $this;
+    }
+
+    public function getClientName(): ?string
+    {
+        return $this->clientName;
+    }
+
+    public function setClientName(string $clientName): self
+    {
+        $this->clientName = $clientName;
 
         return $this;
     }

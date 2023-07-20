@@ -17,6 +17,8 @@ register.form:
   password:
     blank: Prosze wprowadzić hasło
     minMessage: "Hasło musi się składać conajmniej z  {{ limit }} znaków"
+    repeat: Powtórz hasło
+    not-equal: Hasła są różne
 
 #Resetowanie hasła:
 reset:

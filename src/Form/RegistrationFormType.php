@@ -7,7 +7,9 @@ use Gregwar\CaptchaBundle\Type\CaptchaType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
+use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
+use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -25,6 +27,7 @@ class RegistrationFormType extends AbstractType
         $user=$options['data'];
         $builder
             ->add('username',TextType::class,array('label'=>'register.form.username.label'))
+            ->add('clientName',TextType::class,array('label'=>'register.form.client_name.label'))
             ->add('agreeTerms', CheckboxType::class, [
                 'mapped' => false,
                 'label'=>'register.form.terms.label',
@@ -34,26 +37,65 @@ class RegistrationFormType extends AbstractType
                     ]),
                 ],
             ])
-            ->add('plainPassword', PasswordType::class, [
-                // instead of being set onto the object directly,
+            ->add('plainPassword', RepeatedType::class, array(
+                'type' => PasswordType::class,
+                'first_options' => [
+                    'constraints' => [
+                        new NotBlank([
+                            'message' => 'register.form.password.blank',
+                        ]),
+                        new Length([
+                            'min' => 8,
+                            'minMessage' => 'register.form.password.minMessage',
+                            // max length allowed by Symfony for security reasons
+                            'max' => 4096,
+                        ]),
+                    ],
+                    'label' => 'password',
+                ],
+                'second_options' => [
+                    'label' => 'password.repeat',
+                ],
+                'invalid_message' => 'register.form.password.not-equal',
+                // Instead of being set onto the object directly,
                 // this is read and encoded in the controller
                 'mapped' => false,
-                'label'=>'password',
-                'constraints' => [
-                    new NotBlank([
-                        'message' => 'register.form.password.blank',
-                    ]),
-                    new Length([
-                        'min' => 6,
-                        'minMessage' => 'register.form.password.minMessage',
-                        // max length allowed by Symfony for security reasons
-                        'max' => 4096,
-                    ]),
-                ],
-            ])
+            ))
+
             ->add('name',TextType::class,array('label'=>'firstName',))
             ->add('surname',TextType::class,array('label'=>'lastName'))
             ->add('email',EmailType::class,array('label'=>'email.address'))
+            ->add('participantListSize', NumberType::class,['label' => 'participants.limit_list',
+                'html5' =>true,
+                'attr'=>[
+                    'min'=>1,
+                    'step' =>1,
+                    'max'=> 50,
+                ],
+                'empty_data' => 10
+            ])
+            ->add('eventsLimit', NumberType::class,['label' => 'profile.events_count',
+                'html5' =>true,
+                'mapped' =>false,
+                'disabled' => true,
+                'attr'=>[
+                    'min'=>0,
+                    'step' =>0,
+                    'max'=> 0,
+                ],
+                'data' => 0
+            ])
+            ->add('participantsListCount', NumberType::class,['label' => 'profile.participants_list_count',
+                'html5' =>true,
+                'mapped' =>false,
+                'disabled' => true,
+                'attr'=>[
+                    'min'=>0,
+                    'step' =>0,
+                    'max'=> 0,
+                ],
+                'data' => 0
+            ])
             ->add('submit',SubmitType::class,array(
                 'label'=>($user->getParent()===null ? 'registration' :'profile.subaccount.create.button')
 

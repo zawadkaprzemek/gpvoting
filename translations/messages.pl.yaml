@@ -25,6 +25,9 @@ profile:
       success: Podkonto zostało utworzone
       button: Stwórz podkonto
       text: Utwórz podkonto
+
+  events_count: Ilość wydarzeń
+  participants_list_count: Ilość list uczestników
 #admin
 admin:
   page: Panel administracyjny
@@ -123,6 +126,7 @@ submit: Wyślij
 save: Zapisz
 login.to.site: Zaloguj się!
 password: Hasło
+password.repeat: Powtórz hasło
 enter_password: Wprowadź hasło
 login.text: Login
 login.text.info: Login
@@ -582,7 +586,10 @@ register.form:
     success: Twój adres email został zweryfikowany
 
   username:
-    label: Nazwa użytkownika
+    label: Login
+
+  client_name:
+    label: Nazwa klienta
 
   email:
     account_created:
