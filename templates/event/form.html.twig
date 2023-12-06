@@ -28,6 +28,17 @@
         </div>
     </div>
 
+    <div class="row form-group">
+        <div class="col-12 col-sm-4 col-form-label">
+            {{ 'event.validCodeMessage'|info_icon }}
+            {{ 'event.validCodeMessage'|help_icon }}
+            {{form_label(form.validCodeMessage)}}
+        </div>
+        <div class="col-12 col-sm-8">
+            {{ form_widget(form.validCodeMessage) }}
+        </div>
+    </div>
+
     {% if form.vars.value.id is not null %}
         {{ form_widget(form.changeLogo) }}
     {% endif %}

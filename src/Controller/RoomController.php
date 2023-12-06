@@ -47,11 +47,14 @@ class RoomController extends AbstractController
         $form->handleRequest($request);
         if($form->isSubmitted()&&$form->isValid())
         {
-            $room->setCode(uniqid($event->getUser()->getUsername()));
+            $prefix = $form->get('prefix')->getData();
+            $randomLength = $form->get('randomLength')->getData();
+            $unique=substr(md5(uniqid()),0,$randomLength);
+            $room->setCode($prefix.$unique);
             $em=$this->getDoctrine()->getManager();
             $em->persist($room);
             $em->flush();
-            $this->addFlash('sucess',$this->translator->trans('room.create.success'));
+            $this->addFlash('success',$this->translator->trans('room.create.success'));
             return $this->redirectToRoute('app_manage_event_show',['slug'=>$event->getSlug()]);
         }
 

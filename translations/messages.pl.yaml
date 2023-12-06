@@ -5,6 +5,7 @@ login: Logowanie
 registration: Rejestracja
 logout: Wyloguj
 hello: Witaj
+home_page: Strona główna
 profile:
   your_data: Twoje dane
   change_data: Zmień dane
@@ -231,6 +232,9 @@ fastest_ranking: Ranking najszybciej głosujących
 yes: Tak
 no: Nie
 here: tutaj
+uploadedfile:
+  name: Nazwa wybranego pliku
+
 #Zarządzanie
 
 manage:
@@ -247,6 +251,9 @@ event:
   activated: Aktywowano wydarzenie
   hidden: Ukryto wydarzenie
   no_rooms: Brak pokoi
+
+  validCodeMessage:
+    label: Treść powiadomienia o poprawnie wprowadzonym kodzie
 
   manage_events: Zarządzaj wydarzeniami
   add:
@@ -287,7 +294,7 @@ event:
   logo:
       text: Logo
       info: Logo wyświetlane
-      help: Rozmiar do 1MB, Wysokość i szerokość 200-400px
+      help: Rozmiar do 2MB, Wysokość i szerokość min 100px
       label: Logo wydarzenia/organizatora
 
   shortOrganizatorName:
@@ -304,12 +311,15 @@ codes:
 
   assigned_votings: Przypisane głosowania
   not_assigned: Kod nie przypisany do żadnego głosowania
+  no_codes: Brak wygenerowanych kodów
   manage:
     info: Zarządzanie kodami dostępu
     text: Zarządzaj kodami
 
     new_codes:
       count: Ilość nowych kodów
+      prefix: Prefix
+      randomLengthsize: Długość losowej końcówki
       generate: Generuj
       generate_many: Generuj nowe kody
       generate_many.info: Generuj nowe kody
@@ -345,6 +355,9 @@ room:
 
   add:
     new: Dodaj pokój
+    code:
+      prefix: Prefix kodu dostępu
+      randomLength: Długość losowej końcówki kodu dostępu
 
   create:
     new: Stwórz nowy pokój
@@ -704,9 +717,15 @@ general_meeting:
 
     answers:
       info: Treść odpowiedzi
+      list:
+        info: Ilość dostępnych odpowiedzi
+        help: Ilość dostępnych odpowiedzi
 
     candidates:
       info: Imię i nazwisko kandydata
+      list:
+        info: Ilość dostępnych kandydatów
+        help: Ilość dostępnych kandydatów
 
     add:
       text: Dodaj głosowanie
@@ -785,6 +804,7 @@ packs:
   single_text.help: Pakiet
   single_text.info: Pakiet
   many_text: Pakiety
+  choose: Wybierz pakiet
   new:
     text: Dodaj pakiet
     success: Dodano nowy pakiet

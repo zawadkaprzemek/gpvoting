@@ -35,6 +35,7 @@ class AppFixtures extends Fixture
             ->setName("GPTeam")
             ->setSurname("GPTeam")
             ->setUsername("GPTeam")
+            ->setClientName("GPTeam")
             ->setEmail("gpvoting@gpteam.pl")
             ->setIsVerified(true)
             ->setPassword($this->encoder->hashPassword($user,"GPTeam1234"))

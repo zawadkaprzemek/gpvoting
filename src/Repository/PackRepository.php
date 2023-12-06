@@ -36,6 +36,16 @@ class PackRepository extends ServiceEntityRepository
     }
     */
 
+    public function getSingleStarterPack()
+    {
+        return $this->createQueryBuilder('p')
+            ->orderBy('p.id','ASC')
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getOneOrNullResult()
+            ;
+    }
+
     /*
     public function findOneBySomeField($value): ?Pack
     {

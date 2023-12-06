@@ -9,6 +9,7 @@ use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -30,15 +31,17 @@ class EventType extends AbstractType
                     'required'=>!$isEdit,
                     'constraints' => [
                         new Image([
-                            'maxSize' => '1024k',
-                            'minWidth' => 200,
-                            'maxWidth' => 400,
-                            'minHeight' => 200,
-                            'maxHeight' => 400,
+                            'maxSize' => '2048k',
+                            'minWidth' => 100,
+                            'minHeight' => 100,
                         ])
                     ]
                 )
             )
+            ->add('validCodeMessage', TextareaType::class,[
+                'label'=>'event.validCodeMessage.label',
+                "attr" => array("row" => 5, 'class'=> 'noresize')
+            ])
             ->add('submit',SubmitType::class,array('label'=>'save'))
         ;
         if($isEdit)

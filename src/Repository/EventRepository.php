@@ -58,11 +58,13 @@ class EventRepository extends ServiceEntityRepository
             ->getResult();
     }
 
-    public function findAllOpen()
+    public function findAllOpen(?User $user): \Doctrine\ORM\Query
     {
         return $this->createQueryBuilder('e')
             ->andWhere('e.status = :status')
+            ->andWhere('e.user = :user')
             ->setParameter('status',1)
+            ->setParameter('user',$user)
             ->getQuery();
     }
 }

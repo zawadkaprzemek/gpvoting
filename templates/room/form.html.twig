@@ -13,6 +13,24 @@
             {{ form_widget(form.name) }}
         </div>
     </div>
+    {% if form.vars.value.id is null %}
+    <div class="row form-group">
+        <div class="col-12 col-sm-3 col-form-label">
+            {{form_label(form.prefix)}}
+        </div>
+        <div class="col-12 col-sm-9">
+            {{ form_widget(form.prefix) }}
+        </div>
+    </div>
+    <div class="row form-group">
+        <div class="col-12 col-sm-3 col-form-label">
+            {{form_label(form.randomLength)}}
+        </div>
+        <div class="col-12 col-sm-9">
+            {{ form_widget(form.randomLength) }}
+        </div>
+    </div>
+    {% endif %}
     {{ form_row(form._token) }}
     {{ form_row(form.submit) }}
     {{ form_end(form) }}

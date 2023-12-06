@@ -2,8 +2,11 @@
 
 namespace App\Form;
 
+use App\Entity\Pack;
 use App\Entity\User;
+use App\Repository\PackRepository;
 use Gregwar\CaptchaBundle\Type\CaptchaType;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
@@ -77,24 +80,37 @@ class RegistrationFormType extends AbstractType
             ->add('eventsLimit', NumberType::class,['label' => 'profile.events_count',
                 'html5' =>true,
                 'mapped' =>false,
-                'disabled' => true,
                 'attr'=>[
                     'min'=>0,
                     'step' =>0,
                     'max'=> 0,
+                    'readonly'=> true
                 ],
                 'data' => 0
             ])
             ->add('participantsListCount', NumberType::class,['label' => 'profile.participants_list_count',
                 'html5' =>true,
                 'mapped' =>false,
-                'disabled' => true,
                 'attr'=>[
                     'min'=>0,
                     'step' =>0,
                     'max'=> 0,
+                    'readonly'=> true
                 ],
                 'data' => 0
+            ])
+            ->add('pack', EntityType::class,[
+                'label'=>'packs.single_text',
+                'attr' =>[
+                    'readonly'=> true
+                ],
+                'required'=>false,
+                'class'=>Pack::class,
+                'placeholder'=>false,
+                'choice_label' => 'name',
+                'empty_data' => function (PackRepository $pr)  {
+                    return $pr->getSingleStarterPack();
+                },
             ])
             ->add('submit',SubmitType::class,array(
                 'label'=>($user->getParent()===null ? 'registration' :'profile.subaccount.create.button')

@@ -43,11 +43,11 @@ class HomeController extends AbstractController
      * @param Request $request
      * @return Response
      */
-    public function index(EventRepository $repository,PaginatorInterface $paginator, Request $request)
+    public function index(EventRepository $repository,PaginatorInterface $paginator, Request $request): Response
     {
         return $this->render('event/index.html.twig', [
             'pagination' => $paginator->paginate(
-                $repository->findAllOpen(),$request->query->getInt('page', 1),20,[]),
+                $repository->findAllOpen($this->getUser()),$request->query->getInt('page', 1),20,[]),
             'manage'=>false
         ]);
     }
@@ -86,10 +86,10 @@ class HomeController extends AbstractController
         if($form->isSubmitted())
         {
             $name=$form->get('name')->getData();
-            if(mb_strlen($name)<5)
+            /*if(mb_strlen($name)<5)
             {
                 $form->get('name')->addError(new FormError($this->translator->trans('form.error.name_short',['%limit%'=>5])));
-            }
+            }*/
             if($form->isValid())
             {
                 $session->set('name',$name);
@@ -105,12 +105,18 @@ class HomeController extends AbstractController
                     ]
                 );
             }
+            $events = [];
             foreach ($rooms as $room)
             {
                 /**
                  * @var $room Room
                  */
                 $session->set('room_'.$room->getId().'_code',$code);
+                if(!in_array($room->getEvent()->getId(),$events))
+                {
+                    $this->addFlash('success',$room->getEvent()->getValidCodeMessage());
+                    $events[] = $room->getEvent()->getId();
+                }
             }
             foreach ($pollings as $polling)
             {
@@ -119,8 +125,13 @@ class HomeController extends AbstractController
                 /** @var Room $room */
                 $room=$polling->getRoom();
                 $session->set('room_'.$room->getId().'_code',$room->getCode());
+                if(!in_array($room->getEvent()->getId(),$events))
+                {
+                    $this->addFlash('success',$room->getEvent()->getValidCodeMessage());
+                    $events[] = $room->getEvent()->getId();
+                }
             }
-            $this->addFlash('success',$this->translator->trans('codes.valid_code_enter'));
+            //$this->addFlash('success',$this->translator->trans('codes.valid_code_enter'));
             if($find>1)
             {
                 return $this->render('home/enter.html.twig',[

@@ -14,7 +14,7 @@ class NameType extends AbstractType
     {
         $builder
             ->add('name',TextType::class,array('label'=>'name.form.label','attr'=>array(
-                'minlength'=>5
+                'minlength'=>1
             )))
             ->add('submit',SubmitType::class,array('label'=>'submit'))
         ;

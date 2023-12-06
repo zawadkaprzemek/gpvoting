@@ -76,6 +76,11 @@ class Event
      */
     private $shortOrganizatorName;
 
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $validCodeMessage;
+
     public function __construct()
     {
         $this->eventCodes = new ArrayCollection();
@@ -239,6 +244,18 @@ class Event
     public function setShortOrganizatorName(string $shortOrganizatorName): self
     {
         $this->shortOrganizatorName = $shortOrganizatorName;
+
+        return $this;
+    }
+
+    public function getValidCodeMessage(): ?string
+    {
+        return $this->validCodeMessage;
+    }
+
+    public function setValidCodeMessage(string $validCodeMessage): self
+    {
+        $this->validCodeMessage = $validCodeMessage;
 
         return $this;
     }

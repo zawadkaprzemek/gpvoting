@@ -110,7 +110,8 @@ class GeneralMeetingController extends AbstractController
             $em->persist($voting);
             $em->flush();
             $this->addFlash('success', $this->translator->trans('general_meeting.voting.add.success'));
-            if ($form->get('add_next')->getData()) {
+            $meeting->addMeetingVoting($voting);
+            if ($form->get('add_next')->getData() && (sizeof($meeting->getMeetingVotings()) < $meeting->getCount())) {
                 return $this->redirectToRoute('app_manage_general_meeting_add_voting', ['slug' => $meeting->getSlug()]);
             } else {
                 return $this->redirectToRoute('app_manage_show_vottings', ['slug' => $meeting->getSlug()]);

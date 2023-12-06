@@ -91,3 +91,8 @@ input:checked+label.list-group-item.bg-danger{
     height:49px;
     border-right: 1px solid white;
 }
+
+.noresize {
+    resize: none;
+    height: 120px !important;
+}

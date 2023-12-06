@@ -12,6 +12,7 @@
             </div>
             <div class="col-12 col-sm-9">
                 {{ form_widget(form.file) }}
+                <p class="d-none mt-3" id="uploadedFileName"> {{ "uploadedfile.name"|trans }}: <strong></strong> </p>
             </div>
         </div>
     {% if list.open is not same as true or (list.participants|length)>=list.user.participantListSize %}
@@ -41,4 +42,20 @@
         </ul>
     </div>
 </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        $(document).ready(function () {
+            $('#import_participants_file').change(function () {
+                let filename = this.files.length ? this.files[0].name : "";
+                if(filename.length>0)
+                {
+                   $('#uploadedFileName').removeClass('d-none');
+                   $('#uploadedFileName strong').text(filename)
+                }
+            });
+        });
+    </script>
 {% endblock %}

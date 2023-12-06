@@ -62,12 +62,6 @@ class EventController extends AbstractController
             );
             $em=$this->getDoctrine()->getManager();
             $event->setLogo($newFilename);
-            $codes=$this->generateEventCodes($event);
-            foreach ($codes as $code)
-            {
-                $event->addEventCode($code);
-                $em->persist($code);
-            }
             $em->persist($event);
             $em->flush();
             $this->addFlash('success', $this->translator->trans('event.add.success'));
@@ -150,14 +144,14 @@ class EventController extends AbstractController
         ]);
     }
 
-    private function generateEventCodes(Event $event,int $count=5): array
+    private function generateEventCodes(Event $event,string $prefix, int $randomLength, int $count=5): array
     {
         $codes=array();
         for($i=0;$i<$count;$i++)
         {
             $code=new EventCode();
-            $unique=substr(md5(uniqid()),0,6);
-            $code->setEvent($event)->setName($event->getOrganizer().$unique);
+            $unique=substr(md5(uniqid()),0,$randomLength);
+            $code->setEvent($event)->setName($prefix.$unique);
             $codes[]=$code;
         }
         return $codes;
@@ -256,7 +250,9 @@ class EventController extends AbstractController
         {
             $em=$this->getDoctrine()->getManager();
             $count=$form->get('count')->getData();
-            $codes=$this->generateEventCodes($event,$count);
+            $prefix = $form->get('prefix')->getData();
+            $randomLength = $form->get('randomLength')->getData();
+            $codes=$this->generateEventCodes($event,$prefix,$randomLength,$count);
             foreach ($codes as $code)
             {
                 $em->persist($code);
